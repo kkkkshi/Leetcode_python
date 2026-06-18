@@ -1,15 +1,49 @@
+# 98. Validate Binary Search Tree
+
 import math
+from collections import deque
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
-        self.value = value
+        self.val = val
         self.left = left
         self.right = right
+
+
+def build(values):
+    # level-order build; None means missing node
+    if not values:
+        return None
+    it = iter(values)
+    root = TreeNode(next(it))
+    queue = deque([root])
+    while queue:
+        node = queue.popleft()
+        try:
+            v = next(it)
+        except StopIteration:
+            break
+        if v is not None:
+            node.left = TreeNode(v)
+            queue.append(node.left)
+        try:
+            v = next(it)
+        except StopIteration:
+            break
+        if v is not None:
+            node.right = TreeNode(v)
+            queue.append(node.right)
+    return root
+
 
 # Recursive Traversal with Valid Range Algorithm (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution(object):
+# notes: pass down (min, max) bounds; each node must sit strictly
+#        inside its allowed range
+class Solution:
     def isValidBST(self, root):
         """
         :type root: TreeNode
@@ -32,8 +66,13 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
+# notes: same range check but with an explicit stack of (node, lo, hi)
 class Solution2:
     def isValidBST(self, root: TreeNode) -> bool:
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
         if not root:
             return True
 
@@ -49,12 +88,19 @@ class Solution2:
             stack.append((root.left, lower, val))
         return True
 
+
 # Recursive Inorder Traversal Algorithm (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
+# notes: inorder of a BST is strictly increasing; track the previous
+#        value and fail if the order breaks
 class Solution3:
     def isValidBST(self, root: TreeNode) -> bool:
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
 
         def inorder(root):
             if not root:
@@ -69,12 +115,19 @@ class Solution3:
         self.prev = -math.inf
         return inorder(root)
 
+
 # Iterative Inorder Traversal
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
+# notes: iterative inorder with a stack; each visited value must be
+#        greater than the previous one
 class Solution4:
     def isValidBST(self, root: TreeNode) -> bool:
+        """
+        :type root: TreeNode
+        :rtype: bool
+        """
         stack, prev = [], -math.inf
 
         while stack or root:
@@ -93,26 +146,9 @@ class Solution4:
 
 
 # Tests:
-tree = TreeNode(10, TreeNode(5), TreeNode(15, TreeNode(6), TreeNode(20)))
-test = Solution3()
-test.isValidBST(None)
-test.isValidBST(tree)
-
-
-def solution(t):
-    def inorder(root):
-        global tmp
-        if not root:
-            return True
-        if not inorder(root.left):
-            return False
-        if root.value <= tmp:
-            return False
-        tmp = root.value
-        return inorder(root.right)
-    tmp = -math.inf
-    return inorder(t)
-
-
-tree = TreeNode(10, TreeNode(5), TreeNode(15, TreeNode(6), TreeNode(20)))
-solution(tree)
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.isValidBST(None) is True
+    assert sol.isValidBST(build([2, 1, 3])) is True
+    assert sol.isValidBST(build([5, 1, 4, None, None, 3, 6])) is False
+    assert sol.isValidBST(build([10, 5, 15, None, None, 6, 20])) is False
+    assert sol.isValidBST(build([1])) is True

@@ -55,7 +55,7 @@ class Solution2:
 # state transition:
 # dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
 # dp[i][1] = max(dp[i-1][1], - prices[i])
-class Solution4(object):
+class Solution4:
     def maxProfit(self, prices):
         """
         :type prices: List[int]
@@ -78,7 +78,7 @@ class Solution4(object):
 # Space: O(1)
 # 2023.07.28: no
 # notes: same DP but keep only the previous two states, not the table
-class Solution5(object):
+class Solution5:
     def maxProfit(self, prices):
         """
         :type prices: List[int]

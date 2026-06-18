@@ -1,10 +1,15 @@
+# 704. Binary Search
+
 # Find the Exact Value Approach
 # Time: O(logn)
 # Space: O(1)
 # 2024.06.03: yes
+# notes: standard binary search on a sorted array; return the index
+#        when nums[mid] equals target, else narrow the half
 from bisect import bisect_right
 
-class Solution(object):
+
+class Solution:
     def search(self, nums, target):
         """
         :type nums: List[int]
@@ -22,12 +27,13 @@ class Solution(object):
                 right = mid-1
         return -1
 
+
 # Find Lower bound Approach
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.21: no
-# notes: 重点是考虑结束的情况，边界情况
-class Solution2(object):
+# notes: the key is handling the ending and the boundary cases
+class Solution2:
     def search(self, nums, target):
         """
         :type nums: List[int]
@@ -45,11 +51,14 @@ class Solution2(object):
             return -1
         return left if nums[left] == target else -1
 
+
 # Find Upper bound Approach
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.21: no
-class Solution3(object):
+# notes: search for the upper bound, then right = left - 1 points
+#        to the last matching element
+class Solution3:
     def search(self, nums, target):
         """
         :type nums: List[int]
@@ -73,15 +82,25 @@ class Solution3(object):
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.21: no
+# notes: bisect_right gives the insert point; the slot before it is
+#        the target if it matches
 class Solution4:
     def search(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         idx = bisect_right(nums, target)
         if idx > 0 and nums[idx - 1] == target:
             return idx - 1
         else:
             return -1
 
+
 # Tests:
-test = Solution4()
-test.search([-1,0,3,3,3,5,9,12], 3)
-test.search([-1,0,3,5,9,12], 9)
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.search([-1,0,3,5,9,12], 9) == 4
+    assert sol.search([-1,0,3,5,9,12], 2) == -1
+    assert sol.search([5], 5) == 0
+    assert sol.search([5], -5) == -1

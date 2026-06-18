@@ -1,9 +1,16 @@
+# 1254. Number of Closed Islands
+
+from collections import deque
+from copy import deepcopy
+
+
 # BFS Approach
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.08.03: yes
-from collections import deque
-class Solution(object):
+# notes: flood fill each land cell with BFS; an island touching any
+#        border is not closed
+class Solution:
     def closedIsland(self, grid):
         """
         :type grid: List[List[int]]
@@ -34,12 +41,19 @@ class Solution(object):
                         count += 1
         return count
 
+
 # DFS Approach
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: DFS each land cell; an island is closed only if no cell of
+#        it reaches outside the grid
 class Solution2:
     def closedIsland(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         m = len(grid)
         n = len(grid[0])
         visit = [[False for _ in range(n)] for _ in range(m)]
@@ -71,17 +85,17 @@ class Solution2:
 
 
 # Tests:
-test = Solution()
-test.closedIsland([[0,1,1,1,0],
-                   [1,0,1,0,1],
-                   [1,0,1,0,1],
-                   [1,0,0,0,1],
-                   [0,1,1,1,0]])
-
-
-test.closedIsland([[1,1,1,1,1,1,1,0],
-                   [1,0,0,0,0,1,1,0],
-                   [1,0,1,0,1,1,1,0],
-                   [1,0,0,0,0,1,0,1],
-                   [1,1,1,1,1,1,1,0]])
-
+grid1 = [[0, 1, 1, 1, 0],
+         [1, 0, 1, 0, 1],
+         [1, 0, 1, 0, 1],
+         [1, 0, 0, 0, 1],
+         [0, 1, 1, 1, 0]]
+grid2 = [[1, 1, 1, 1, 1, 1, 1, 0],
+         [1, 0, 0, 0, 0, 1, 1, 0],
+         [1, 0, 1, 0, 1, 1, 1, 0],
+         [1, 0, 0, 0, 0, 1, 0, 1],
+         [1, 1, 1, 1, 1, 1, 1, 0]]
+for sol in (Solution(), Solution2()):
+    assert sol.closedIsland(deepcopy(grid1)) == 1
+    assert sol.closedIsland(deepcopy(grid2)) == 2
+    assert sol.closedIsland([[1, 1, 1], [1, 0, 1], [1, 1, 1]]) == 1

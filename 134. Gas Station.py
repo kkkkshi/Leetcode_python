@@ -1,3 +1,10 @@
+# 134. Gas Station
+
+# Greedy One Pass
+# Time: O(n)
+# Space: O(1)
+# notes: if total gas covers total cost a route exists; whenever the
+#        running tank drops below 0, restart from the next station
 class Solution:
     def canCompleteCircuit(self, gas, cost):
         """
@@ -21,7 +28,10 @@ class Solution:
 
         return starting_station if total_tank >= 0 else -1
 
-gas = [1,2,3,4,5]
-cost = [3,4,5,1,2]
-test = Solution()
-test.canCompleteCircuit(gas, cost)
+
+# Tests:
+for sol in (Solution(),):
+    assert sol.canCompleteCircuit([1,2,3,4,5], [3,4,5,1,2]) == 3
+    assert sol.canCompleteCircuit([2,3,4], [3,4,3]) == -1
+    assert sol.canCompleteCircuit([5,1,2,3,4], [4,4,1,5,1]) == 4
+    assert sol.canCompleteCircuit([2], [2]) == 0

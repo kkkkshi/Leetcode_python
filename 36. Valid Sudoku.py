@@ -1,12 +1,19 @@
+# 36. Valid Sudoku
+
+from typing import List
+
+
 # Hash Set
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.10.08: yes
-from typing import List
-
-
+# notes: track seen digits per row, column and box with sets
 class Solution:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
+        """
+        :type board: List[List[str]]
+        :rtype: bool
+        """
         N = 9
         rows = [set() for _ in range(N)]
         cols = [set() for _ in range(N)]
@@ -32,8 +39,13 @@ class Solution:
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.10.08: yes
+# notes: same idea but mark seen digits in fixed length arrays
 class Solution2:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
+        """
+        :type board: List[List[str]]
+        :rtype: bool
+        """
         N = 9
 
         # Use an array to record the status
@@ -67,13 +79,18 @@ class Solution2:
 
         return True
 
+
 # Bitmasking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.10.08: no
-# notes: 在一个位置上存一个bit来节省空间
+# notes: store each digit as a bit to save space
 class Solution3:
     def isValidSudoku(self, board: List[List[str]]) -> bool:
+        """
+        :type board: List[List[str]]
+        :rtype: bool
+        """
         N = 9
         # Use binary number to check previous occurrence
         rows = [0] * N
@@ -108,30 +125,28 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.isValidSudoku(
-    board=[
-        ["5", "3", ".", ".", "7", ".", ".", ".", "."],
-        ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-        [".", "9", "8", ".", ".", ".", ".", "6", "."],
-        ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-        ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-        ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-        [".", "6", ".", ".", ".", ".", "2", "8", "."],
-        [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-        [".", ".", ".", ".", "8", ".", ".", "7", "9"],
-    ]
-)
-test.isValidSudoku(
-    board=[
-        ["8", "3", ".", ".", "7", ".", ".", ".", "."],
-        ["6", ".", ".", "1", "9", "5", ".", ".", "."],
-        [".", "9", "8", ".", ".", ".", ".", "6", "."],
-        ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
-        ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
-        ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
-        [".", "6", ".", ".", ".", ".", "2", "8", "."],
-        [".", ".", ".", "4", "1", "9", ".", ".", "5"],
-        [".", ".", ".", ".", "8", ".", ".", "7", "9"],
-    ]
-)
+valid_board = [
+    ["5", "3", ".", ".", "7", ".", ".", ".", "."],
+    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+    [".", "9", "8", ".", ".", ".", ".", "6", "."],
+    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+    [".", "6", ".", ".", ".", ".", "2", "8", "."],
+    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+]
+invalid_board = [
+    ["8", "3", ".", ".", "7", ".", ".", ".", "."],
+    ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+    [".", "9", "8", ".", ".", ".", ".", "6", "."],
+    ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+    ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+    ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+    [".", "6", ".", ".", ".", ".", "2", "8", "."],
+    [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+    [".", ".", ".", ".", "8", ".", ".", "7", "9"],
+]
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isValidSudoku(valid_board) is True
+    assert sol.isValidSudoku(invalid_board) is False

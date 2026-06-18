@@ -1,9 +1,12 @@
+# 990. Satisfiability of Equality Equations
+
 # Union-Find Approach
 # Time: O(n)
 # Space: O(26)
 # 2023.07.05: yes
-# notes:重点是先把所有能连的连起来，再考虑别的, 可以用ord不需要hash table
-class Solution(object):
+# notes: union all '==' pairs first, then check no '!=' pair shares a
+#        root; ord avoids needing a hash table
+class Solution:
     def equationsPossible(self, equations):
         """
         :type equations: List[str]
@@ -50,11 +53,12 @@ class Solution(object):
                     return False
         return True
 
+
 # Union-Find
 # Time: O(n)
 # Space: O(n)
 # 2023.07.05: yes
-# notes: 上面的简短版，效率不高
+# notes: shorter version of the above, not as efficient
 class Solution2:
     def equationsPossible(self, equations):
         root = list(range(26))
@@ -80,10 +84,13 @@ class Solution2:
                     return False
         return True
 
+
 # DFS Approach
 # Time: O(n)
 # Space: O(26)
 # 2023.07.05: yes
+# notes: build a graph of '==' edges, color each connected component,
+#        then a '!=' pair sharing a color is impossible
 class Solution3:
     def equationsPossible(self, equations):
         graph = [[] for _ in range(26)]
@@ -116,10 +123,10 @@ class Solution3:
                     return False
         return True
 
-# Tests:
-test = Solution3()
-test.equationsPossible(["a==b","b!=c","c==a"])
-test.equationsPossible(["c==c","b==d","x!=z"])
-test.equationsPossible(equations = ["a==b","b!=a"])
-test.equationsPossible(equations = ["b==a","a==b"])
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.equationsPossible(["a==b", "b!=c", "c==a"]) is False
+    assert sol.equationsPossible(["c==c", "b==d", "x!=z"]) is True
+    assert sol.equationsPossible(["a==b", "b!=a"]) is False
+    assert sol.equationsPossible(["b==a", "a==b"]) is True

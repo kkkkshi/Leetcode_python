@@ -1,7 +1,11 @@
+# 648. Replace Words
+
 # Trie
 # Time: O(n)
 # Space: O(n)
 # 2023.07.16: yes
+# notes: build a trie of the roots, then for each word walk down until
+#        we hit a stored root and replace the word with it
 from functools import reduce
 from collections import defaultdict
 
@@ -10,7 +14,7 @@ class TrieNode:
         self.val = 0
         self.children = {}
 
-class Solution(object):
+class Solution:
     def replaceWords(self, dictionary, sentence):
         """
         :type dictionary: List[str]
@@ -46,8 +50,19 @@ class Solution(object):
         return " ".join(result)
 
 
-class Solution2(object):
+# Trie with defaultdict
+# Time: O(n)
+# Space: O(n)
+# 2023.07.16: yes
+# notes: nested defaultdict trie; for each word stop at the first
+#        stored root and return it, else keep the word
+class Solution2:
     def replaceWords(self, roots, sentence):
+        """
+        :type roots: List[str]
+        :type sentence: str
+        :rtype: str
+        """
         Trie = lambda: defaultdict(Trie)
         trie = Trie()
         END = True
@@ -69,8 +84,15 @@ class Solution2(object):
 # Time: O(wi^2), wi is length of i-th word
 # Space: O(n)
 # 2023.07.16: yes
-class Solution3(object):
+# notes: put roots in a set, then for each word try its prefixes from
+#        shortest and return the first one that is a root
+class Solution3:
     def replaceWords(self, roots, sentence):
+        """
+        :type roots: List[str]
+        :type sentence: str
+        :rtype: str
+        """
         rootset = set(roots)
 
         def replace(word):
@@ -81,9 +103,9 @@ class Solution3(object):
 
         return " ".join(map(replace, sentence.split()))
 
-# Tests:
-test = Solution2()
-test.replaceWords(["cat","bat","rat"], "the cattle was rattled by the battery")
-test.replaceWords(["a","b","c"], "aadsfasf absbs bbab cadsfafs")
-test.replaceWords(["a", "aa", "aaa", "aaaa"], "a aa a aaaa aaa aaa aaa aaaaaa bbb baba ababa")
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.replaceWords(["cat","bat","rat"], "the cattle was rattled by the battery") == "the cat was rat by the bat"
+    assert sol.replaceWords(["a","b","c"], "aadsfasf absbs bbab cadsfafs") == "a a b c"
+    assert sol.replaceWords(["catt","cat","bat","rat"], "the cattle was rattled by the battery") == "the cat was rat by the bat"

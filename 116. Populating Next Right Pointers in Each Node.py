@@ -1,16 +1,23 @@
-# Level Order Traversal Approach
-# Time: O(n)
-# Space: O(n)
-# 2023.06.26: yes
-# notes: 翻转当前和子树
-class TreeNode(object):
+# 116. Populating Next Right Pointers in Each Node
+
+import collections
+
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
         self.next = None
 
-class Solution(object):
+
+# Level Order Traversal Approach
+# Time: O(n)
+# Space: O(n)
+# 2023.06.26: yes
+# notes: BFS level by level; for a perfect tree, count nodes and
+#        cut next at the end of each row using 2**j - 1
+class Solution:
     def connect(self, root):
         """
         :type root: Node
@@ -34,15 +41,15 @@ class Solution(object):
                 saving.append(cur.right)
         return root
 
+
 # Level Order Traversal Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.26: yes
-# notes: same approach as above, but not using perfect tree condition, more general cases
-import collections
+# notes: same idea, but plain BFS without the perfect-tree
+#        assumption, so it handles more general cases
 class Solution2:
     def connect(self, root):
-
         if not root:
             return root
 
@@ -59,15 +66,16 @@ class Solution2:
                     Q.append(node.right)
         return root
 
+
 # Using previously established next pointers Approach(best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.26: no
-# notes: 利用了刚刚建立好的next节点去解决问题
-# 有两种connection, 1. 子树的左节点和右节点， 2.子树的右节点和另一个子树的左节点，第二条可以根据1链接好的来链接，还是BFS
+# notes: reuse the next links just built one level up; two link
+#        types: left-to-right child, and right child to the next
+#        node's left child, still a BFS
 class Solution3:
     def connect(self, root):
-
         if not root:
             return root
 
@@ -100,11 +108,27 @@ class Solution3:
         return root
 
 
+def build():
+    return TreeNode(1, TreeNode(2, TreeNode(4), TreeNode(5)),
+                    TreeNode(3, TreeNode(6), TreeNode(7)))
+
+
+def next_rows(root):
+    # collect node values level by level following next pointers
+    rows = []
+    leftmost = root
+    while leftmost:
+        row = []
+        node = leftmost
+        while node:
+            row.append(node.val)
+            node = node.next
+        rows.append(row)
+        leftmost = leftmost.left
+    return rows
+
 
 # Tests:
-a = TreeNode(1, TreeNode(2, TreeNode(4), TreeNode(5)), TreeNode(3, TreeNode(6), TreeNode(7)))
-test = Solution3()
-test.connect(a)
-
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert next_rows(sol.connect(build())) == [[1], [2, 3], [4, 5, 6, 7]]
+    assert sol.connect(None) is None

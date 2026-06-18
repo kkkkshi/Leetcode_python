@@ -1,9 +1,14 @@
-# Prefix Sums with Linear Search Approach
+# 528. Random Pick with Weight
+
+import random
+
+
+# Prefix Sums with Binary Search Approach
 # Time: construction: O(n), pickIndex: O(logn)
 # Space: construction: O(n), pickIndex: O(1)
 # 2023.06.21: no
-import random
-
+# notes: build prefix sums, draw a target in [1, total], then binary
+#        search for the first prefix >= target
 class Solution:
     def __init__(self, w):
         n = len(w)
@@ -32,6 +37,8 @@ class Solution:
 # Time: construction: O(n), pickIndex: O(n)
 # Space: construction: O(n), pickIndex: O(1)
 # 2023.06.21: no
+# notes: build prefix sums, scale a random in [0, total), then scan
+#        for the first prefix above it
 class Solution2:
 
     def __init__(self, w):
@@ -56,7 +63,14 @@ class Solution2:
                 return i
 
 
-obj = Solution([1,3])
-a = obj.pickIndex()
-obj.pickIndex()
-obj.pickIndex()
+# Tests:
+for cls in (Solution, Solution2):
+    # single weight always returns index 0
+    obj = cls([1])
+    assert all(obj.pickIndex() == 0 for _ in range(20))
+    # zero-weight indices are never picked, all picks stay in range
+    obj = cls([0, 5, 0])
+    picks = [obj.pickIndex() for _ in range(200)]
+    assert all(p == 1 for p in picks)
+    obj = cls([1, 3])
+    assert all(p in (0, 1) for p in (obj.pickIndex() for _ in range(50)))

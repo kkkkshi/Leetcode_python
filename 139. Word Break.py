@@ -1,10 +1,16 @@
+# 139. Word Break
+
+from typing import List
+from collections import deque
+from functools import cache
+
+
 # Breadth-First Search
 # Time: O(n^3 + mk)
 # Space: O(n+m*k)
 # 2023.07.22: yes
-# notes: 从每一个start开始检查，end检查，把见过的放到queue里，弹出的时候就是start的位置
-from collections import deque
-from functools import cache
+# notes: start a BFS from index 0; for each reachable start, push every
+#        end whose substring is a word, mark seen so we don't repeat
 class Solution:
     def wordBreak(self, s, wordDict):
         words = set(wordDict)
@@ -25,13 +31,15 @@ class Solution:
                     seen.add(end)
         return False
 
+
 # Top-Down Dynamic Programming
 # Time: O(nmk)
 # Space: O(n)
 # 2023.07.22: no
-# notes: 利用递归的方法，从i = len(n)-1开始，匹配一个单词，符合的话i = i-len(word)+1，说明进入下一层递归
+# notes: recurse from i = len(s)-1; match a word ending at i and recurse
+#        on i - len(word), so the prefix shrinks one word at a time
 class Solution2:
-    def wordBreak(self, s, wordDict) :
+    def wordBreak(self, s, wordDict):
         @cache
         def dp(i):
             if i < 0:
@@ -42,13 +50,14 @@ class Solution2:
             return False
         return dp(len(s) - 1)
 
+
 # Bottom-Up Dynamic Programming
 # Time: O(nmk)
 # Space: O(n)
 # 2023.07.22: no
-# notes: 用dp的方法，根据dp[i]是到i为止，这个点之前是不是True，从i = 0到i = len(s) -1开始循环
-# 标记True有两个情况，第一，这个词很长，直接覆盖这个点，第二，这个词从上个i = True出发，是True，也就是接下去
-# 上一个方法用了cache，这个是用array的方式存储结果
+# notes: dp[i] means s[:i+1] is breakable; mark True if a word covers
+#        s up to i, or follows a True ending at i - len(word)
+# same as the cached method but stores results in an array
 class Solution3:
     def wordBreak(self, s, wordDict):
         dp = [False] * len(s)
@@ -63,16 +72,19 @@ class Solution3:
                         break
         return dp[-1]
 
+
 # Trie Optimization
 # Time: O(n^2+mk)
 # Space: O(n+mk)
 # 2023.07.22: no
-# notes: 利用trienode加速进度，是单词的标记为True，下次只从true的下一个开始当rootnode查询有没有子节点，和上一题差不多，只是
-# 确认True的过程加速
+# notes: build a trie of words; from each True position walk the trie
+#        and mark every end that completes a word, like the dp above
+#        but the word-matching step is sped up
 class TrieNode:
     def __init__(self):
         self.is_word = False
         self.children = {}
+
 
 class Solution4:
     def wordBreak(self, s, wordDict):
@@ -100,51 +112,52 @@ class Solution4:
 
 
 # Backtracking (time exceed)
-# notes: 只是用来比较backtracking与dp的区别，超时
-from typing import List
-
-class Solution4:
+# notes: only here to contrast backtracking with dp; times out
+class Solution5:
     def __init__(self):
         self.wordDict = []
-        # 记录是否找到一个合法的答案
+        # whether a valid answer was found
         self.found = False
-        # 记录回溯算法的路径
+        # the backtracking path
         self.track = []
 
-    # 主函数
+    # main entry
     def wordBreak(self, s: str, wordDict: List[str]) -> bool:
+        self.found = False
+        self.track = []
         self.wordDict = wordDict
-        # 执行回溯算法穷举所有可能的组合
+        # run backtracking over all possible combinations
         self.backtrack(s, 0)
         return self.found
 
-    # 回溯算法框架
+    # backtracking template
     def backtrack(self, s: str, i: int):
         # base case
         if self.found:
-            # 如果已经找到答案，就不要再递归搜索了
+            # stop searching once an answer is found
             return
         if i == len(s):
-            # 整个 s 都被匹配完成，找到一个合法答案
+            # whole s matched, one valid answer found
             self.found = True
             return
 
-        # 回溯算法框架
+        # backtracking template
         for word in self.wordDict:
-            # 看看哪个单词能够匹配 s[i..] 的前缀
+            # see which word matches the prefix of s[i..]
             length = len(word)
             if i + length <= len(s) and s[i:i+length] == word:
-                # 找到一个单词匹配 s[i..i+length)
-                # 做选择
+                # found a word matching s[i..i+length)
+                # make the choice
                 self.track.append(word)
-                # 进入回溯树的下一层，继续匹配 s[i+length..]
+                # go to the next level, keep matching s[i+length..]
                 self.backtrack(s, i+length)
-                # 撤销选择
+                # undo the choice
                 self.track.pop()
 
 
-
 # Tests:
-test = Solution4()
-test.wordBreak(s = "catsandog", wordDict = ["cats","dog","sand","and","cat"])
-test.wordBreak(s = "leetcode", wordDict = ["leet","code"])
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.wordBreak("leetcode", ["leet", "code"]) is True
+    assert sol.wordBreak("applepenapple", ["apple", "pen"]) is True
+    assert sol.wordBreak("catsandog",
+                         ["cats", "dog", "sand", "and", "cat"]) is False

@@ -1,7 +1,11 @@
+# 721. Accounts Merge
+
 # Union-Find Approach
 # Time: O(nklognk)
 # Space: O(nk)
 # 2023.07.13: no
+# notes: union accounts that share any email, then group emails by
+#        their representative and prepend the name
 class DSU:
     def __init__(self, sz):
         self.representative = [i for i in range(sz)]
@@ -30,6 +34,10 @@ class DSU:
 
 class Solution:
     def accountsMerge(self, accountList):
+        """
+        :type accountList: List[List[str]]
+        :rtype: List[List[str]]
+        """
         accountListSize = len(accountList)
         dsu = DSU(accountListSize)
         emailGroup = {}
@@ -62,6 +70,8 @@ class Solution:
 # Time: O(nklognk)
 # Space: O(nk)
 # 2023.07.13: no
+# notes: build an email graph linking each account's emails, then DFS
+#        each unvisited email to collect one merged account
 class Solution2:
     def __init__(self):
         self.visited = set()
@@ -76,9 +86,14 @@ class Solution2:
                 self.DFS(mergedAccount, neighbor)
 
     def accountsMerge(self, accountList):
+        """
+        :type accountList: List[List[str]]
+        :rtype: List[List[str]]
+        """
         for account in accountList:
             accountSize = len(account)
             accountFirstEmail = account[1]
+            self.adjacent.setdefault(accountFirstEmail, [])
 
             for j in range(2, accountSize):
                 email = account[j]
@@ -100,8 +115,13 @@ class Solution2:
 
 
 # Tests:
-test = Solution2()
-test.accountsMerge([["John","johnsmith@mail.com","john_newyork@mail.com"],
-                    ["John","johnsmith@mail.com","john00@mail.com"],
-                    ["Mary","mary@mail.com"],
-                    ["John","johnnybravo@mail.com"]])
+accounts = [["John","johnsmith@mail.com","john_newyork@mail.com"],
+            ["John","johnsmith@mail.com","john00@mail.com"],
+            ["Mary","mary@mail.com"],
+            ["John","johnnybravo@mail.com"]]
+expected = [["John","john00@mail.com","john_newyork@mail.com","johnsmith@mail.com"],
+            ["John","johnnybravo@mail.com"],
+            ["Mary","mary@mail.com"]]
+for sol in (Solution(), Solution2()):
+    result = sol.accountsMerge([row[:] for row in accounts])
+    assert sorted(sorted(g) for g in result) == sorted(sorted(g) for g in expected)

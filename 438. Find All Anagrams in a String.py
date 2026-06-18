@@ -1,10 +1,14 @@
+# 438. Find All Anagrams in a String
+
 # Sliding Window with Hashmap Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.20: yes
-# notes: 重点就是每次需要更新的东西是valid和window
+# notes: the key thing to update each step is valid and the window
 from collections import Counter
-class Solution(object):
+
+
+class Solution:
     def findAnagrams(self, s, p):
         """
         :type s: str
@@ -33,13 +37,20 @@ class Solution(object):
                     window[d] -= 1
         return results
 
+
 # Sliding Window with Array
 # Time: O(n)
 # Space: O(1)
 # 2023.06.20: no
-# notes: 方法是一样的，记录valid，记录window的变化，然后看看数量匹配情况
+# notes: same idea, track valid and the window changes, then check
+#        whether the counts match
 class Solution2:
     def findAnagrams(self, s, p):
+        """
+        :type s: str
+        :type p: str
+        :rtype: List[int]
+        """
         ns, np = len(s), len(p)
         if ns < np:
             return []
@@ -65,8 +76,10 @@ class Solution2:
                 output.append(i - np + 1)
 
         return output
-# Tests:
-test = Solution2()
-test.findAnagrams(s = "cbaebabacd", p = "abc")
-test.findAnagrams(s = "abab", p = "ab")
 
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.findAnagrams("cbaebabacd", "abc") == [0, 6]
+    assert sol.findAnagrams("abab", "ab") == [0, 1, 2]
+    assert sol.findAnagrams("aa", "bb") == []

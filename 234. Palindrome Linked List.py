@@ -1,14 +1,28 @@
+# 234. Palindrome Linked List
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+
+
+def build(values):
+    dummy = ListNode()
+    cur = dummy
+    for v in values:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
 
 # Copy into Array List and then Use Two Pointer Technique
 # Time: O(n)
 # Space: O(n)
 # 2023.06.19: yes
-class Solution(object):
+# notes: copy values into a list and check it reads the same from both
+#        ends
+class Solution:
     def isPalindrome(self, head):
         """
         :type head: ListNode
@@ -28,11 +42,14 @@ class Solution(object):
                 return False
         return True
 
+
 # Reverse Second Half In-place(best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.19: yes
-class Solution2(object):
+# notes: find the middle with fast/slow pointers, reverse the second
+#        half, then compare it against the first half
+class Solution2:
     def reverse(self, head):
         prev = None
         cur = head
@@ -62,12 +79,14 @@ class Solution2(object):
                 return False
         return True
 
+
 # Recursive Approach(advanced)
 # Time: O(n)
 # Space: O(n)
 # 2023.06.19: no
-# notes: 运用了linked list的后序遍历，主要是太优美了写的，令人折服
-class Solution3(object):
+# notes: postorder traversal of the list; the recursion compares the
+#        tail-to-head order against a left pointer moving head-to-tail
+class Solution3:
     left = None
 
     def isPalindrome(self, head):
@@ -80,16 +99,15 @@ class Solution3(object):
         if right is None:
             return True
         res = self.traverse(right.next)
-        # 后序遍历代码， 打印的时候就是倒着打印
-        res = res and (right.val == left.val)  # 递归一定要去递归结果
-        left = left.next # 常规的left是正着打印，正好比对正倒序一不一样
+        # postorder code, so this compares from the tail backwards
+        res = res and (right.val == left.val)  # must carry the recursion result
+        left = left.next # left moves forward, matching front against back
         return res
 
 
-
 # Tests:
-a = ListNode(1, ListNode(2, ListNode(3, ListNode(4))))
-b = ListNode(1, ListNode(2, ListNode(2, ListNode(1))))
-test = Solution3()
-test.isPalindrome(a)
-test.isPalindrome(b)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isPalindrome(build([1, 2, 2, 1])) is True
+    assert sol.isPalindrome(build([1, 2, 3, 4])) is False
+    assert sol.isPalindrome(build([1, 2, 1])) is True
+    assert sol.isPalindrome(build([1])) is True

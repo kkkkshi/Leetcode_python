@@ -1,9 +1,12 @@
+# 739. Daily Temperatures
+
 # Monotonic Stack Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.07.15: yes
-# notes: 记录序号
-class Solution(object):
+# notes: scan from the right, keep a stack of indices, pop colder or
+#        equal days so the top is the next warmer day
+class Solution:
     def dailyTemperatures(self, temperatures):
         """
         :type temperatures: List[int]
@@ -19,13 +22,18 @@ class Solution(object):
             stack.append(i)
         return res
 
+
 # Monotonic Stack Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.15: yes
-# 记录序号和值
+# notes: scan left to right, store indices and values
 class Solution2:
     def dailyTemperatures(self, temperatures):
+        """
+        :type temperatures: List[int]
+        :rtype: List[int]
+        """
         n = len(temperatures)
         answer = [0] * n
         stack = []
@@ -39,13 +47,18 @@ class Solution2:
             stack.append(curr_day)
         return answer
 
+
 # Array, Optimized Space
 # Time: O(n)
 # Space: O(n)
 # 2023.07.15: no
-# 甚是复杂，不推荐吧
+# notes: rather involved, not really recommended
 class Solution3:
     def dailyTemperatures(self, temperatures):
+        """
+        :type temperatures: List[int]
+        :rtype: List[int]
+        """
         n = len(temperatures)
         hottest = 0
         answer = [0] * n
@@ -64,7 +77,9 @@ class Solution3:
 
         return answer
 
-# Tests:
-test = Solution3()
-test.dailyTemperatures([73,74,75,71,69,72,76,73])
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.dailyTemperatures([73,74,75,71,69,72,76,73]) == [1,1,4,2,1,1,0,0]
+    assert sol.dailyTemperatures([30,40,50,60]) == [1,1,1,0]
+    assert sol.dailyTemperatures([30,60,90]) == [1,1,0]

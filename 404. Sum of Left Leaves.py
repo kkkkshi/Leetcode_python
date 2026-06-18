@@ -1,15 +1,40 @@
+# 404. Sum of Left Leaves
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # build a tree from a level-order list, None means no node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # depth-first Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.03: yes
-class Solution(object):
+# notes: recurse with a flag marking left children; add a node's value
+#        only when it is a leaf reached as a left child.
+class Solution:
     def sumOfLeftLeaves(self, root):
         """
         :type root: TreeNode
@@ -28,10 +53,13 @@ class Solution(object):
         recursion(root, False)
         return self.total
 
+
 # breadth-first Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.03: yes
+# notes: iterate with a stack; whenever a node's left child is a leaf,
+#        add its value.
 class Solution2:
     def sumOfLeftLeaves(self, root: TreeNode) -> int:
         if root is None:
@@ -55,6 +83,8 @@ class Solution2:
 # Time: O(n)
 # Space: O(1)
 # 2023.07.03: no
+# notes: Morris traversal using threaded right links so it visits the
+#        tree without a stack, counting left leaves along the way.
 class Solution3:
     def sumOfLeftLeaves(self, root):
         total_sum = 0
@@ -90,7 +120,7 @@ class Solution3:
 
 
 # Tests:
-tree = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
-tree2 = TreeNode(1)
-test = Solution3()
-test.sumOfLeftLeaves(tree)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.sumOfLeftLeaves(build([3, 9, 20, None, None, 15, 7])) == 24
+    assert sol.sumOfLeftLeaves(build([1])) == 0
+    assert sol.sumOfLeftLeaves(build([1, 2, 3, 4, 5])) == 4

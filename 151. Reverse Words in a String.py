@@ -1,9 +1,12 @@
+# 151. Reverse Words in a String
+
 # Reverse the Whole String and Then Reverse Each Word
 # Time: O(n)
 # Space: O(n)
 # 2023.06.19: no
-# notes: 知道想法之后，立刻就写出来了，想法很难想到
-class Solution(object):
+# notes: hard to come up with, but easy to write once known:
+#        reverse the whole list, then reverse each word back
+class Solution:
     def trim_zeros(self, s):
         result = []
         for i in range(len(s)-1):
@@ -33,7 +36,6 @@ class Solution(object):
         while start < len(s):
             while end < len(s) and s[end] != ' ':
                 end += 1
-            print(start, end)
             self.reverse(s, start, end-1)
             start = end+1
             end += 1
@@ -44,8 +46,13 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.06.19: yes
+# notes: split on whitespace, reverse the word list, join back
 class Solution2:
     def reverseWords(self, s: str) -> str:
+        """
+        :type s: str
+        :rtype: str
+        """
         return " ".join(reversed(s.split()))
 
 
@@ -53,9 +60,15 @@ class Solution2:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.19: no
+# notes: scan chars, build each word, push it to the front of a
+#        deque so the order ends up reversed
 from collections import deque
 class Solution3:
     def reverseWords(self, s: str) -> str:
+        """
+        :type s: str
+        :rtype: str
+        """
         left, right = 0, len(s) - 1
         # remove leading spaces
         while left <= right and s[left] == ' ':
@@ -78,11 +91,9 @@ class Solution3:
 
         return ' '.join(d)
 
+
 # Tests:
-test = Solution3()
-test.reverseWords("  hello     world  ")
-test.trim_zeros("  hello     world  ")
-test.reverse(['h', 'e', 'l', 'l', 'o', ' ', 'w', 'o', 'r', 'l', 'd'], 0, 10)
-
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.reverseWords("the sky is blue") == "blue is sky the"
+    assert sol.reverseWords("  hello world  ") == "world hello"
+    assert sol.reverseWords("a good   example") == "example good a"

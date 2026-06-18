@@ -1,12 +1,38 @@
+# 23. Merge k Sorted Lists
+
 import heapq
+
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
-class Solution(object):
-    # Optimize Approach 2 by Priority Queue
+
+def build(values):
+    dummy = ListNode()
+    cur = dummy
+    for v in values:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+
+def to_list(head):
+    res = []
+    while head:
+        res.append(head.val)
+        head = head.next
+    return res
+
+
+# Optimize Approach 2 by Priority Queue
+# Time: O(n log k)
+# Space: O(k)
+# notes: push each list head into a heap keyed by value, pop the
+#        smallest and push its next, until the heap is empty
+class Solution:
     def mergeKLists(self, lists):
         """
         :type lists: List[ListNode]
@@ -36,8 +62,12 @@ class Solution(object):
         return dummy_head.next
 
 
-class Solution2(object):
-    # Merge with Divide And Conquer
+# Merge with Divide And Conquer
+# Time: O(n log k)
+# Space: O(1)
+# notes: repeatedly merge lists in pairs at growing intervals until a
+#        single merged list remains
+class Solution2:
     def mergeKLists(self, lists):
         """
         :type lists: List[ListNode]
@@ -69,16 +99,11 @@ class Solution2(object):
         return head.next
 
 
-
-a = ListNode(1, ListNode(4, ListNode(5)))
-b = ListNode(1, ListNode(3, ListNode(4)))
-c = ListNode(2, ListNode(6))
-test = Solution()
-d = test.mergeKLists([a,b,c])
-
-
-class Solution3(object):
-    # brute force, not recommended
+# brute force, not recommended
+# Time: O(n log n)
+# Space: O(n)
+# notes: collect every value, sort them, then rebuild one list
+class Solution3:
     def mergeKLists(self, lists):
         """
         :type lists: List[ListNode]
@@ -94,3 +119,12 @@ class Solution3(object):
             point.next = ListNode(x)
             point = point.next
         return head.next
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    lists = [build([1, 4, 5]), build([1, 3, 4]), build([2, 6])]
+    assert to_list(sol.mergeKLists(lists)) == [1, 1, 2, 3, 4, 4, 5, 6]
+    assert to_list(sol.mergeKLists([])) == []
+    assert to_list(sol.mergeKLists([build([])])) == []
+    assert to_list(sol.mergeKLists([build([2]), build([1])])) == [1, 2]

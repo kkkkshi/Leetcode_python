@@ -1,12 +1,20 @@
+# 253. Meeting Rooms II
+
+import heapq
+
+
 # Chronological Ordering
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.29: no
-# notes: 这道题的重点是把start和end区分开来排序，把start和end投影到一个线段上，如果遇到start,
-# count+=1，遇到end，count-=1，每次只会有一个情况，start/end
-import heapq
-class Solution(object):
+# notes: sort starts and ends separately; sweep both, +1 on a start
+#        and -1 on an end; the peak count is the rooms needed
+class Solution:
     def minMeetingRooms(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
         n = len(intervals)
         begin = [meeting[0] for meeting in intervals]
         end = [meeting[1] for meeting in intervals]
@@ -35,10 +43,14 @@ class Solution(object):
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.29: no
-# notes: 思路和上一道题差不多，但是这次每次start都会往前一步，这样就不用考虑res = max(res, count)这句了
-# 保证了used_room永远在增加或者平衡，不可能出现减少的情况，就同步了最大值，但是挺难理解的
+# notes: same idea, but every start advances one step, so used_rooms
+#        never decreases and the final value is the max directly
 class Solution2:
     def minMeetingRooms(self, intervals):
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
         # If there are no meetings, we don't need any rooms.
         if not intervals:
             return 0
@@ -64,15 +76,19 @@ class Solution2:
             start_pointer += 1
         return used_rooms
 
+
 # Priority Queues
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.29: no
-# notes: 思路不同，但是free_room也永远会增多，不会减少，因为每次增加一个，要不不减少，不可能出现减少的情况
-# 思路是，根据start排序，然后把end time放到heap中，就可以根据heap的情况考虑要不要增加一个room
+# notes: sort by start; keep end times in a heap; reuse the room that
+#        frees earliest when its end <= current start, else add a room
 class Solution3:
     def minMeetingRooms(self, intervals):
-
+        """
+        :type intervals: List[List[int]]
+        :rtype: int
+        """
         # If there is no meeting to schedule then no room needs to be allocated.
         if not intervals:
             return 0
@@ -100,6 +116,10 @@ class Solution3:
         # The size of the heap tells us the minimum rooms required for all the meetings.
         return len(free_rooms)
 
+
 # Tests:
-test = Solution3()
-test.minMeetingRooms([[1,10],[2,7],[3,19],[4,18],[5,16],[6,10],[8,12],[10,20],[11,30]])
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.minMeetingRooms([[0,30],[5,10],[15,20]]) == 2
+    assert sol.minMeetingRooms([[7,10],[2,4]]) == 1
+    assert sol.minMeetingRooms([]) == 0
+    assert sol.minMeetingRooms([[1,5],[2,6],[3,7]]) == 3

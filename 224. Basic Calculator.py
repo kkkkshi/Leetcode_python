@@ -1,7 +1,11 @@
+# 224. Basic Calculator
+
 # Stack and String Reversal
 # Time: O(n)
 # Space: O(n)
 # 2023.07.19: yes
+# notes: scan right to left, push numbers/signs; on '(' evaluate the
+#        sub-expression already on the stack down to its ')'
 class Solution:
     def evaluate_expr(self, stack):
 
@@ -67,6 +71,8 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.07.19: yes
+# notes: scan left to right keeping a running result and sign; on '('
+#        push the result/sign, on ')' fold the sub-result back in
 class Solution2:
     def calculate(self, s: str) -> int:
 
@@ -131,5 +137,10 @@ class Solution2:
 
         return res + sign * operand
 
-test = Solution()
-test.calculate("(1+(4+5+2)-3)+(6+8)")
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.calculate("1 + 1") == 2
+    assert sol.calculate(" 2-1 + 2 ") == 3
+    assert sol.calculate("(1+(4+5+2)-3)+(6+8)") == 23
+    assert sol.calculate("-(3+2)") == -5

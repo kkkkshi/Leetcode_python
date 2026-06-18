@@ -1,9 +1,13 @@
+# 380. Insert Delete GetRandom O(1)
+
 # HashMap + ArrayList Approach
 # Time: O(1)
 # Space: O(1)
-# 2023.06.22:no
-# notes: 对各种数据结构不够了解，思路不难，但是很难想到用hashmap+arraylist
+# 2023.06.22: no
+# notes: not familiar enough with data structures; the idea is easy
+#        but the hashmap + arraylist combo is hard to come up with
 import random
+
 
 class RandomizedSet:
     def __init__(self):
@@ -30,8 +34,12 @@ class RandomizedSet:
     def getRandom(self):
         return random.choice(self.nums)
 
-# Your RandomizedSet object will be instantiated and called as such:
-# obj = RandomizedSet()
-# param_1 = obj.insert(val)
-# param_2 = obj.remove(val)
-# param_3 = obj.getRandom()
+
+# Tests:
+obj = RandomizedSet()
+assert obj.insert(1) is True
+assert obj.insert(1) is False
+assert obj.remove(2) is False
+assert obj.insert(2) is True
+assert obj.remove(1) is True
+assert obj.getRandom() == 2

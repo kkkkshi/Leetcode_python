@@ -1,8 +1,11 @@
+# 28. Find the Index of the First Occurrence in a String
+
 # Sliding Window
 # Time: O(nm)
 # Space: O(1)
 # 2023.06.21: yes
-class Solution(object):
+# notes: try each start in haystack and compare needle char by char
+class Solution:
     def strStr(self, haystack, needle):
         """
         :type haystack: str
@@ -23,11 +26,18 @@ class Solution(object):
 
 
 # Rabin-Karp Approach
-# Time: O(n)，只有python3是O(n)，因为可以处理大数字，其他语言考虑double hash Rabin-Karp
+# Time: O(n), only python3 is O(n) since it handles big ints; other
+# languages should use double-hash Rabin-Karp
 # Space: O(1)
 # 2023.06.21: yes
+# notes: roll a single hash over the window and compare with needle's
 class Solution2:
-    def strStr(self, haystack: str, needle: str) -> int:
+    def strStr(self, haystack, needle):
+        """
+        :type haystack: str
+        :type needle: str
+        :rtype: int
+        """
         n = len(needle)
         h = len(haystack)
         needle_hash = 0
@@ -51,18 +61,20 @@ class Solution2:
                 left += 1
         return -1
 
-test = Solution2()
-test.strStr(haystack = "sadbutsad", needle = "sad")
-test.strStr(haystack = "leetcode", needle = "leeto")
-test.strStr(haystack = "leetcodee", needle = 'tco')
 
 # Rabin-Karp Approach
 # Time: O(nm)
 # Space: O(1)
 # 2023.06.21: no
-# notes: 本质就是两个hash，然后看一不一样，因为一个hash之后mod是有可能一样的，两个hash基本不可能了
+# notes: use two hashes and compare both; one hash mod can collide,
+#        two basically never do
 class Solution3:
-    def strStr(self, haystack: str, needle: str) -> int:
+    def strStr(self, haystack, needle):
+        """
+        :type haystack: str
+        :type needle: str
+        :rtype: int
+        """
         m = len(needle)
         n = len(haystack)
 
@@ -120,12 +132,20 @@ class Solution3:
                 return window_start
         return -1
 
-# Knuth–Morris–Pratt Algorithm Approach
+
+# Knuth-Morris-Pratt Algorithm Approach
 # Time: O(n)
 # Space: O(m)
 # 2023.06.21: no
+# notes: build the longest-border table, then scan without
+#        backtracking the haystack pointer
 class Solution4:
-    def strStr(self, haystack: str, needle: str) -> int:
+    def strStr(self, haystack, needle):
+        """
+        :type haystack: str
+        :type needle: str
+        :rtype: int
+        """
         m = len(needle)
         n = len(haystack)
 
@@ -181,3 +201,12 @@ class Solution4:
                     needle_pointer = longest_border[needle_pointer - 1]
 
         return -1
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.strStr("sadbutsad", "sad") == 0
+    assert sol.strStr("leetcode", "leeto") == -1
+    assert sol.strStr("leetcodee", "tco") == 3
+    assert sol.strStr("hello", "ll") == 2
+    assert sol.strStr("a", "a") == 0

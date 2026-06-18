@@ -1,9 +1,13 @@
+# 130. Surrounded Regions
+
 # Depth-First Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.05: no
+# notes: mark every 'O' reachable from a border as escaped, then
+#        flip the rest to 'X' and the escaped ones back to 'O'
 from itertools import product
-class Solution(object):
+class Solution:
     def solve(self, board):
         """
         :type board: List[List[str]]
@@ -40,11 +44,14 @@ class Solution(object):
         if row > 0:
             self.DFS(board, row-1, col)
 
+
 # Breadth-First Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.05: no
-class Solution2(object):
+# notes: same idea as DFS but flood the border 'O' cells with a
+#        queue instead of recursion
+class Solution2:
     def solve(self, board):
         """
         :type board: List[List[str]]
@@ -72,7 +79,6 @@ class Solution2(object):
                 if board[r][c] == 'O':   board[r][c] = 'X'  # captured
                 elif board[r][c] == 'E': board[r][c] = 'O'  # escaped
 
-
     def BFS(self, board, row, col):
         from collections import deque
         queue = deque([(row, col)])
@@ -97,7 +103,8 @@ class Solution2(object):
 # Time: O(v+e)
 # Space: O(v+e)
 # 2023.07.05: no
-# notes: DFS和BFS更好，但是这只是个思路
+# notes: DFS and BFS are better, this is just an idea; union every
+#        border 'O' with a dummy, leftover 'O' cells get captured
 class Union_Find:
     def __init__(self, size):
         self.parent = list(range(size))
@@ -126,44 +133,64 @@ class Union_Find:
         rootQ = self.find(q)
         return rootP == rootQ
 
-class Solution3(object):
-    def solve(self, board) -> None:
+
+class Solution3:
+    def solve(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: None Do not return anything, modify board in-place instead.
+        """
         if not board:
             return
         m = len(board)
         n = len(board[0])
-        # 给 dummy 留一个额外位置
+        # keep one extra slot for the dummy
         uf = Union_Find(m * n + 1)
         dummy = m * n
-        # 将首列和末列的 O 与 dummy 连通
+        # connect the 'O' in the first and last columns to the dummy
         for i in range(m):
             if board[i][0] == 'O':
                 uf.union(i * n, dummy)
             if board[i][n - 1] == 'O':
                 uf.union(i * n + n - 1, dummy)
-        # 将首行和末行的 O 与 dummy 连通
+        # connect the 'O' in the first and last rows to the dummy
         for j in range(n):
             if board[0][j] == 'O':
                 uf.union(j, dummy)
             if board[m - 1][j] == 'O':
                 uf.union(n * (m - 1) + j, dummy)
-        # 方向数组 d 是上下左右搜索的常用手法
+        # direction array d for the usual up/down/left/right search
         d = [[1, 0], [0, 1], [0, -1], [-1, 0]]
         for i in range(1, m - 1):
             for j in range(1, n - 1):
                 if board[i][j] == 'O':
-                    # 将此 O 与上下左右的 O 连通
+                    # connect this 'O' with the 'O' around it
                     for k in range(4):
                         x = i + d[k][0]
                         y = j + d[k][1]
                         if board[x][y] == 'O':
                             uf.union(x * n + y, i * n + j)
-        # 所有不和 dummy 连通的 O，都要被替换
+        # every 'O' not connected to the dummy gets replaced
         for i in range(1, m - 1):
             for j in range(1, n - 1):
                 if not uf.connected(dummy, i * n + j):
                     board[i][j] = 'X'
 
+
 # Tests:
-test = Solution()
-test.solve(board = [["X","X","X","X"],["X","O","O","X"],["X","X","O","X"],["X","O","X","X"]])
+for sol in (Solution(), Solution2(), Solution3()):
+    board = [["X", "X", "X", "X"],
+             ["X", "O", "O", "X"],
+             ["X", "X", "O", "X"],
+             ["X", "O", "X", "X"]]
+    sol.solve(board)
+    assert board == [["X", "X", "X", "X"],
+                     ["X", "X", "X", "X"],
+                     ["X", "X", "X", "X"],
+                     ["X", "O", "X", "X"]]
+    board = [["X"]]
+    sol.solve(board)
+    assert board == [["X"]]
+    board = [["O", "O"], ["O", "O"]]
+    sol.solve(board)
+    assert board == [["O", "O"], ["O", "O"]]

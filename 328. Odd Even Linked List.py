@@ -1,14 +1,35 @@
+# 328. Odd Even Linked List
+
 # Two Pointers
 # Time: O(mlogm) for sorting
 # Space: O(n)
 # 2023.07.06: yes
+# notes: split nodes into an odd-index list and an even-index list by
+#        position, then stitch the even list after the odd list
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
-class Solution(object):
+
+def build(values):
+    dummy = cur = ListNode(-1)
+    for v in values:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+
+class Solution:
     def oddEvenList(self, head):
         """
         :type head: ListNode
@@ -30,9 +51,11 @@ class Solution(object):
         even_cur.next = None
         return odd_head.next
 
+
 # Tests:
-test = Solution()
-result2 = test.oddEvenList(ListNode(2, ListNode(1, ListNode(3, ListNode(5, ListNode(6, ListNode(4, ListNode(7))))))))
-result = test.oddEvenList(ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5))))))
-
-
+for sol in (Solution(),):
+    assert to_list(sol.oddEvenList(build([1, 2, 3, 4, 5]))) == [1, 3, 5, 2, 4]
+    assert to_list(sol.oddEvenList(
+        build([2, 1, 3, 5, 6, 4, 7]))) == [2, 3, 6, 7, 1, 5, 4]
+    assert to_list(sol.oddEvenList(build([]))) == []
+    assert to_list(sol.oddEvenList(build([1]))) == [1]

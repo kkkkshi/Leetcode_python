@@ -1,11 +1,19 @@
+# 64. Minimum Path Sum
+
 # Dynamic Programming 2D recursion
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: yes
+# notes: top-down dp(i, j) = grid[i][j] plus the cheaper of the cell
+#        above and the cell to the left, memoized
 class Solution:
     def minPathSum(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         m, n = len(grid), len(grid[0])
-        # 构造备忘录，初始值全部设为 -1
+        # memo table, all cells start at -1
         memo = [[-1 for _ in range(n)] for _ in range(m)]
 
         def dp(i, j):
@@ -14,10 +22,10 @@ class Solution:
                 return grid[0][0]
             if i < 0 or j < 0:
                 return float('inf')
-            # 避免重复计算
+            # avoid recomputing
             if memo[i][j] != -1:
                 return memo[i][j]
-            # 将计算结果记入备忘录
+            # store the computed result in the memo
             memo[i][j] = min(
                 dp(i - 1, j),
                 dp(i, j - 1)
@@ -27,11 +35,14 @@ class Solution:
 
         return dp(m - 1, n - 1)
 
+
 # Dynamic Programming 2D iteration
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: yes
-class Solution2(object):
+# notes: fill the first row and column by prefix sums, then each cell
+#        adds the cheaper of its top and left neighbor
+class Solution2:
     def minPathSum(self, grid):
         """
         :type grid: List[List[int]]
@@ -49,11 +60,14 @@ class Solution2(object):
                 dp[i][j] = min(dp[i-1][j], dp[i][j-1]) + grid[i][j]
         return dp[m-1][n-1]
 
+
 # Dynamic Programming 1D Iteration
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.07.26: yes
-class Solution3(object):
+# notes: keep one row; dp[j] holds the row above, dp[j-1] the left
+#        cell, so update dp[j] = min(dp[j], dp[j-1]) + grid[i][j]
+class Solution3:
     def minPathSum(self, grid):
         """
         :type grid: List[List[int]]
@@ -72,13 +86,19 @@ class Solution3(object):
                     dp[j] = min(dp[j], dp[j-1]) + grid[i][j]
         return dp[n-1]
 
+
 # Dynamic Programming No extra space
 # Time: O(mn)
 # Space: O(1)
 # 2023.07.26: yes
-# notes: 直接在grid上面改，但是有人说不好哈哈
-class Solution4(object):
+# notes: edit the grid in place, walking from bottom-right; some say
+#        mutating the input is not ideal but it works
+class Solution4:
     def minPathSum(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         rows, cols = len(grid), len(grid[0])
         for i in range(rows - 1, -1, -1):
             for j in range(cols - 1, -1, -1):
@@ -92,25 +112,8 @@ class Solution4(object):
 
 
 # Tests:
-test = Solution3()
-test.minPathSum(grid = [[1,2,3],[4,5,6]])
-test.minPathSum(grid = [[1,3,1],[1,5,1],[4,2,1]])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minPathSum([[1,3,1],[1,5,1],[4,2,1]]) == 7
+    assert sol.minPathSum([[1,2,3],[4,5,6]]) == 12
+    assert sol.minPathSum([[5]]) == 5
+    assert sol.minPathSum([[1,2],[1,1]]) == 3

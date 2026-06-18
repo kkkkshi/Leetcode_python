@@ -1,11 +1,15 @@
+# 797. All Paths From Source to Target
+
+from functools import lru_cache
+
+
 # Backtracking Approach
 # Time: O(2^n*n)
 # Space: O(n)
 # 2023.07.04: yes
-from functools import lru_cache
-
-
-class Solution(object):
+# notes: dfs from node 0, extending the current path; on reaching the
+#        last node, record a copy of the path
+class Solution:
     def allPathsSourceTarget(self, graph):
         """
         :type graph: List[List[int]]
@@ -25,14 +29,13 @@ class Solution(object):
         return results
 
 
-
 # Top-Down Dynamic Programming Approach
 # Time: O(2^n*n)
 # Space: O(2^n*n)
 # 2023.07.04: no
-# notes: 并不是很理解这里运用了什么dp的东西，思路感觉和上面差不多，
-# 只是for path in all_paths_to_taget(next_node)增加了一步保存的结果
-class Solution2(object):
+# notes: same idea as above but memoize the paths from each node, so
+#        all_paths_to_target(next_node) reuses cached results
+class Solution2:
     def allPathsSourceTarget(self, graph):
         target = len(graph) - 1
         # apply the memoization
@@ -47,7 +50,10 @@ class Solution2(object):
             return results
         return all_paths_to_target(0)
 
+
 # Tests:
-graph = [[4,3,1],[3,2,4],[3],[4],[]]
-test = Solution2()
-test.allPathsSourceTarget(graph)
+for sol in (Solution(), Solution2()):
+    assert sorted(sol.allPathsSourceTarget([[1,2],[3],[3],[]])) == [[0,1,3],[0,2,3]]
+    assert sorted(sol.allPathsSourceTarget([[4,3,1],[3,2,4],[3],[4],[]])) == \
+        [[0,1,2,3,4],[0,1,3,4],[0,1,4],[0,3,4],[0,4]]
+    assert sol.allPathsSourceTarget([[1],[]]) == [[0,1]]

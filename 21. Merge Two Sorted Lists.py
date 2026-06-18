@@ -1,10 +1,33 @@
+# 21. Merge Two Sorted Lists
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
 
-class Solution(object):
+
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+
+def to_list(node):
+    res = []
+    while node:
+        res.append(node.val)
+        node = node.next
+    return res
+
+
+# Iterative Approach
+# Time: O(n+m)
+# Space: O(1)
+# notes: walk both lists, always splice the smaller head onto the
+#        result, then attach whatever tail is left over
+class Solution:
     def mergeTwoLists(self, list1, list2):
         """
         :type list1: Optional[ListNode]
@@ -28,12 +51,9 @@ class Solution(object):
             cur.next = list2
         return dummy_head.next
 
-a = ListNode(1, ListNode(2, ListNode(4)))
-b = ListNode(1, ListNode(3, ListNode(4)))
 
-test = Solution()
-c = test.mergeTwoLists(a, b)
-d = test.mergeTwoLists([],[])
-
-
-
+# Tests:
+for sol in (Solution(),):
+    assert to_list(sol.mergeTwoLists(build([1, 2, 4]), build([1, 3, 4]))) == [1, 1, 2, 3, 4, 4]
+    assert to_list(sol.mergeTwoLists(build([]), build([]))) == []
+    assert to_list(sol.mergeTwoLists(build([]), build([0]))) == [0]

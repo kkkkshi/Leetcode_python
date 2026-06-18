@@ -1,8 +1,12 @@
+# 91. Decode Ways
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.31: yes
-# notes: recursion， 如果当前是0，直接返回0，因为0没法做开头，如果数字小于26，就index+2重新循环，否则就index+1循环
+# notes: recursion; if current char is '0' return 0 since '0' can't
+#        start a code; if the two-digit number <= 26 recurse at
+#        index+2 as well, else just recurse at index+1
 from functools import lru_cache
 
 
@@ -35,8 +39,9 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.07.31: yes
-# notes: 这道题的关键是i-1和i-2要分两个case来判断，不能直接加起来，如果有i-1，那就+dp[i-1]，如果有i-2，那就+dp[i-2]
-# 而不能单独+1, +2是有问题的
+# notes: the key is to judge i-1 and i-2 in two separate cases instead
+#        of adding them directly: if i-1 is valid add dp[i-1], if i-2
+#        is valid add dp[i-2]; adding 1 or 2 outright would be wrong
 class Solution2:
     def numDecodings(self, s: str) -> int:
         # Array to store the subproblem results
@@ -48,7 +53,6 @@ class Solution2:
         dp[1] = 0 if s[0] == '0' else 1
 
         for i in range(2, len(dp)):
-
             # Check if successful single digit decode is possible.
             if s[i - 1] != '0':
                 dp[i] = dp[i - 1]
@@ -60,11 +64,12 @@ class Solution2:
 
         return dp[len(s)]
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.31: yes
-# notes: 压缩空间方法
+# notes: space-compressed version of the dp above
 class Solution3:
     def numDecodings(self, s: str) -> int:
         if s[0] == "0":
@@ -83,20 +88,14 @@ class Solution3:
             one_back = current
 
         return one_back
+
+
 # Tests:
-test = Solution2()
-test.numDecodings(s = "1201234")
-test.numDecodings(s = "226")
-test.numDecodings(s = "1123")
-test.numDecodings(s = "2101")
-test.numDecodings(s = '10')
-test.numDecodings(s = "12")
-test.numDecodings(s = "127")
-
-test.numDecodings("06")
-
-# 2 2 6
-# 22 6
-# 2 26
-
-#
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.numDecodings("226") == 3
+    assert sol.numDecodings("12") == 2
+    assert sol.numDecodings("127") == 2
+    assert sol.numDecodings("10") == 1
+    assert sol.numDecodings("2101") == 1
+    assert sol.numDecodings("06") == 0
+    assert sol.numDecodings("1") == 1

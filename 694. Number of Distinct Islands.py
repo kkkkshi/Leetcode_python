@@ -1,10 +1,13 @@
+# 694. Number of Distinct Islands
+
 # Hash By Path Signature
 # Time: O(mn)
 # Space: O(mn)
 # 2023.08.03: yes
-# notes: 这道题的技巧是记录走过的路径，这样就可以判断这个岛是不是重复了，额外加一点，进节点的时候append，出节点的时候也要append
-# 一个额外字符，比如"0"，防止重复
-class Solution(object):
+# notes: record the dfs path of each island so identical shapes hash the
+#        same; append a marker when entering and when leaving a cell to
+#        keep distinct shapes apart
+class Solution:
     def numDistinctIslands(self, grid):
         """
         :type grid: List[List[int]]
@@ -35,13 +38,19 @@ class Solution(object):
                     diff_island.add("".join(path))
         return len(diff_island)
 
+
 # Brute Force:
 # Time: O(m^2n^2)
 # Space: O(mn)
 # 2023.08.03: yes
-# notes: 记录下来每一个岛的点，然后先判断长度，再比较大小如何，不推荐，如果岛长度都一样，将会非常费时间
+# notes: store every island's cells, compare by length then cell by cell;
+#        slow when many islands share the same size
 class Solution2:
     def numDistinctIslands(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         def current_island_is_unique():
             for other_island in unique_islands:
                 if len(other_island) != len(current_island):
@@ -78,17 +87,21 @@ class Solution2:
                 if not current_island or not current_island_is_unique():
                     continue
                 unique_islands.append(current_island)
-        print(unique_islands)
         return len(unique_islands)
+
 
 # Hash By Local Coordinates
 # Time: O(mn)
 # Space: O(mn)
 # 2023.08.03: yes
-# notes: 每次进入新的岛屿新的节点的时候，新的节点都要和初始节点做标记，是初始节点的什么位置，然后存进去
-# 只要和初始节点的位置一样，就可以判断两个岛一样
+# notes: record each cell offset from the island's origin; two islands
+#        with the same set of offsets are the same shape
 class Solution3:
     def numDistinctIslands(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
 
         # Do a DFS to find all cells in the current island.
         def dfs(row, col):
@@ -117,7 +130,14 @@ class Solution3:
 
         return len(unique_islands)
 
+
 # Tests:
-test = Solution2()
-test.numDistinctIslands([[1,1,0,0,0],[1,1,0,0,0],[0,0,0,1,1],[0,0,0,1,1]])
-test.numDistinctIslands([[1,1,0,1,1],[1,0,0,0,0],[0,0,0,0,1],[1,1,0,1,1]])
+for Sol in (Solution, Solution2, Solution3):
+    sol = Sol()
+    assert sol.numDistinctIslands(
+        [[1, 1, 0, 0, 0], [1, 1, 0, 0, 0],
+         [0, 0, 0, 1, 1], [0, 0, 0, 1, 1]]) == 1
+    assert sol.numDistinctIslands(
+        [[1, 1, 0, 1, 1], [1, 0, 0, 0, 0],
+         [0, 0, 0, 0, 1], [1, 1, 0, 1, 1]]) == 3
+    assert sol.numDistinctIslands([[0, 0, 0], [0, 0, 0]]) == 0

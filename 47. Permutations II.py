@@ -1,12 +1,14 @@
+# 47. Permutations II
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.03: yes
-# notes: 同款剪枝方法
+# notes: same pruning trick; sort, then skip equal siblings
 from collections import Counter
 
 
-class Solution(object):
+class Solution:
     def permuteUnique(self, nums):
         """
         :type nums: List[int]
@@ -27,16 +29,18 @@ class Solution(object):
             self.dp(nums, res+[n], saving)
             nums.insert(i, n)
 
-test = Solution()
-test.permuteUnique([1,2,2])
 
 # Backtracking
 # Time: O(n!)
 # Space: O(n)
 # 2023.08.03: yes
-# notes: 同款counter方法去重
+# notes: same counter trick to dedupe
 class Solution2:
     def permuteUnique(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         results = []
         def backtrack(comb, counter):
             if len(comb) == len(nums):
@@ -56,3 +60,11 @@ class Solution2:
                     counter[num] += 1
         backtrack([], Counter(nums))
         return results
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sorted(sol.permuteUnique([1, 2, 2])) == [[1, 2, 2], [2, 1, 2], [2, 2, 1]]
+    assert sorted(sol.permuteUnique([1, 1])) == [[1, 1]]
+    assert sorted(sol.permuteUnique([3])) == [[3]]
+    assert len(sol.permuteUnique([1, 2, 3])) == 6

@@ -1,8 +1,12 @@
+# 8. String to Integer (atoi)
+
 # Follow the Rules Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.25: yes
-class Solution(object):
+# notes: skip leading spaces, read an optional sign and the digits, then
+#        clamp the result to the 32-bit signed range
+class Solution:
     def myAtoi(self, s):
         """
         :type s: str
@@ -55,11 +59,13 @@ class Solution(object):
         clamped_number = max(min(number, 2 ** 31 - 1), -2 ** 31)
         return clamped_number
 
+
 # Deterministic Finite Automaton (DFA) Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.25: no
-# notes: 非常好的方法，就是一道题写这么多真的很离谱，但是思路很巧妙，解决复杂的题可用
+# notes: drive a small state machine over the chars; each transition
+#        appends a digit and clamps once the int range overflows
 class StateMachine:
     def __init__(self):
         self.State = {"q0": 1, "q1": 2, "q2": 3, "qd": 4}
@@ -151,13 +157,11 @@ class Solution2:
                 break
         return q.get_integer()
 
-# Tests:
-test = Solution2()
-test.myAtoi("  +  413")
-test.myAtoi("   +0 123")
-test.myAtoi("-91283472332")
-test.myAtoi("words and 987")
-test.myAtoi("  -42")
-test.myAtoi("42")
 
-test.myAtoi("4193 with words")
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.myAtoi("42") == 42
+    assert sol.myAtoi("   -42") == -42
+    assert sol.myAtoi("4193 with words") == 4193
+    assert sol.myAtoi("words and 987") == 0
+    assert sol.myAtoi("-91283472332") == -2147483648

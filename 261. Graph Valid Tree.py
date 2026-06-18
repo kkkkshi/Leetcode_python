@@ -1,8 +1,12 @@
+# 261. Graph Valid Tree
+
 # Depth-First Search Approach
 # Time: O(n+e)
 # Space: O(n+e)
 # 2023.07.06: yes
-class Solution(object):
+# notes: DFS from node 0 tracking the current path; revisiting a node
+#        on the path means a cycle; a tree must also reach every node
+class Solution:
     def validTree(self, n, edges):
         """
         :type n: int
@@ -33,13 +37,20 @@ class Solution(object):
         recursion(0, [], None)
         return not self.cycle and all(self.visited)
 
+
 # Depth-First Search Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.06: no
-# notes: BFS一样，如果普通DFS是永不不会遇到两个重复的点的，重复了就有环了
-class Solution2(object):
+# notes: with exactly n-1 edges, a plain DFS that reaches all n
+#        nodes proves it is a tree; otherwise there is a cycle
+class Solution2:
     def validTree(self, n, edges):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: bool
+        """
         if len(edges) != n - 1: return False
 
         # Create an adjacency list.
@@ -61,14 +72,21 @@ class Solution2(object):
         dfs(0)
         return len(seen) == n
 
+
 # Breadth-First Search Approach
 # Time: O(n+e)
 # Space: O(n+e)
 # 2023.07.06: no
-# notes: 如果edge数量不等于n-1的话，说明肯定有重复连接的; 记录parent node，因为有无向图，不能返回去
-class Solution3(object):
+# notes: if edge count is not n-1 there is a duplicate edge; track
+#        each node's parent so the undirected edge isn't walked back
+class Solution3:
     def validTree(self, n, edges):
-        # 这行，如果edge数量不等于n-1的话，说明肯定有重复连接的，太牛了
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: bool
+        """
+        # not n-1 edges means there must be a repeated connection
         if len(edges) != n - 1:
             return False
         adj_list = [[] for _ in range(n)]
@@ -88,13 +106,20 @@ class Solution3(object):
                 stack.append(neighbour)
         return len(parent) == n
 
+
 # Breadth-First Search Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.06: no
-# notes: 本质上就是bfs，看看有没有重复的点，重复了肯定是有环了，因为树遍历BFS的时候永远不会重复
-class Solution4(object):
+# notes: with n-1 edges, BFS that visits all n nodes proves a tree;
+#        a tree's BFS never revisits a node, a revisit means a cycle
+class Solution4:
     def validTree(self, n, edges):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: bool
+        """
         if len(edges) != n - 1: return False
 
         # Create an adjacency list.
@@ -123,6 +148,8 @@ class Solution4(object):
 # Time: O(n*alpha(n))
 # Space: O(n)
 # 2023.07.06: yes
+# notes: with n-1 edges, union each edge; if a union finds both ends
+#        already joined there is a cycle, so it is not a tree
 class UnionFind:
 
     # For efficiency, we aren't using makeset, but instead initialising
@@ -162,8 +189,14 @@ class UnionFind:
             self.size[root_A] += self.size[root_B]
         return True
 
+
 class Solution5:
     def validTree(self, n, edges):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: bool
+        """
         # Condition 1: The graph must contain n - 1 edges.
         if len(edges) != n - 1: return False
 
@@ -179,8 +212,10 @@ class Solution5:
         # If we got this far, there's no cycles!
         return True
 
+
 # Tests:
-test = Solution5()
-test.validTree(n = 5, edges = [[0,1],[1,2],[2,3],[1,3]])
-test.validTree(n = 5, edges = [[0,1],[0,2],[0,3],[1,4]])
-test.validTree(4, [[0,1],[2,3]])
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.validTree(5, [[0,1],[0,2],[0,3],[1,4]]) is True
+    assert sol.validTree(5, [[0,1],[1,2],[2,3],[1,3],[1,4]]) is False
+    assert sol.validTree(4, [[0,1],[2,3]]) is False
+    assert sol.validTree(1, []) is True

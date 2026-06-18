@@ -1,9 +1,12 @@
+# 167. Two Sum II - Input Array Is Sorted
+
 # Two Pointers Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.18: no
-# notes: 滑动窗口不一定起始点一样，可以一个从右一个从左，因为是按从小到大顺序排列
-class Solution(object):
+# notes: the window need not start aligned; since the array is sorted
+#        move one pointer from the left and one from the right
+class Solution:
     def twoSum(self, numbers, target):
         """
         :type numbers: List[int]
@@ -19,7 +22,10 @@ class Solution(object):
             else:
                 lp += 1
 
-# Tests
-test = Solution()
-test.twoSum([2,7,11,15], 9)
 
+# Tests:
+for sol in (Solution(),):
+    assert sol.twoSum([2,7,11,15], 9) == [1, 2]
+    assert sol.twoSum([2,3,4], 6) == [1, 3]
+    assert sol.twoSum([-1,0], -1) == [1, 2]
+    assert sol.twoSum([5,25,75], 100) == [2, 3]

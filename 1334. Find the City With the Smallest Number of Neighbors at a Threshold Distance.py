@@ -1,13 +1,22 @@
+# 1334. Find the City With the Smallest Number of Neighbors at a Threshold Distance
+
 # Array Approach
 # Time: O(n^3)
 # Space: O(n)
 # 2023.07.22: yes
-# notes: 根据k的不同，通过dp不断updateedges，方法不太好，不推荐
+# notes: Floyd-Warshall all-pairs distances, then pick the city
+#        with fewest reachable neighbors; not great but works
 import collections
 import heapq
 
-class Solution(object):
+class Solution:
     def findTheCity(self, n, edges, maxd):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :type maxd: int
+        :rtype: int
+        """
         dis = [[float('inf')] * n for _ in range(n)]
         for i, j, w in edges:
             dis[i][j] = dis[j][i] = w
@@ -20,14 +29,22 @@ class Solution(object):
         res = {sum(d <= maxd for d in dis[i]): i for i in range(n)}
         return res[min(res)]
 
+
 # Dijkstra
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.22: yes
-# notes: 从每一个点开始，求dijkstra，算出每一个到任何一个点的最短距离，如果超过threshold，就不压栈了
-# 然后求出最少的数量，和最大的数字
+# notes: run Dijkstra from every city, stop expanding past the
+#        threshold, then take the city with the fewest reachable
+#        neighbors, breaking ties by the larger index
 class Solution2:
     def findTheCity(self, n, edges, distanceThreshold):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :type distanceThreshold: int
+        :rtype: int
+        """
         graph = collections.defaultdict(list)
 
         for u, v, w in edges:
@@ -53,6 +70,9 @@ class Solution2:
 
         return max([(getNumberOfNeighbors(city), city) for city in range(n)], key=lambda x: (-x[0], x[1]))[-1]
 
+
 # Tests:
-test = Solution2()
-test.findTheCity(4, [[0,1,3],[1,2,1],[1,3,4],[2,3,1]], 4)
+for sol in (Solution(), Solution2()):
+    assert sol.findTheCity(4, [[0,1,3],[1,2,1],[1,3,4],[2,3,1]], 4) == 3
+    assert sol.findTheCity(5, [[0,1,2],[0,4,8],[1,2,3],[1,4,2],[2,3,1],[3,4,1]], 2) == 0
+    assert sol.findTheCity(2, [[0,1,10]], 5) == 1

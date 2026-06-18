@@ -1,18 +1,23 @@
-# Breadth First Search
-# Time: O(mn)
-# Space: O(1)
-# 2023.07.31: no
-# notes: 这道题很难想到的点是怎么去确定这个2*3的matrix永远不可能成为"123450"，方法是用BFS，记录所有有可能的状态
-# 如果所有的状态都走完了，那么当前2*3是不可能有解的，否则只要返回步数即可，其中的第一个技巧是2*3的数组，我们用1*6的string
-# 来标答，方便map，因为对于任何0的位置都只有4中可能，上下左右，左右就是+1，-1，上下就是+col, -col，只要保证变化后的
-# 数字在这个string中即为有效，第二点是因为我们要求步数，所以一次把能Push的点都push完，全部即为一步，再把由这些点
-# 可能的所有变化push，即为第二步，所以第一个for loop表示当前dq中的所有当前步数的节点，把当前dq检查一遍后，step才会+1
+# 773. Sliding Puzzle
+
 import collections
 import heapq
 
 
-class Solution(object):
+# Breadth First Search
+# Time: O(mn)
+# Space: O(1)
+# 2023.07.31: no
+# notes: encode the 2*3 board as a length-6 string for easy mapping;
+#        the 0 can move up/down/left/right (+-1 or +-width). Run
+#        level-order BFS over states, count steps until "123450";
+#        if every state is exhausted the board has no solution
+class Solution:
     def slidingPuzzle(self, board):
+        """
+        :type board: List[List[int]]
+        :rtype: int
+        """
         s = "".join(str(d) for row in board for d in row)
         dq, seen = collections.deque(), {s}
         dq.append((s, s.index("0")))
@@ -39,11 +44,15 @@ class Solution(object):
 # Time: O(mn)
 # Space: O(1)
 # 2023.07.31: no
-# notes: Dijkstra的进化版本，分为两个部分，当前状态（走了几步），到达重点的距离，这里用manhatten distance
-# 对应的是heuristic，计算的是每个点距离正确的点的距离，全部加起来就是count，和dijkstra一样，把比当前小的状态
-# 压进去，保证只会更小，不会更大，同时也要设置一个end状态，碰到那个状态，证明这道题无解，或者q空了也无解
-class Solution2(object):
+# notes: upgraded Dijkstra; priority = steps so far + heuristic, where
+#        the heuristic is the total Manhattan distance of each tile
+#        from its goal cell. Push states with smaller cost first
+class Solution2:
     def slidingPuzzle(self, board):
+        """
+        :type board: List[List[int]]
+        :rtype: int
+        """
         goal = [[1, 2, 3], [4, 5, 0]]
         dx = [0, 0, 1, -1]
         dy = [1, -1, 0, 0]
@@ -104,5 +113,8 @@ class Solution2(object):
 
 
 # Tests:
-test = Solution2()
-test.slidingPuzzle(board=[[1, 2, 3], [4, 0, 5]])
+for sol in (Solution(), Solution2()):
+    assert sol.slidingPuzzle([[1, 2, 3], [4, 0, 5]]) == 1
+    assert sol.slidingPuzzle([[1, 2, 3], [5, 4, 0]]) == -1
+    assert sol.slidingPuzzle([[4, 1, 2], [5, 0, 3]]) == 5
+    assert sol.slidingPuzzle([[1, 2, 3], [4, 5, 0]]) == 0

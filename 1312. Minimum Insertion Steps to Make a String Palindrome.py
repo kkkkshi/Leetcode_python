@@ -1,9 +1,11 @@
+# 1312. Minimum Insertion Steps to Make a String Palindrome
+
 # Iterative Dynamic Programming
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.07.25: yes
-# notes: 和516实在是太像了，基本就是秒了
-class Solution(object):
+# notes: very close to 516; dp[i][j] is the min inserts for s[i..j]
+class Solution:
     def minInsertions(self, s):
         """
         :type s: str
@@ -25,7 +27,8 @@ class Solution(object):
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.25: yes
-class Solution2(object):
+# notes: same dp but keep only the previous row to save space
+class Solution2:
     def minInsertions(self, s):
         """
         :type s: str
@@ -43,12 +46,13 @@ class Solution2(object):
             dpPrev = dp[:]
         return dp[n-1]
 
+
 # Recursive Dynamic Programming
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.07.25: no
-# notes: 谁现在还用recursion啊
-class Solution3(object):
+# notes: answer is n minus the LCS of s and its reverse
+class Solution3:
     def lcs(self, s1, s2, m, n, memo):
         if m == 0 or n == 0:
             return 0
@@ -61,6 +65,10 @@ class Solution3(object):
         return memo[m][n]
 
     def minInsertions(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
         n = len(s)
         sReverse = s[::-1]
         memo = [[-1] * (n + 1) for _ in range(n + 1)]
@@ -69,6 +77,8 @@ class Solution3(object):
 
 
 # Tests:
-test = Solution2()
-test.minInsertions(s = "zzazz")
-test.minInsertions(s = "mbadm")
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.minInsertions("zzazz") == 0
+    assert sol.minInsertions("mbadm") == 2
+    assert sol.minInsertions("leetcode") == 5
+    assert sol.minInsertions("a") == 0

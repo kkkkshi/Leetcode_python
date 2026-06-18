@@ -1,11 +1,14 @@
-#  Approach
+# 383. Ransom Note
+
+# Approach
 # Time: O(m)
 # Space: O(k)
 # 2023.06.26: yes
+# notes: count magazine letters, decrement per note char
 from collections import Counter
 
 
-class Solution(object):
+class Solution:
     def canConstruct(self, ransomNote, magazine):
         """
         :type ransomNote: str
@@ -27,8 +30,14 @@ class Solution(object):
 # Time: O(m)
 # Space: O(k)
 # 2023.06.26: yes
-class Solution2(object):
+# notes: for each note char, find and splice it out of magazine
+class Solution2:
     def canConstruct(self, ransomNote: str, magazine: str) -> bool:
+        """
+        :type ransomNote: str
+        :type magazine: str
+        :rtype: bool
+        """
         # For each character, c,  in the ransom note.
         for c in ransomNote:
             # If there are none of c left in the String, return False.
@@ -43,13 +52,19 @@ class Solution2(object):
         # If we got this far, we can successfully build the note.
         return True
 
+
 # Two HashMaps Approach
 # Time: O(m)
 # Space: O(k)
 # 2023.06.26: yes
-class Solution3(object):
+# notes: compare counts of each note char against the magazine
+class Solution3:
     def canConstruct(self, ransomNote: str, magazine: str) -> bool:
-
+        """
+        :type ransomNote: str
+        :type magazine: str
+        :rtype: bool
+        """
         # Check for obvious fail case.
         if len(ransomNote) > len(magazine): return False
 
@@ -69,13 +84,19 @@ class Solution3(object):
         # If we got this far, we can successfully build the note.
         return True
 
+
 # Sorting and Stacks Approach
 # Time: O(mlogm)
 # Space: O(m)
 # 2023.06.26: yes
-class Solution4(object):
+# notes: sort both, pop matches like two stacks
+class Solution4:
     def canConstruct(self, ransomNote: str, magazine: str) -> bool:
-
+        """
+        :type ransomNote: str
+        :type magazine: str
+        :rtype: bool
+        """
         # Check for obvious fail case.
         if len(ransomNote) > len(magazine): return False
 
@@ -101,10 +122,9 @@ class Solution4(object):
         return not ransomNote
 
 
-
-
 # Tests:
-test = Solution()
-test.canConstruct(ransomNote = "a", magazine = "b")
-test.canConstruct(ransomNote = "aa", magazine = "ab")
-test.canConstruct(ransomNote = "aa", magazine = "aab")
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.canConstruct("a", "b") is False
+    assert sol.canConstruct("aa", "ab") is False
+    assert sol.canConstruct("aa", "aab") is True
+    assert sol.canConstruct("", "abc") is True

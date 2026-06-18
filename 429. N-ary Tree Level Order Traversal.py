@@ -1,16 +1,21 @@
-class Node(object):
+# 429. N-ary Tree Level Order Traversal
+
+class Node:
     def __init__(self, val=None, children=None):
         self.val = val
         self.children = children
+
 
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.01: yes
-class Solution(object):
+# notes: BFS level by level; for each level pop all current nodes
+#        and queue their children
+class Solution:
     def levelOrder(self, root):
         """
-        :type root: TreeNode
+        :type root: Node
         :rtype: List[List[int]]
         """
         levels = []
@@ -30,11 +35,14 @@ class Solution(object):
             level += 1
         return levels
 
+
 # depth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.01: yes
-class Solution2(object):
+# notes: DFS carrying the level index; append each value to its
+#        level bucket, creating the bucket on first visit
+class Solution2:
     def levelOrder(self, root):
         """
         :type root: Node
@@ -53,8 +61,10 @@ class Solution2(object):
         recursion(root, 0)
         return levels
 
+
 # Tests:
 tree = Node(1, [Node(3, [Node(5), Node(6)]), Node(2), Node(4)])
-test = Solution2()
-test.levelOrder(tree)
-
+for sol in (Solution(), Solution2()):
+    assert sol.levelOrder(tree) == [[1], [3, 2, 4], [5, 6]]
+    assert sol.levelOrder(None) == []
+    assert sol.levelOrder(Node(1, [])) == [[1]]

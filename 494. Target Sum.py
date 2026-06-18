@@ -1,3 +1,5 @@
+# 494. Target Sum
+
 # Bottom Up Dynamic Programming
 # Time: O(tn)
 # Space: O(tn)
@@ -5,6 +7,11 @@
 # notes: dp[i][j] refers to the number of assignments which can lead to a sum of j up to the ith index
 class Solution:
     def findTargetSumWays(self, nums, S):
+        """
+        :type nums: List[int]
+        :type S: int
+        :rtype: int
+        """
         total = sum(nums)
         dp = [[0] * (2 * total + 1) for _ in range(len(nums))]
         dp[0][nums[0] + total] = 1
@@ -13,8 +20,9 @@ class Solution:
         for i in range(1, len(nums)):
             for s in range(-total, total + 1):
                 if dp[i - 1][s + total] > 0:
-                    # 这个次数不会变化，因为一共只有2^n的种方法，这个意思其实就是把dp[i-1][s+total]的次数变化到
-                    # dp[i][s + nums[i] + total]，加过这个数字上，数字本身不会变化，由多条路径加起来才会变化
+                    # the count never changes: there are only 2^n ways total, so this just
+                    # carries dp[i-1][s+total] onto dp[i][s+nums[i]+total]; adding a number
+                    # does not change the count, only merging paths does
                     dp[i][s + nums[i] + total] += dp[i - 1][s + total]
                     dp[i][s - nums[i] + total] += dp[i - 1][s + total]
         return 0 if abs(S) > total else dp[len(nums) - 1][S + total]
@@ -24,11 +32,16 @@ class Solution:
 # Time: O(2^n)
 # Space: O(1)
 # 2023.07.25: no
-# notes: 只是提供一种思路，超时
+# notes: just one way to think about it; times out
 class Solution2:
     def __init__(self):
         self.result = 0
     def findTargetSumWays(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         if len(nums) == 0:
             return 0
         self.backtrack(nums, 0, target)
@@ -46,13 +59,18 @@ class Solution2:
         remain += nums[i]
 
 
-# Recursion，非标答
+# Recursion, non-standard answer
 # Time: O(tn)
 # Space: O(tn)
 # 2023.07.25: no
-# notes: 用str记录
+# notes: use a string key for the memo
 class Solution3:
     def findTargetSumWays(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         if len(nums) == 0:
             return 0
         memo = {}
@@ -62,7 +80,7 @@ class Solution3:
                 if remain == 0:
                     return 1
                 return 0
-            # 把它俩转成字符串才能作为哈希表的键
+            # turn the two into a string to use as a hash key
             key = str(i) + "," + str(remain)
             if key in memo:
                 return memo[key]
@@ -72,16 +90,22 @@ class Solution3:
         return dp(0, target)
 
 
-# Recursion 标答
+# Recursion, standard answer
 # Time: O(tn)
 # Space: O(tn)
 # 2023.07.25: no
-# notes: memo[i][sum + self.total] = add + subtract这句话的意思是，add这条支线上返回的次数+subtract返回的次数，即为所有次数
+# notes: memo[i][sum + self.total] = add + subtract means the count returned on the add
+#        branch plus the count on the subtract branch is the total count
 class Solution4:
     def __init__(self):
         self.total = 0
 
     def findTargetSumWays(self, nums, S):
+        """
+        :type nums: List[int]
+        :type S: int
+        :rtype: int
+        """
         self.total = sum(nums)
         memo = [[float('-inf')] * (2 * self.total + 1) for _ in range(len(nums))]
         return self.calculate(nums, 0, 0, S, memo)
@@ -99,16 +123,23 @@ class Solution4:
             subtract = self.calculate(nums, i + 1, sum - nums[i], S, memo)
             memo[i][sum + self.total] = add + subtract
             return memo[i][sum + self.total]
+
 
 # 1D Dynamic Programming
 # Time: O(tn)
 # Space: O(t)
 # 2023.07.25: no
+# notes: same recursion with memo as solution4
 class Solution5:
     def __init__(self):
         self.total = 0
 
     def findTargetSumWays(self, nums, S):
+        """
+        :type nums: List[int]
+        :type S: int
+        :rtype: int
+        """
         self.total = sum(nums)
         memo = [[float('-inf')] * (2 * self.total + 1) for _ in range(len(nums))]
         return self.calculate(nums, 0, 0, S, memo)
@@ -128,8 +159,10 @@ class Solution5:
             return memo[i][sum + self.total]
 
 
-
-test = Solution4()
-test.findTargetSumWays([1,1,1,1,1], 3)
-
-
+# Tests:
+# Solution2/4/5 carry state, so build a fresh instance per assert.
+for cls in (Solution, Solution2, Solution3, Solution4, Solution5):
+    assert cls().findTargetSumWays([1, 1, 1, 1, 1], 3) == 5
+    assert cls().findTargetSumWays([1, 0], 1) == 2
+    assert cls().findTargetSumWays([1], 1) == 1
+    assert cls().findTargetSumWays([1], 2) == 0

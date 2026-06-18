@@ -1,14 +1,35 @@
+# 86. Partition List
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+
+
+def build(vals):
+    dummy = cur = ListNode(-1)
+    for v in vals:
+        cur.next = ListNode(v)
+        cur = cur.next
+    return dummy.next
+
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
 
 # Two Pointers Approach (best approach):
 # Time: O(n)
 # Space: O(1)
 # 2023.06.17: yes
-class Solution(object):
+# notes: build two chains, one for values < x and one for >= x, keeping
+#        the original order, then splice the small chain before the large.
+class Solution:
     def partition(self, head, x):
         """
         :type head: ListNode
@@ -29,8 +50,8 @@ class Solution(object):
         return dummy_small.next
 
 
-a = ListNode(1, ListNode(4, ListNode(3, ListNode(2, ListNode(5, ListNode(2))))))
-test = Solution()
-b = test.partition(a, 3)
-c = test.partition([], 3)
-
+# Tests:
+for sol in (Solution(),):
+    assert to_list(sol.partition(build([1, 4, 3, 2, 5, 2]), 3)) == [1, 2, 2, 4, 3, 5]
+    assert to_list(sol.partition(build([2, 1]), 2)) == [1, 2]
+    assert to_list(sol.partition(build([]), 3)) == []

@@ -1,16 +1,20 @@
-class TreeNode(object):
+# 236. Lowest Common Ancestor of a Binary Tree
+
+class TreeNode:
     def __init__(self, x, left = None, right = None):
         self.val = x
         self.left = left
         self.right = right
 
+
 # Recursive Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: no
-# 两个点，1. 因为是求公共节点，所以是需要拿到子节点的结果，才能算出来，所以肯定是后序遍历的改版
-# 2. 回归的时候，如果左树有，右树没有，这种情况，肯定两个点都在左树上，返回第一个遇到的左树的root就可以，根本就不需要继续遍历
-class Solution(object):
+# notes: needs the children's results to decide, so it is a postorder
+#        variant; if a subtree contains both p and q this node is the
+#        answer, if only one side has them return that side
+class Solution:
     def lowestCommonAncestor(self, root, p, q):
         """
         :type root: TreeNode
@@ -30,17 +34,21 @@ class Solution(object):
             return left if left is not None else right
         return recursion(root, p, q)
 
+
 # Iterative using parent pointers Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: no
-# notes: 1.每个节点都存储他的父节点，
-# 2. 找到pq并且存到hash map里，
-# 3. 把p的父节点全部存起来，
-# 4. 从q开始找，q在不在p的父节点里，直到找到返回
-
+# notes: record each node's parent, collect all ancestors of p into a
+#        set, then walk up from q until a shared ancestor is hit
 class Solution2:
     def lowestCommonAncestor(self, root, p, q):
+        """
+        :type root: TreeNode
+        :type p: TreeNode
+        :type q: TreeNode
+        :rtype: TreeNode
+        """
         stack = [root]
         parent = {root: None}
         while p not in parent or q not in parent:
@@ -59,12 +67,14 @@ class Solution2:
             q = parent[q]
         return q
 
+
 # Iterative without parent pointers Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: no
-# notes: 1. 三个状态的变化，两个nodes都弄完了，弄完了一个，一个都没弄完
-# 2. 找到其中一个点之后，记录他在stack的位置，如果找到另一个点的时候，位置不同，就-1，就是找他的父节点，继续确认父节点
+# notes: track three states per node (both children pending, one done,
+#        both done); after finding one node remember its stack depth,
+#        and as the stack shrinks the recorded depth follows the LCA
 class Solution3:
     BOTH_PENDING = 2
     LEFT_DONE = 1
@@ -103,17 +113,19 @@ class Solution3:
                 stack.pop()
         return None
 
+
 # Tests:
 root = TreeNode(3)
 root.left = TreeNode(5)
 root.right = TreeNode(1)
-root.left.left = p = TreeNode(6)
+root.left.left = node6 = TreeNode(6)
 root.left.right = TreeNode(2)
 root.left.right.left = TreeNode(7)
-root.left.right.right = q = TreeNode(4)
+root.left.right.right = node4 = TreeNode(4)
 root.right.left = TreeNode(0)
 root.right.right = TreeNode(8)
 
-
-test = Solution3()
-test.lowestCommonAncestor(root, p, q)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.lowestCommonAncestor(root, node6, node4).val == 5
+    assert sol.lowestCommonAncestor(root, root.left, root.right).val == 3
+    assert sol.lowestCommonAncestor(root, root.left, node4).val == 5

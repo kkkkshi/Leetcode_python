@@ -1,9 +1,15 @@
+# 355. Design Twitter
+
 # Priority Queue + Linked List Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.17: no
+# notes: each user keeps a tweet list, merge the followees' lists
+#        with a heap to pull the 10 most recent tweets
 import heapq
-class Tweet(object):
+
+
+class Tweet:
     timestamp = 0
 
     def __init__(self, tid):
@@ -12,7 +18,7 @@ class Tweet(object):
         Tweet.timestamp += 1
 
 
-class User(object):
+class User:
     def __init__(self, uid):
         self.id = uid
         self.following = set()
@@ -31,7 +37,7 @@ class User(object):
         self.tweets.append(Tweet(tid))
 
 
-class Twitter(object):
+class Twitter:
 
     def __init__(self):
         """
@@ -124,3 +130,15 @@ class Twitter(object):
 
         follower = self.id_to_user[followerId]
         follower.unfollow(followeeId)
+
+
+# Tests:
+for cls in (Twitter,):
+    tw = cls()
+    tw.postTweet(1, 5)
+    assert tw.getNewsFeed(1) == [5]
+    tw.follow(1, 2)
+    tw.postTweet(2, 6)
+    assert tw.getNewsFeed(1) == [6, 5]
+    tw.unfollow(1, 2)
+    assert tw.getNewsFeed(1) == [5]

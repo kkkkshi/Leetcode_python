@@ -1,11 +1,18 @@
+# 969. Pancake Sorting
+
 # Recursion Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.03: no
-# notes: 真的有必要用recursion？典型脱裤子放屁好吗，原理都是一样的，找到最大的，翻到最底下
+# notes: do we really need recursion here? same idea either way: find
+#        the largest, flip it to the top, then flip it to the bottom
 class Solution:
     def pancakeSort(self, cakes):
-        # 记录反转操作序列
+        """
+        :type cakes: List[int]
+        :rtype: List[int]
+        """
+        # record the sequence of flips
         self.res = []
         self.sort(cakes, len(cakes))
         return self.res
@@ -14,21 +21,21 @@ class Solution:
         # base case
         if n == 1:
             return
-        # 寻找最大饼的索引
+        # find the index of the largest pancake
         max_cake = 0
         max_cake_index = 0
         for i in range(n):
             if cakes[i] > max_cake:
                 max_cake_index = i
                 max_cake = cakes[i]
-        # 第一次翻转，将最大饼翻到最上面
+        # first flip: bring the largest pancake to the top
         self.reverse(cakes, 0, max_cake_index)
         self.res.append(max_cake_index + 1)
-        # 第二次翻转，将最大饼翻到最下面
+        # second flip: bring the largest pancake to the bottom
         self.reverse(cakes, 0, n - 1)
         self.res.append(n)
 
-        # 递归调用
+        # recurse
         self.sort(cakes, n - 1)
 
     def reverse(self, arr, i, j):
@@ -37,12 +44,14 @@ class Solution:
             i += 1
             j -= 1
 
+
 # Recursion Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.03: no
-# notes: 题目给的不清晰的原因是没说array是从1开始到k的，随机的就不行，如果要随机的，就需要找到最大的
-# 但是每次flip都一定是2次
+# notes: the problem is vague because it doesn't say the array is a
+#        permutation of 1..k; a random array won't work, you'd first
+#        find the max, but each value still takes at most two flips
 class Solution2:
     def pancakeSort(self, A):
         """ sort like bubble-sort
@@ -76,7 +85,17 @@ class Solution2:
 
         return ans
 
+
+def apply_flips(arr, flips):
+    a = arr[:]
+    for k in flips:
+        a[:k] = a[:k][::-1]
+    return a
+
+
 # Tests:
-test = Solution2()
-test.pancakeSort([3,2,4,1])
-test.pancakeSort([6,2,4,9])
+# inputs are permutations of 1..n (Solution2 requires this)
+for sol in (Solution(), Solution2()):
+    for arr in ([3, 2, 4, 1], [1, 2, 3], [4, 3, 2, 1], [1]):
+        flips = sol.pancakeSort(arr[:])
+        assert apply_flips(arr, flips) == sorted(arr)

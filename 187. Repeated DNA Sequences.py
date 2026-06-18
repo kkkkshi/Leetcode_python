@@ -1,10 +1,14 @@
+# 187. Repeated DNA Sequences
+
 # Rabin-Karp Approach
 # Time: O(n)
 # Space: O(n-l)
 # 2023.06.20: yes
-class Solution(object):
+# notes: map each base to a base-4 digit, then slide a length-10
+#        window keeping a rolling hash to spot repeats
+class Solution:
     def findRepeatedDnaSequences(self, s):
-        # 先把字符串转化成四进制的数字数组
+        # first turn the string into an array of base-4 digits
         nums = [0] * len(s)
         for i in range(len(nums)):
             if s[i] == 'A':
@@ -16,40 +20,40 @@ class Solution(object):
             elif s[i] == 'T':
                 nums[i] = 3
 
-        # 记录重复出现的哈希值
+        # hashes seen so far
         seen = set()
-        # 记录重复出现的字符串结果
+        # repeated substrings collected as the result
         res = set()
 
-        # 数字位数
+        # number of digits
         L = 10
-        # 进制
+        # base
         R = 4
-        # 存储 R^(L - 1) 的结果
+        # value of R^(L - 1)
         RL = R ** (L - 1)
-        # 维护滑动窗口中字符串的哈希值
+        # rolling hash of the current window
         windowHash = 0
 
-        # 滑动窗口代码框架，时间 O(N)
+        # sliding window framework, time O(N)
         left, right = 0, 0
         while right < len(nums):
-            # 扩大窗口，移入字符，并维护窗口哈希值（在最低位添加数字）
+            # grow the window, add a digit at the lowest position
             windowHash = R * windowHash + nums[right]
             right += 1
 
-            # 当子串的长度达到要求
+            # window reached the required length
             if right - left == L:
-                # 根据哈希值判断是否曾经出现过相同的子串
+                # check the hash to see if this substring appeared
                 if windowHash in seen:
-                    # 当前窗口中的子串是重复出现的
+                    # current window substring is a repeat
                     res.add(s[left:right])
                 else:
-                    # 当前窗口中的子串之前没有出现过，记下来
+                    # not seen before, record it
                     seen.add(windowHash)
-                # 缩小窗口，移出字符，并维护窗口哈希值（删除最高位数字）
+                # shrink the window, drop the highest digit
                 windowHash -= nums[left] * RL
                 left += 1
-        # 转化成题目要求的 List 类型
+        # convert to the List type the problem expects
         return list(res)
 
 
@@ -57,6 +61,8 @@ class Solution(object):
 # Time: O(n)
 # Space: O((n-l)*l)
 # 2023.06.20: yes
+# notes: slide a length-10 window and store the raw substrings in a
+#        set, adding to output once a substring repeats
 class Solution2:
     def findRepeatedDnaSequences(self, s):
         L, n = 10, len(s)
@@ -70,11 +76,13 @@ class Solution2:
             seen.add(tmp)
         return output
 
+
 # Bit Manipulation
 # Time: O(n-l)
 # Space: O((n-l)*l)
 # 2023.06.20: no
-# notes: 完全不懂，但是核心思路和rabin karp差不多
+# notes: don't fully get it, but the core idea is close to Rabin-Karp;
+#        keep a 20-bit mask rolled forward 2 bits per step
 class Solution3:
     def findRepeatedDnaSequences(self, s):
         L, n = 10, len(s)
@@ -107,3 +115,10 @@ class Solution3:
                 output.add(s[start:start + L])
             seen.add(bitmask)
         return output
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sorted(sol.findRepeatedDnaSequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT")) == ["AAAAACCCCC", "CCCCCAAAAA"]
+    assert sorted(sol.findRepeatedDnaSequences("AAAAAAAAAAAAA")) == ["AAAAAAAAAA"]
+    assert sorted(sol.findRepeatedDnaSequences("ACGT")) == []

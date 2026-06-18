@@ -1,9 +1,12 @@
+# 54. Spiral Matrix
+
 # Mark Visited Elements
 # Time: O(mn)
 # Space: O(1)
 # 2023.06.20: yes
-# notes: 就是我写的复杂了点，但是思路是一样的
-class Solution(object):
+# notes: a bit over-engineered but the idea is the same; walk in
+#        spiral order, marking visited cells until all four sides stall
+class Solution:
     def spiralOrder(self, matrix):
         """
         :type matrix: List[List[int]]
@@ -40,7 +43,12 @@ class Solution(object):
                 return result
             check1, check2, check3, check4 = True, True, True, True
 
-# 这个是标答，思路一样，但是写的更好看。。。
+
+# Mark Visited In Place
+# Time: O(mn)
+# Space: O(1)
+# notes: the reference answer; same idea, just cleaner; turn right
+#        whenever the next cell is out of bounds or already visited
 class Solution2:
     def spiralOrder(self, matrix):
         VISITED = 101
@@ -86,11 +94,13 @@ class Solution2:
 
         return result
 
+
 # Set Up Boundaries
 # Time: O(mn)
 # Space: O(1)
 # 2023.06.20: no
-# 如果不用extra space 去确认visited node只需要记录有什么boundaries就可以了
+# notes: instead of marking visited cells, just shrink the four
+#        boundaries inward as each side is consumed
 class Solution3:
     def spiralOrder(self, matrix):
         result = []
@@ -127,8 +137,15 @@ class Solution3:
 
         return result
 
-a = [[1,2,3],[4,5,6],[7,8,9]]
-b = [[1,2,3,4],[5,6,7,8],[9,10,11,12]]
-test = Solution()
-test.spiralOrder(b)
-test.spiralOrder(a)
+
+# Tests:
+# Solution2 mutates the matrix, so give each solution a fresh copy.
+for sol in (Solution(), Solution2(), Solution3()):
+    m1 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    assert sol.spiralOrder(m1) == [1, 2, 3, 6, 9, 8, 7, 4, 5]
+    m2 = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
+    assert sol.spiralOrder(m2) == [1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+    m3 = [[7]]
+    assert sol.spiralOrder(m3) == [7]
+    m4 = [[1, 2], [3, 4]]
+    assert sol.spiralOrder(m4) == [1, 2, 4, 3]

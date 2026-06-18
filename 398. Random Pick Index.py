@@ -1,8 +1,14 @@
+# 398. Random Pick Index
+
+import random
+from collections import defaultdict
+
+
 # Brute Force
 # Time: O(n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: 标答过不去
+# notes: scan for all indices equal to target, then pick one uniformly.
 class Solution:
     def __init__(self, nums):
         # Do not allocate extra space for the nums array
@@ -25,10 +31,7 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: 完全不懂，标答中唯一过的
-import random
-from collections import defaultdict
-
+# notes: precompute target -> list of indices, then pick one uniformly.
 class Solution2:
     def __init__(self, nums):
         self.rand = random.Random()
@@ -42,13 +45,13 @@ class Solution2:
         random_index = self.indices[target][self.rand.randint(0, l - 1)]
         return random_index
 
+
 # Reservoir sampling
 # Time: O(n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: 完全不懂，且标答超时
-import random
-
+# notes: one pass; keep the i-th matching index with probability 1/count
+#        so every match ends up equally likely.
 class Solution3:
     def __init__(self, nums):
         self.nums = nums
@@ -69,3 +72,11 @@ class Solution3:
                     idx = i
         return idx
 
+
+# Tests:
+nums = [1, 2, 3, 3, 3]
+for cls in (Solution, Solution2, Solution3):
+    obj = cls(nums)
+    assert obj.pick(1) == 0
+    assert nums[obj.pick(3)] == 3
+    assert obj.pick(3) in (2, 3, 4)

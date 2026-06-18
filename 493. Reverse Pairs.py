@@ -1,10 +1,17 @@
+# 493. Reverse Pairs
+
 # Merge sort Approach
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.28: no
-# notes: 更改merge，使左边排序好的每一个都对右边确认一下有几个两倍的
+# notes: tweak the merge so each sorted left value checks how
+#        many right values it is more than twice as large as
 class Solution:
     def reversePairs(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         self.count = 0
         self.sort(nums)
         return self.count
@@ -25,7 +32,8 @@ class Solution:
         for i in range(lo, hi + 1):
             self.temp[i] = nums[i]
 
-        end = mid + 1   # 左边比右边的大两倍的值，因为左边和右边都是sorted order, 左边的每一个值都需要像右边确认一遍是不是两倍
+        end = mid + 1   # left is more than twice the right value; both halves are
+                        # sorted, so each left value checks the right once
         for i in range(lo, mid + 1):
             while end <= hi and nums[i] > nums[end] * 2:
                 end += 1
@@ -47,6 +55,9 @@ class Solution:
                 i += 1
 
 
-test = Solution()
-test.reversePairs(nums = [4,10,2,5,1])
-test.reversePairs([1,3,2,3,1])
+# Tests:
+for sol in (Solution(),):
+    assert sol.reversePairs([4, 10, 2, 5, 1]) == 4
+    assert sol.reversePairs([1, 3, 2, 3, 1]) == 2
+    assert sol.reversePairs([2, 4, 3, 5, 1]) == 3
+    assert sol.reversePairs([1]) == 0

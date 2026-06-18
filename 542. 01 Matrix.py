@@ -1,10 +1,15 @@
+# 542. 01 Matrix
+
 # DFS Approach (best approach)
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: push all zeros into a queue, then BFS outward, relaxing
+#        each neighbor distance like multi-source shortest path
 from collections import deque
 
-class Solution(object):
+
+class Solution:
     def updateMatrix(self, mat):
         """
         :type mat: List[List[int]]
@@ -35,11 +40,16 @@ class Solution(object):
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: two passes, first from top-left then bottom-right, each
+#        cell takes the smaller neighbor distance plus one
 class Solution2:
     def updateMatrix(self, mat):
+        """
+        :type mat: List[List[int]]
+        :rtype: List[List[int]]
+        """
         dp = [row[:] for row in mat]
         m, n = len(dp), len(dp[0])
-
         for row in range(m):
             for col in range(n):
                 min_neighbor = float("inf")
@@ -49,7 +59,6 @@ class Solution2:
                     if col > 0:
                         min_neighbor = min(min_neighbor, dp[row][col - 1])
                     dp[row][col] = min_neighbor + 1
-
         for row in range(m - 1, -1, -1):
             for col in range(n - 1, -1, -1):
                 min_neighbor = float("inf")
@@ -61,8 +70,12 @@ class Solution2:
                     dp[row][col] = min(dp[row][col], min_neighbor + 1)
         return dp
 
-# Tests:
-test = Solution2()
-test.updateMatrix([[0,0,0],[0,1,0],[0,0,0]])
-test.updateMatrix([[0,0,0],[0,1,0],[1,1,1]])
 
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.updateMatrix([[0, 0, 0], [0, 1, 0], [0, 0, 0]]) == \
+        [[0, 0, 0], [0, 1, 0], [0, 0, 0]]
+    assert sol.updateMatrix([[0, 0, 0], [0, 1, 0], [1, 1, 1]]) == \
+        [[0, 0, 0], [0, 1, 0], [1, 2, 1]]
+    assert sol.updateMatrix([[0]]) == [[0]]
+    assert sol.updateMatrix([[0, 1, 1]]) == [[0, 1, 2]]

@@ -1,8 +1,11 @@
+# 793. Preimage Size of Factorial Zeroes Function
+
 # Counting Factors of 5 Efficiently
 # Time: O(logn)
 # Space: O(1)
 # 2023.08.04: yes
-# notes: 用binary search的方法来判断边界，上边界需要*10是因为*10才会多一个0，*5是不行的，在zeta中不对
+# notes: binary search the boundary; the high bound is *10 because only
+#        *10 adds another zero (*5 doesn't work in zeta)
 class Solution:
     def preimageSizeFZF(self, K):
 
@@ -23,6 +26,10 @@ class Solution:
 
         return 0
 
+
 # Tests:
-test = Solution()
-test.preimageSizeFZF(5)
+for sol in (Solution(),):
+    assert sol.preimageSizeFZF(0) == 5
+    assert sol.preimageSizeFZF(5) == 0
+    assert sol.preimageSizeFZF(3) == 5
+    assert sol.preimageSizeFZF(6) == 5

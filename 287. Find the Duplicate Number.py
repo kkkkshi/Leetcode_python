@@ -1,9 +1,11 @@
+# 287. Find the Duplicate Number
+
 # Binary Search
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.10.29: yes
-# notes: 因为Nums是1-n，每个应该只出现一次，所以计算当前这个数字，有几个比他小的
-# 如果超出了应该比他小的个数，就说明，比他小的地方有重复，binary search缩小范围
+# notes: nums hold 1..n, so for a guess count how many are <= it; if
+#        the count exceeds the guess the duplicate is in the low half
 from typing import List
 
 
@@ -21,11 +23,13 @@ class Solution:
                 low = cur + 1
         return duplicate
 
+
 # Sum of Set Bits
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.10.29: no
-# notes: 计算一个个位置上的bit，看是不是多出来的那个，如果是重复的话，bit会比原来的多，记录即可，只需要考虑正的，负数证明没出现过
+# notes: per bit, if it is set more often in nums than in 1..n the
+#        duplicate must have that bit set
 class Solution2:
     def findDuplicate(self, nums: List[int]) -> int:
         duplicate = 0
@@ -56,8 +60,8 @@ class Solution2:
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.10.29: yes
-# notes: 通过构造Floyd's algorithm的方法，龟兔赛跑，从一个点到另一个点，必定会有循环出现，hare每次跳两步，也就是nums[nums[hare]]
-# tortoise每次跳一步
+# notes: treat values as next-pointers; the cycle entry found by the
+#        tortoise and hare is the duplicate value
 class Solution3:
     def findDuplicate(self, nums):
         # Find the intersection point of the two runners.
@@ -76,6 +80,10 @@ class Solution3:
 
         return hare
 
-# Test:
-test = Solution3()
-test.findDuplicate([1,3,4,2,2])
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.findDuplicate([1, 3, 4, 2, 2]) == 2
+    assert sol.findDuplicate([3, 1, 3, 4, 2]) == 3
+    assert sol.findDuplicate([1, 1]) == 1
+    assert sol.findDuplicate([2, 2, 2, 2, 2]) == 2

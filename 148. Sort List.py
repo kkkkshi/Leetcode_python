@@ -1,13 +1,31 @@
-class ListNode(object):
+# 148. Sort List
+
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+
+
+def build(values):
+    head = None
+    for v in reversed(values):
+        head = ListNode(v, head)
+    return head
+
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
 
 # Top Down Merge Sort Approach
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.05: no
-# notes: 常规merge sort + two pointers
+# notes: split by the middle with two pointers, sort each half, merge
 class Solution:
     def sortList(self, head):
         if not head or not head.next:
@@ -46,12 +64,13 @@ class Solution:
         midPrev.next = None
         return mid
 
+
 # Bottom Up Merge Sort Approach
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.05: no
-# notes: 具体看表格，不难理解
-class Solution2(object):
+# notes: merge runs of size 1, 2, 4, ... bottom up, doubling each pass
+class Solution2:
     def sortList(self, head):
         """
         :type head: ListNode
@@ -109,7 +128,10 @@ class Solution2(object):
         head.next = None
         return second
 
+
 # Tests:
-a = ListNode(4, ListNode(2, ListNode(1, ListNode(3))))
-test = Solution2()
-test.sortList(a)
+for sol in (Solution(), Solution2()):
+    assert to_list(sol.sortList(build([4, 2, 1, 3]))) == [1, 2, 3, 4]
+    assert to_list(sol.sortList(build([-1, 5, 3, 4, 0]))) == [-1, 0, 3, 4, 5]
+    assert to_list(sol.sortList(build([]))) == []
+    assert to_list(sol.sortList(build([1]))) == [1]

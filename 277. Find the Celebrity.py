@@ -1,8 +1,12 @@
+# 277. Find the Celebrity
+
 # Logical Deduction Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.04: yes
-class Solution(object):
+# notes: pair people off; a candidate that knows someone or is not
+#        known back is eliminated, leaving one to verify
+class Solution:
     def findCelebrity(self, n):
         """
         :type n: int
@@ -16,9 +20,10 @@ class Solution(object):
         while len(q) >= 2:
             cand = q.pop()
             other = q.pop()
-            # cand 认识别人，cand不是，或者别人并不认识cand，cand也不是
+            # cand knows someone -> not celeb; or other doesn't
+            # know cand -> not celeb either
             if knows(cand, other) or not knows(other, cand):
-                # cand 不可能是名人，排除，让 other 归队
+                # cand can't be the celebrity, drop it, requeue other
                 q.insert(0, other)
             else:
                 q.insert(0, cand)
@@ -27,7 +32,7 @@ class Solution(object):
         for other in range(n):
             if other == cand:
                 continue
-            # 保证其他人都认识 cand，且 cand 不认识任何其他人
+            # everyone must know cand, and cand knows no one else
             if not knows(other, cand) or knows(cand, other):
                 return -1
         return cand
@@ -37,7 +42,9 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.07.04: yes
-class Solution2(object):
+# notes: keep a single candidate, replacing it whenever the test
+#        shows it cannot be the celebrity, then verify
+class Solution2:
     def findCelebrity(self, n):
         """
         :type n: int
@@ -47,28 +54,34 @@ class Solution2(object):
             return 0
         cand = 0
         for other in range(1, n):
-            # cand 认识别人，cand不是，或者别人并不认识cand，cand也不是
+            # cand knows someone -> not celeb; or other doesn't
+            # know cand -> not celeb either
             if knows(cand, other) or not knows(other, cand):
                 cand = other
         for other in range(n):
             if other == cand:
                 continue
-            # 保证其他人都认识 cand，且 cand 不认识任何其他人
+            # everyone must know cand, and cand knows no one else
             if not knows(other, cand) or knows(cand, other):
                 return -1
         return cand
+
 
 # Logical Deduction with Caching
 # Time: O(n)
 # Space: O(n)
 # 2023.07.04: no
-# notes: 把knows cache一下，会快一点，不用重复调用api
+# notes: cache knows so the api isn't called twice for a pair
 from functools import lru_cache
 class Solution3:
     @lru_cache(maxsize=None)
     def cachedKnows(self, a, b):
         return knows(a, b)
-    def findCelebrity(self, n: int) -> int:
+    def findCelebrity(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
         self.n = n
         celebrity_candidate = 0
         for i in range(1, n):
@@ -85,3 +98,20 @@ class Solution3:
         return True
 
 
+# Tests:
+def make_knows(graph):
+    def knows(a, b):
+        return graph[a][b] == 1
+    return knows
+
+
+for cls in (Solution, Solution2, Solution3):
+    # person 1 is the celebrity
+    knows = make_knows([[1, 1, 0], [0, 1, 0], [1, 1, 1]])
+    assert cls().findCelebrity(3) == 1
+    # no celebrity
+    knows = make_knows([[1, 0], [0, 1]])
+    assert cls().findCelebrity(2) == -1
+    # single person is the celebrity
+    knows = make_knows([[1]])
+    assert cls().findCelebrity(1) == 0

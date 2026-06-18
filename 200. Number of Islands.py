@@ -1,10 +1,20 @@
+# 200. Number of Islands
+
+from collections import deque
+
+
 # BFS Approach
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.07.13: yes
-from collections import deque
+# notes: scan the grid; on an unvisited '1' start a BFS that marks
+#        all connected land, counting one island per BFS
 class Solution:
     def numIslands(self, grid):
+        """
+        :type grid: List[List[str]]
+        :rtype: int
+        """
         row, col = len(grid), len(grid[0])
         visited = [[False]*col for _ in range(row)]
         offsets = [[1,0], [0, 1], [-1, 0], [0, -1]]
@@ -27,15 +37,17 @@ class Solution:
                                 q.append([next_row, next_col])
         return numIslands
 
+
 # DFS Approach
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: on each '1' sink the whole island by flipping cells to '0'
+#        via DFS, counting one island each time a new '1' is hit
 class Solution2:
     def dfs(self, grid, r, c):
         nr = len(grid)
         nc = len(grid[0])
-
         grid[r][c] = '0'
         if r - 1 >= 0 and grid[r-1][c] == '1':
             self.dfs(grid, r - 1, c)
@@ -47,24 +59,29 @@ class Solution2:
             self.dfs(grid, r, c + 1)
 
     def numIslands(self, grid):
+        """
+        :type grid: List[List[str]]
+        :rtype: int
+        """
         nr = len(grid)
         if not nr:
             return 0
         nc = len(grid[0])
-
         num_islands = 0
         for r in range(nr):
             for c in range(nc):
                 if grid[r][c] == '1':
                     num_islands += 1
                     self.dfs(grid, r, c)
-
         return num_islands
+
 
 # Union-Find Approach
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: union every land cell with its land neighbors; islands left
+#        is total cells minus water minus the merges done
 class Union_Find:
     def __init__(self, n):
         self.count = n
@@ -98,6 +115,10 @@ class Union_Find:
 
 class Solution3:
     def numIslands(self, grid):
+        """
+        :type grid: List[List[str]]
+        :rtype: int
+        """
         row, col = len(grid), len(grid[0])
         total = row * col
         uf = Union_Find(total)
@@ -119,12 +140,13 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.numIslands(grid = [
-  ["1","1","0","0","0"],
-  ["1","1","0","0","0"],
-  ["0","0","1","0","0"],
-  ["0","0","0","1","1"]
-])
-test.numIslands(grid = [["1","1","1","1","0"],  ["1","1","0","1","0"],  ["1","1","0","0","0"],  ["0","0","0","0","0"]])
+def make_grid(rows):
+    return [list(r) for r in rows]
 
+
+grid1 = ["11000", "11000", "00100", "00011"]
+grid2 = ["11110", "11010", "11000", "00000"]
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.numIslands(make_grid(grid1)) == 3
+    assert sol.numIslands(make_grid(grid2)) == 1
+    assert sol.numIslands(make_grid(["0"])) == 0

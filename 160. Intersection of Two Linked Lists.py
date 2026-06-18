@@ -1,9 +1,23 @@
-class ListNode(object):
+# 160. Intersection of Two Linked Lists
+
+class ListNode:
     def __init__(self, x, next = None):
         self.val = x
         self.next = next
 
 
+def build(vals):
+    head = None
+    for v in reversed(vals):
+        head = ListNode(v, head)
+    return head
+
+
+# Hash Table Approach
+# Time: O(m+n)
+# Space: O(n)
+# notes: this is what I thought of first; store every node of B in a
+#        set, then walk A and return the first node already in it
 class Solution:
     # hash table method, which is what I thought first
     def getIntersectionNode(self, headA, headB):
@@ -22,6 +36,11 @@ class Solution:
         return None
 
 
+# Two Pointers Approach
+# Time: O(m+n)
+# Space: O(1)
+# notes: walk both lists; when a pointer hits the end switch it to the
+#        other head, so both meet at the intersection or at None
 class Solution2:
     # important method
     def getIntersectionNode(self, headA, headB):
@@ -39,12 +58,10 @@ class Solution2:
         return p1
 
 
-a = ListNode(2, ListNode(6, ListNode(4)))
-b = ListNode(1, ListNode(5))
-test = Solution2()
-test.getIntersectionNode(a, b)
-
-
+# Brute Force Approach
+# Time: O(m*n)
+# Space: O(1)
+# notes: for each node in A, scan all of B looking for the same node
 class Solution3:
     def getIntersectionNode(self, headA: ListNode, headB: ListNode) -> ListNode:
         while headA is not None:
@@ -56,3 +73,17 @@ class Solution3:
             headA = headA.next
 
         return None
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    # build a shared tail so the two lists intersect
+    shared = build([8, 4, 5])
+    a = ListNode(4, ListNode(1, shared))
+    b = ListNode(5, ListNode(6, ListNode(1, shared)))
+    assert sol.getIntersectionNode(a, b) is shared
+
+    # no intersection
+    a2 = build([2, 6, 4])
+    b2 = build([1, 5])
+    assert sol.getIntersectionNode(a2, b2) is None

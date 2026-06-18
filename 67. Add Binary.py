@@ -1,8 +1,11 @@
+# 67. Add Binary
+
 # Bit Manipulation
 # Time: O(n)
 # Space: O(1)
 # 2023.08.02: yes
-class Solution(object):
+# notes: parse both as ints, add, format the sum back to binary
+class Solution:
     def addBinary(self, a, b):
         """
         :type a: str
@@ -11,13 +14,19 @@ class Solution(object):
         """
         return bin(int(a, 2) + int(b, 2))[2:]
 
+
 # Bit-by-Bit Computation
 # Time: O(max(M,N))
 # Space: O(max(M,N))
 # 2023.08.02: no
-# notes: 纯一位位加，还是别看了
+# notes: pad to equal length, add bit by bit keeping a carry
 class Solution2:
     def addBinary(self, a, b) -> str:
+        """
+        :type a: str
+        :type b: str
+        :rtype: str
+        """
         n = max(len(a), len(b))
         a, b = a.zfill(n), b.zfill(n)
 
@@ -42,14 +51,20 @@ class Solution2:
 
         return ''.join(answer)
 
+
 # Bit Manipulation
 # Time: O(N+M)
 # Space: O(max(M,N))
 # 2023.08.02: no
-# notes: answer算出当前的位数可以被算到结果的，carry是算出，两个1需要进位的情况，左移就是进位，
-# loop的原因是防止多次重复进位，可以都加上去
+# notes: xor gives the sum without carry, (x & y) << 1 is the carry;
+#        loop until the carry is consumed
 class Solution3:
     def addBinary(self, a, b) -> str:
+        """
+        :type a: str
+        :type b: str
+        :rtype: str
+        """
         x, y = int(a, 2), int(b, 2)
         while y:
             answer = x ^ y
@@ -59,13 +74,8 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.addBinary("1010", "1011")
-
-# 0001
-
-# 1010  << 1      10100
-
-# 1, 10100
-# 10101, 0
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.addBinary("11", "1") == "100"
+    assert sol.addBinary("1010", "1011") == "10101"
+    assert sol.addBinary("0", "0") == "0"
+    assert sol.addBinary("1", "0") == "1"

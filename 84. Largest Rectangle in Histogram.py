@@ -1,13 +1,11 @@
+# 84. Largest Rectangle in Histogram
+
 # Using Stack (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.20: no
-# notes: 这道题，非常好，写一下思路， O(n)的情况
-# 要保证stack是increasing的order，放stack的时候放index就可以，因为可以直接看到元素
-# 如果下一个element比stack前一个元素大，直接压
-# 如果下一个element比stack前一个元素小，弹出前一个元素，算一下前一个元素的前一个元素的index是多少，就可以看出，这个前一个元素
-# 最大的面积是多少；一直弹出栈中元素，直到下一个元素比前面的元素大，弹完也可以
-# 全部遍历完一遍后，stack中的元素一个个弹出的时候，看前一个元素的index，确认面积
+# notes: keep a stack of indices with increasing heights; when a
+#        shorter bar comes, pop and settle each popped bar's area
 class Solution:
     def largestRectangleArea(self, heights):
         stack = [-1]
@@ -18,18 +16,19 @@ class Solution:
                 current_width = i - stack[-1] - 1
                 max_area = max(max_area, current_height * current_width)
             stack.append(i)
-
         while stack[-1] != -1:
             current_height = heights[stack.pop()]
             current_width = len(heights) - stack[-1] - 1
             max_area = max(max_area, current_height * current_width)
         return max_area
 
+
 # Divide and Conquer
 # Time: O(nlogn)
 # Space: O(n^2)
 # 2023.07.20: no
-# notes: 利用merge sort的方法去算出最大的面积，由最小的高度进行分割
+# notes: split at the lowest bar; the answer is the best of that bar
+#        spanning the whole range or the best in the left/right parts
 class Solution2:
     def largestRectangleArea(self, heights):
         def calculateArea(heights, start, end):
@@ -46,6 +45,10 @@ class Solution2:
             )
         return calculateArea(heights, 0, len(heights) - 1)
 
+
 # Tests:
-test = Solution2()
-test.largestRectangleArea([2,1,5,6,2,3])
+for sol in (Solution(), Solution2()):
+    assert sol.largestRectangleArea([2, 1, 5, 6, 2, 3]) == 10
+    assert sol.largestRectangleArea([2, 4]) == 4
+    assert sol.largestRectangleArea([0]) == 0
+    assert sol.largestRectangleArea([1, 1, 1, 1]) == 4

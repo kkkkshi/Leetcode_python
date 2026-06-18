@@ -1,9 +1,14 @@
+# 40. Combination Sum II
+
 # Backtracking
 # Time: O(2^n)
 # Space: O(n)
 # 2023.08.03: yes
-# notes: 根据counter算出每个元素的数量，遍历的时候根据元素遍历去扣除freq，就不会重复调用一个元素了
+# notes: build a (num, count) list from a Counter; during backtracking
+#        decrement a count when used so each element is not reused.
 from collections import Counter
+
+
 class Solution:
     def combinationSum2(self, candidates, target):
 
@@ -44,15 +49,12 @@ class Solution:
         return results
 
 
-test = Solution()
-test.combinationSum2([2,5,2,1,2], target = 5)
-
 # Backtracking
 # Time: O(2^n)
 # Space: O(n)
 # 2023.08.03: yes
-# notes: sort可以剪枝，因为比他大的肯定超出结果了，candidates[next_curr] == candidates[next_curr - 1]这个情况
-# 说明和前面的一样，也可以去掉，防止重复
+# notes: sort to prune (a too-large pick ends the branch); skip a
+#        candidate equal to its previous sibling to avoid duplicates.
 class Solution2:
     def combinationSum2(self, candidates, target):
 
@@ -85,3 +87,13 @@ class Solution2:
         return results
 
 
+# Tests:
+def norm(combos):
+    return sorted(sorted(c) for c in combos)
+
+
+for sol in (Solution(), Solution2()):
+    assert norm(sol.combinationSum2([2, 5, 2, 1, 2], 5)) == [[1, 2, 2], [5]]
+    assert norm(sol.combinationSum2([10, 1, 2, 7, 6, 1, 5], 8)) == \
+        [[1, 1, 6], [1, 2, 5], [1, 7], [2, 6]]
+    assert sol.combinationSum2([2, 2, 2], 5) == []

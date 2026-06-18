@@ -1,8 +1,12 @@
+# 150. Evaluate Reverse Polish Notation
+
 # stack Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.07.18: yes
-class Solution(object):
+# notes: push numbers on a stack; on an operator pop two operands,
+#        apply it, push the result back
+class Solution:
     def evalRPN(self, tokens):
         """
         :type tokens: List[str]
@@ -52,9 +56,13 @@ class Solution(object):
 # Time: O(n^2)
 # Space: O(1)
 # 2023.07.18: yes
-# notes: 可以，但是意义不大，写法参考意义不错
-class Solution2(object):
+# notes: works but not very useful; the style is worth a look
+class Solution2:
     def evalRPN(self, tokens):
+        """
+        :type tokens: List[str]
+        :rtype: int
+        """
         operations = {
             "+": lambda a, b: a + b,
             "-": lambda a, b: a - b,
@@ -64,7 +72,6 @@ class Solution2(object):
         current_position = 0
 
         while len(tokens) > 1:
-
             # Move the current position pointer to the next operator.
             while tokens[current_position] not in "+-*/":
                 current_position += 1
@@ -88,9 +95,9 @@ class Solution2(object):
 
 
 # Tests:
-test = Solution()
-test.evalRPN(["18"])
-test.evalRPN2(["10","6","9","3","+","-11","*","/","*","17","+","5","+"])
-test.evalRPN(["2","1","+","3","*"])
-test.evalRPN(["4","13","5","/","+"])
-
+for sol in (Solution(), Solution2()):
+    assert sol.evalRPN(["2", "1", "+", "3", "*"]) == 9
+    assert sol.evalRPN(["4", "13", "5", "/", "+"]) == 6
+    assert sol.evalRPN(
+        ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
+    ) == 22

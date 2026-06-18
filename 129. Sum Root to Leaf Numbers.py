@@ -1,15 +1,40 @@
+# 129. Sum Root to Leaf Numbers
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order build, None means missing node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # depth-first Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.03: yes
-class Solution(object):
+# notes: recurse down each path carrying the number built so far;
+#        at a leaf add it to the running total
+class Solution:
     def sumNumbers(self, root):
         """
         :type root: TreeNode
@@ -26,12 +51,19 @@ class Solution(object):
         recursion(root, 0)
         return self.total
 
+
 # breadth-first Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.03: yes
+# notes: walk the tree with a stack, building the number per node;
+#        add it at each leaf
 class Solution2:
-    def sumNumbers(self, root: TreeNode):
+    def sumNumbers(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
         root_to_leaf = 0
         stack = [(root, 0)]
 
@@ -53,8 +85,14 @@ class Solution2:
 # Time: O(n)
 # Space: O(1)
 # 2023.07.03: no
+# notes: thread predecessor links to traverse without a stack,
+#        summing each leaf number as it is reached
 class Solution3:
-    def sumNumbers(self, root: TreeNode):
+    def sumNumbers(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
         root_to_leaf = curr_number = 0
 
         while root:
@@ -107,6 +145,7 @@ class Solution3:
 
 
 # Tests:
-tree = TreeNode(4, TreeNode(9, TreeNode(5), TreeNode(1)), TreeNode(0))
-test = Solution3()
-test.sumNumbers(tree)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.sumNumbers(build([1, 2, 3])) == 25
+    assert sol.sumNumbers(build([4, 9, 0, 5, 1])) == 1026
+    assert sol.sumNumbers(build([1])) == 1

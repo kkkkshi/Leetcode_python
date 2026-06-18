@@ -1,11 +1,18 @@
+# 310. Minimum Height Trees
+
 # Breadth-First Search Approach
 # Time: O(v)
 # Space: O(v)
 # 2023.07.14: yes
-
+# notes: trim leaves layer by layer; the last 1 or 2 nodes left are
+#        the centroids that give the minimum height
 class Solution:
     def findMinHeightTrees(self, n, edges):
-
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: List[int]
+        """
         # edge cases
         if n <= 2:
             return [i for i in range(n)]
@@ -43,6 +50,11 @@ class Solution:
         # The remaining nodes are the centroids of the graph
         return leaves
 
+
 # Tests:
-test = Solution()
-test.findMinHeightTrees(4, [[1,0],[1,2],[1,3]])
+for sol in (Solution(),):
+    assert sorted(sol.findMinHeightTrees(4, [[1, 0], [1, 2], [1, 3]])) == [1]
+    assert sorted(sol.findMinHeightTrees(
+        6, [[3, 0], [3, 1], [3, 2], [3, 4], [5, 4]])) == [3, 4]
+    assert sorted(sol.findMinHeightTrees(1, [])) == [0]
+    assert sorted(sol.findMinHeightTrees(2, [[0, 1]])) == [0, 1]

@@ -1,8 +1,12 @@
+# 2405. Optimal Partition of String
+
 # Greedy
 # Time: O(n)
 # Space: O(1)
 # 2023.08.17: yes
-class Solution(object):
+# notes: keep extending the current substring; on a repeat char start
+#        a new substring and count one more partition
+class Solution:
     def partitionString(self, s):
         """
         :type s: str
@@ -18,7 +22,10 @@ class Solution(object):
                 saving = [i]
         return res+1
 
+
 # Tests:
-test = Solution()
-test.partitionString("abacaba")
-test.partitionString("ssssss")
+for sol in (Solution(),):
+    assert sol.partitionString("abacaba") == 4
+    assert sol.partitionString("ssssss") == 6
+    assert sol.partitionString("abc") == 1
+    assert sol.partitionString("a") == 1

@@ -1,9 +1,14 @@
+# 43. Multiply Strings
+
 # Sum the products from all pairs of digits
 # Time: O(mn)
 # Space: O(m+n)
 # 2023.09.28: no
+# notes: digit i*j lands at positions i+j (carry) and i+j+1; sum
+#        all products into a result array, then resolve carries
 from itertools import zip_longest
 from typing import List
+
 
 class Solution:
     def multiply(self, num1: str, num2: str) -> str:
@@ -22,10 +27,13 @@ class Solution:
                 break
         return ''.join(str(e) for e in result[l:]) if result else "0"
 
+
 # Elementary Math
 # Time: O(m*(m+n))
 # Space: O(n)
 # 2023.09.28: no
+# notes: reverse both numbers, multiply num1 by each digit of num2,
+#        then add the shifted partial products together
 class Solution2:
     def multiply(self, num1: str, num2: str) -> str:
         if num1 == "0" or num2 == "0":
@@ -97,6 +105,8 @@ class Solution2:
 # Time: O(m*(m+n))
 # Space: O(n+m)
 # 2023.09.28: no
+# notes: same partial-product idea but accumulates each product
+#        straight into one answer array to save memory
 class Solution3:
     def multiply(self, num1: str, num2: str) -> str:
         if num1 == "0" or num2 == "0":
@@ -156,8 +166,9 @@ class Solution3:
         return new_answer
 
 
-
-test = Solution()
-test.multiply("999", "999")
-test.multiply("123", "456")
-test.multiply("2", "3")
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.multiply("999", "999") == "998001"
+    assert sol.multiply("123", "456") == "56088"
+    assert sol.multiply("2", "3") == "6"
+    assert sol.multiply("0", "52") == "0"

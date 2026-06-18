@@ -1,10 +1,11 @@
+# 1143. Longest Common Subsequence
+
 # Improved Memoization - Top down Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.24: no
-# notes: 用cache或者用memo table存效果一样，两个情况，第一，这个字符匹配，p1, p2都往右一格
-# 第二情况，不匹配，p1往右一格，或者p2往右一格，或者都不存在（该情况可以被前两个情况覆盖，不用考虑）
-# max(最长子串即可)
+# notes: cache or memo table works the same; if chars match move both
+#        pointers right, else move one of them right and take the max
 from functools import lru_cache
 class Solution:
     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
@@ -27,11 +28,12 @@ class Solution:
 
         return memo_solve(0, 0)
 
+
 # Bottom Up Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.24: no
-# notes: 同步上一个方法，只是用的iteration的方法，更清晰一点
+# notes: same as the previous method but iterative, a bit clearer
 class Solution2:
     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
 
@@ -57,7 +59,8 @@ class Solution2:
 # Time: O(min(m,n))
 # Space: O(min(m,n))
 # 2023.07.24: no
-# notes: 更新最近两行足以，不需要追踪整个2d表
+# notes: keeping the last two columns is enough, no need for the full
+#        2d table
 class Solution3:
     def longestCommonSubsequence(self, text1: str, text2: str) -> int:
 
@@ -82,3 +85,11 @@ class Solution3:
 
         # The original problem's answer is in previous[0]. Return it.
         return previous[0]
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.longestCommonSubsequence("abcde", "ace") == 3
+    assert sol.longestCommonSubsequence("abc", "abc") == 3
+    assert sol.longestCommonSubsequence("abc", "def") == 0
+    assert sol.longestCommonSubsequence("bsbininm", "jmjkbkjkv") == 1

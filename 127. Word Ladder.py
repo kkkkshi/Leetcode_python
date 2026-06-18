@@ -1,11 +1,16 @@
+# 127. Word Ladder
+
+import collections
+from collections import defaultdict
+
+
 # BFS Approach
 # Time: O(m^2*n)
 # Space: O(m^2*n)
 # 2023.07.13: no
-import collections
-from collections import defaultdict
-
-class Solution(object):
+# notes: map each wildcard pattern (one letter as *) to its words,
+#        then BFS from beginWord through shared patterns to endWord
+class Solution:
     def ladderLength(self, beginWord, endWord, wordList):
         """
         :type beginWord: str
@@ -53,18 +58,14 @@ class Solution(object):
                 all_combo_dict[intermediate_word] = []
         return 0
 
-# Tests:
-test = Solution()
-test.ladderLength("hit","cog", ["hot","dot","dog","lot","log","cog"])
 
 # Bidirectional Breadth First Search
 # Time: O(m^2*n)
 # Space: O(m^2*n)
 # 2023.07.13: no
-from collections import defaultdict
-
-
-class Solution2(object):
+# notes: BFS from both ends at once, always advancing the smaller
+#        frontier; when the two visited sets meet, add their levels
+class Solution2:
     def __init__(self):
         self.length = 0
         # Dictionary to hold combination of words that can be formed,
@@ -133,3 +134,10 @@ class Solution2(object):
                 return ans
 
         return 0
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log", "cog"]) == 5
+    assert sol.ladderLength("hit", "cog", ["hot", "dot", "dog", "lot", "log"]) == 0
+    assert sol.ladderLength("a", "c", ["a", "b", "c"]) == 2

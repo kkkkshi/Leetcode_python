@@ -1,9 +1,11 @@
+# 283. Move Zeroes
+
 # Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.08: yes
-
-class Solution(object):
+# notes: copy non-zero values forward, then fill the rest with zeros
+class Solution:
     def moveZeroes(self, nums):
         """
         :type nums: List[int]
@@ -21,20 +23,33 @@ class Solution(object):
             nums[i] = 0
         return nums
 
+
 # Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.08: yes
 # notes: mark the place we don't have non zero
-class Solution2(object):
-    def moveZeroes(self,nums):
+class Solution2:
+    def moveZeroes(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: None
+        """
         lastNonZeroFoundAt = 0
         for cur in range(len(nums)):
             if nums[cur] != 0:
                 nums[lastNonZeroFoundAt], nums[cur] = nums[cur], nums[lastNonZeroFoundAt]
                 lastNonZeroFoundAt += 1
 
-test = Solution()
-a = test.moveZeroes([1,2,0,3,2,0])
-b = test.moveZeroes([0,0,1])
-c = test.moveZeroes([0])
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    a = [1, 2, 0, 3, 2, 0]
+    sol.moveZeroes(a)
+    assert a == [1, 2, 3, 2, 0, 0]
+    b = [0, 0, 1]
+    sol.moveZeroes(b)
+    assert b == [1, 0, 0]
+    c = [0]
+    sol.moveZeroes(c)
+    assert c == [0]

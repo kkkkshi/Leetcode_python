@@ -1,12 +1,14 @@
+# 57. Insert Interval
+
 # Linear Search Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.24: yes
-# notes: 先把new interval放进去排列，然后再合并
+# notes: drop the new interval into sorted order first, then merge
 from bisect import bisect
 
 
-class Solution(object):
+class Solution:
     def temp_insert(self, intervals, newInterval):
         inserted = False
         results = []
@@ -41,15 +43,22 @@ class Solution(object):
                 new_array.pop(0)
         return results
 
+
 # Binary Search Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.24: no
-# notes: 说是bisect其实只是插入的时候用binary search，后面合并还是O(n)啊，意义何在。。。
+# notes: bisect only helps the insert step, the later merge is still
+#        O(n), so what's the point...
 class Solution2:
     def insert(self, intervals, newInterval):
+        """
+        :type intervals: List[List[int]]
+        :type newInterval: List[int]
+        :rtype: List[List[int]]
+        """
         # O(logN)
-        position = bisect.bisect(intervals, newInterval)
+        position = bisect(intervals, newInterval)
         # O(N)
         intervals.insert(position, newInterval)
 
@@ -65,18 +74,9 @@ class Solution2:
 
 
 # Tests:
-test = Solution()
-# test.temp_insert([[1,5]], [6,8])
-test.insert(intervals=[[1,5]], newInterval=[6,8])
-test.insert(intervals=[], newInterval=[5,7])
-test.insert(intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,8])
-test.insert(intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [3,8])
-test.insert(intervals = [[1,2],[3,5],[6,7],[8,10],[12,16]], newInterval = [4,5])
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.insert([[1, 5]], [6, 8]) == [[1, 5], [6, 8]]
+    assert sol.insert([], [5, 7]) == [[5, 7]]
+    assert sol.insert([[1, 2], [3, 5], [6, 7], [8, 10], [12, 16]], [4, 8]) == \
+        [[1, 2], [3, 10], [12, 16]]
+    assert sol.insert([[1, 3], [6, 9]], [2, 5]) == [[1, 5], [6, 9]]

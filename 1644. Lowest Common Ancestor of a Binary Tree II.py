@@ -1,14 +1,18 @@
-class TreeNode(object):
+# 1644. Lowest Common Ancestor of a Binary Tree II
+
+class TreeNode:
     def __init__(self, x, left = None, right = None):
         self.val = x
         self.left = left
         self.right = right
 
+
 # Recursive Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: no
-# notes: 是个236的改版，只是需要多加一部，找到q和p，而且必须全部遍历
+# notes: a variant of 236; one extra step is to confirm both p and q
+#        exist, which means the whole tree must be traversed
 class Solution:
     def lowestCommonAncestor(self, root, p, q):
         found = {'foundP': False, 'foundQ': False}
@@ -34,13 +38,16 @@ class Solution:
 
         return root if root.val == val1 or root.val == val2 else left or right
 
+
 # Depth First Search - 2/3 Conditions Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: no
-# notes: 惊为天人，三个条件达成两个即可，1. node是p或者q， 2. p或者q在left tree， 3. p或者q在right tree
-# 如果达成就返回，如果没打成就返回左边或者右边，因为左边可能达成了，或者右边可能达成了
-# 回到root都没有就是None
+# notes: brilliant; meeting two of three conditions is enough: 1. node
+#        is p or q, 2. p or q is in the left tree, 3. p or q is in the
+#        right tree. If met return the node, else return left or right
+#        since one side may have matched. Reaching root with nothing
+#        means None
 class Solution2:
     def lowestCommonAncestor(self, root, p, q):
         self.nodes_found = False
@@ -65,17 +72,21 @@ class Solution2:
         ans = dfs(root)
         return ans if self.nodes_found else None
 
+
 # Tests:
-root = TreeNode(3)
-root.left = TreeNode(5)
-root.right = TreeNode(1)
-root.left.left = p = TreeNode(6)
-root.left.right = TreeNode(2)
-root.left.right.left = q = TreeNode(7)
-root.left.right.right = TreeNode(4)
-root.right.left = TreeNode(0)
-root.right.right = TreeNode(8)
+for sol in (Solution(), Solution2()):
+    root = TreeNode(3)
+    root.left = n5 = TreeNode(5)
+    root.right = n1 = TreeNode(1)
+    root.left.left = n6 = TreeNode(6)
+    root.left.right = TreeNode(2)
+    root.left.right.left = n7 = TreeNode(7)
+    root.left.right.right = n4 = TreeNode(4)
+    root.right.left = TreeNode(0)
+    root.right.right = TreeNode(8)
 
-
-test = Solution2()
-result = test.lowestCommonAncestor(root, p, q)
+    assert sol.lowestCommonAncestor(root, n5, n1) is root
+    assert sol.lowestCommonAncestor(root, n5, n4) is n5
+    assert sol.lowestCommonAncestor(root, n6, n7) is n5
+    # q is not in the tree, so there is no common ancestor
+    assert sol.lowestCommonAncestor(root, n5, TreeNode(99)) is None

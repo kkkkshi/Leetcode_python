@@ -1,8 +1,14 @@
+# 271. Encode and Decode Strings
+
+from six import unichr
+
+
 # Non-ASCII Delimiter Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.23: no
-from six import unichr
+# notes: join strings with a rare non-ASCII char as a delimiter and
+#        split on it to decode; chr(258) marks the empty list
 class Codec:
     def encode(self, strs):
         """Encodes a list of strings to a single string.
@@ -24,10 +30,13 @@ class Codec:
             return []
         return s.split(unichr(257))
 
+
 # Chunked Transfer Encoding Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.23: no
+# notes: prefix each string with its 4-byte length, then read that
+#        many chars back when decoding; no delimiter needed
 class Codec2:
     def len_to_str(self, x):
         """
@@ -45,7 +54,7 @@ class Codec2:
         :rtype: str
         """
         # encode here is a workaround to fix BE CodecDriver error
-        return ''.join(self.len_to_str(x) + x.encode('utf-8') for x in strs)
+        return ''.join(self.len_to_str(x) + x for x in strs)
 
     def str_to_int(self, bytes_str):
         """
@@ -70,6 +79,10 @@ class Codec2:
             i += length
         return output
 
+
 # Tests:
-codec = Codec2()
-codec.decode(codec.encode(["Hello","World"]))
+for codec in (Codec(), Codec2()):
+    assert codec.decode(codec.encode(["Hello","World"])) == ["Hello","World"]
+    assert codec.decode(codec.encode([])) == []
+    assert codec.decode(codec.encode([""])) == [""]
+    assert codec.decode(codec.encode(["a","","bc"])) == ["a","","bc"]

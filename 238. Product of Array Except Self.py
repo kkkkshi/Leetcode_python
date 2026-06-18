@@ -1,8 +1,12 @@
+# 238. Product of Array Except Self
+
 # Left and Right product lists Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.23: yes
-class Solution(object):
+# notes: prefix products from the left and the right, then multiply the
+#        matching prefix and suffix for each index
+class Solution:
     def productExceptSelf(self, nums):
         """
         :type nums: List[int]
@@ -19,14 +23,19 @@ class Solution(object):
             results.append(left_product[j] * right_product[len(nums)-(j+1)])
         return results
 
+
 # O(1) space approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.23: no
-# notes: 和上面方法基本一样，只不过把left变成results， 然后right是一边算一边乘上去，因为results不算space
+# notes: same idea, but store the left product in answer and multiply
+#        the right product in on a second pass (output not counted)
 class Solution2:
     def productExceptSelf(self, nums):
-
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
         # The length of the input array
         length = len(nums)
 
@@ -55,7 +64,9 @@ class Solution2:
 
         return answer
 
-nums = [1,2,3,4]
-test = Solution()
-test.productExceptSelf(nums)
 
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.productExceptSelf([1,2,3,4]) == [24,12,8,6]
+    assert sol.productExceptSelf([-1,1,0,-3,3]) == [0,0,9,0,0]
+    assert sol.productExceptSelf([2,3]) == [3,2]

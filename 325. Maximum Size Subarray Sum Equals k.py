@@ -1,10 +1,18 @@
+# 325. Maximum Size Subarray Sum Equals k
+
 # Prefix+Hashmap
 # Time: O(n)
 # Space: O(1)
 # 2023.08.19: yes
-# notes: prefix+hashmap，遇到过的可能性都存起来，像2sum的比对方法
+# notes: prefix sum + hashmap, store each prefix's first index and look
+#        up prefix_sum - k, like the two-sum compare trick
 class Solution:
     def maxSubArrayLen(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: int
+        """
         prefix_sum = longest_subarray = 0
         indices = {}
 
@@ -26,6 +34,11 @@ class Solution:
                 indices[prefix_sum] = i
 
         return longest_subarray
+
+
 # Tests:
-test = Solution()
-test.maxSubArrayLen(nums = [1,-1,5,-2,3], k = 3)
+for sol in (Solution(),):
+    assert sol.maxSubArrayLen([1, -1, 5, -2, 3], 3) == 4
+    assert sol.maxSubArrayLen([-2, -1, 2, 1], 1) == 2
+    assert sol.maxSubArrayLen([1, 2, 3], 7) == 0
+    assert sol.maxSubArrayLen([1, 1, 0], 1) == 2

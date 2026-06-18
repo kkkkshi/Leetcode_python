@@ -1,12 +1,22 @@
+# 2534. Time Taken to Cross the Door
+
+from collections import deque
+
+
 # Queue
 # Time: O(n)
 # Space: O(1)
 # 2023.08.18: yes
-# notes: 有些情况可以合并，比如初始化可以为1，小于当前时间的都可以放进去，看上去是double loop，实际上O(n)
-from collections import deque
-
+# notes: keep an enter queue and an exit queue; each second admit all
+#        arrivals so far, then let one through favoring the prev side;
+#        looks like a double loop but is O(n) overall
 class Solution:
     def timeTaken(self, arrival, state):
+        """
+        :type arrival: List[int]
+        :type state: List[int]
+        :rtype: List[int]
+        """
         enter_pool, exit_pool = deque(),deque()
         cur_time = 0
         prev_state = 1
@@ -36,6 +46,9 @@ class Solution:
             cur_time += 1
         return ans
 
+
 # Tests:
-test = Solution()
-test.timeTaken(arrival = [0,1,1,2,4], state = [0,1,0,0,1])
+for sol in (Solution(),):
+    assert sol.timeTaken([0,1,1,2,4], [0,1,0,0,1]) == [0,3,1,2,4]
+    assert sol.timeTaken([0,0,0], [1,0,1]) == [0,2,1]
+    assert sol.timeTaken([5], [0]) == [5]

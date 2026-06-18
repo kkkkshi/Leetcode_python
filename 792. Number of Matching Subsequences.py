@@ -1,17 +1,21 @@
-# Greedy Match with Character Indices Hashmap
-# Time: O(S.length+∑iwords[i].length)
-# Space: O(word length)
-# 2023.10.01: no
+# 792. Number of Matching Subsequences
+
 from bisect import bisect_right
 from collections import defaultdict
 from typing import List
 
+
+# Greedy Match with Character Indices Hashmap
+# Time: O(S.length+∑iwords[i].length)
+# Space: O(word length)
+# 2023.10.01: no
+# notes: store each letter's positions in s; for every word, binary
+#        search the next position strictly after the last match
 class Solution:
     def numMatchingSubseq(self, s: str, words: List[str]) -> int:
         letter_indices_table = defaultdict(list)
         for index, letter in enumerate(s):
             letter_indices_table[letter].append(index)
-        print(letter_indices_table)
         result = 0
         for word in words:
             curr_match_index = -1
@@ -30,12 +34,14 @@ class Solution:
                 result += 1
         return result
 
+
 # Next Letter Pointers
 # Time: O(S.length+∑iwords[i].length)
 # Space: O(word length)
 # 2023.10.01: no
-# notes: 相当聪明的方法，根据iter把所有单词，根据第一个字母放进26个桶里，然后遍历s即可，如果当前这个word没有下一个了，代表空了，ans+1
-class Solution2(object):
+# notes: bucket each word by its first letter as an iterator; scan s and
+#        advance matched iterators, counting one when an iterator empties
+class Solution2:
     def numMatchingSubseq(self, S, words):
         ans = 0
         heads = [[] for _ in range(26)]
@@ -58,7 +64,8 @@ class Solution2(object):
         return ans
 
 
-
-test = Solution()
-test.numMatchingSubseq("abcdec", ["a","bb","acd","aec"])
-test.numMatchingSubseq("dsahjpjauf", ["ahjpjau","ja","ahbwzgqnuk","tnmlanowax"])
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.numMatchingSubseq("abcde", ["a","bb","acd","ace"]) == 3
+    assert sol.numMatchingSubseq("dsahjpjauf", ["ahjpjau","ja","ahbwzgqnuk","tnmlanowax"]) == 2
+    assert sol.numMatchingSubseq("abc", []) == 0

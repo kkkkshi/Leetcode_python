@@ -1,11 +1,16 @@
+# 31. Next Permutation
+
 # Single Pass Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.09.12: yes
-# notes: 交换必须一个个交互，无语，方法是先确定正确顺序的那一个，然后从后往前遍历，确认比那一个大的数字，交互，再逆序排列后半部分
-# 如果没有找到顺序的那一个，证明全部都是逆序，直接翻转整个array
-# brute force是n!，不写了
+# notes: scan from the right to find the first ascending pair, then
+#        swap that pivot with the next larger value to its right and
+#        reverse the suffix; if none is found the array is fully
+#        descending, so just reverse the whole array
+# brute force is n! permutations, skipped
 from typing import List
+
 
 class Solution:
     def nextPermutation(self, nums: List[int]) -> None:
@@ -22,13 +27,21 @@ class Solution:
         nums[:] = nums[::-1]
         return
 
+
 # Tests:
-test = Solution()
-test.nextPermutation([3,2,1])
-test.nextPermutation([5,1,1])
-test.nextPermutation([1,5,1])
-test.nextPermutation([1,1,5])
-test.nextPermutation([2,3,1])
-test.nextPermutation([2,1,3])
-test.nextPermutation([1,3,2])
-test.nextPermutation([1,2,3])
+for sol in (Solution(),):
+    nums = [1, 2, 3]
+    sol.nextPermutation(nums)
+    assert nums == [1, 3, 2]
+
+    nums = [3, 2, 1]
+    sol.nextPermutation(nums)
+    assert nums == [1, 2, 3]
+
+    nums = [1, 1, 5]
+    sol.nextPermutation(nums)
+    assert nums == [1, 5, 1]
+
+    nums = [1, 3, 2]
+    sol.nextPermutation(nums)
+    assert nums == [2, 1, 3]

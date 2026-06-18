@@ -1,11 +1,17 @@
+# 56. Merge Intervals
+
+import collections
+from typing import List
+
+
 # Sorting Approach (best approach)
 # Time: O(nlogn)
 # Space: O(logn)
 # 2023.06.24: yes
-# 2023.09.11: update一下，这是9月11日的代码，简洁多了，很棒，我变秃了也变强了
-import collections
-from typing import List
-
+# 2023.09.11: redid it, this Sep 11 version is much cleaner, nice,
+#             I went bald but got stronger
+# notes: sort by start, then sweep; extend the last interval when
+#        the next one overlaps, else start a new one
 class Solution:
     def merge(self, intervals: List[List[int]]) -> List[List[int]]:
         intervals = sorted(intervals, key = lambda x: (x[0], x[1]))
@@ -20,15 +26,14 @@ class Solution:
         return results
 
 
-
 # Connected Components Approach
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.06.24: no
-# 9月11日 update一下，就是变成图，1. 构建相连节点buildGraph
-# 2. getComponents把相邻的节点合并
-# 3. mergeNodes输出结果
-# 但是真的写的很麻烦，就算用图应该也写不了这么多，无语
+# Sep 11 redo: turn it into a graph. 1. buildGraph links nodes,
+# 2. getComponents merges adjacent nodes, 3. mergeNodes outputs.
+# But it's really a pain to write; even with a graph it shouldn't
+# need this much code, speechless
 class Solution2:
     def overlap(self, a, b):
         return a[0] <= b[1] and b[0] <= a[1]
@@ -74,7 +79,6 @@ class Solution2:
 
         return nodes_in_comp, comp_number
 
-
     def merge(self, intervals: List[List[int]]) -> List[List[int]]:
         graph = self.buildGraph(intervals)
         nodes_in_comp, number_of_comps = self.getComponents(graph, intervals)
@@ -83,12 +87,10 @@ class Solution2:
         return [self.mergeNodes(nodes_in_comp[comp]) for comp in range(number_of_comps)]
 
 
-
 # Tests:
-intervals = [[8,10],[1,3],[2,6],[15,18]]
-intervals2 = [[1,4],[4,5]]
-intervals3 = [[1,3]]
-test = Solution2()
-test.merge(intervals)
-test.merge(intervals3)
-test.merge(intervals2)
+for sol in (Solution(), Solution2()):
+    assert sorted(sol.merge([[8, 10], [1, 3], [2, 6], [15, 18]])) == \
+        [[1, 6], [8, 10], [15, 18]]
+    assert sorted(sol.merge([[1, 4], [4, 5]])) == [[1, 5]]
+    assert sorted(sol.merge([[1, 3]])) == [[1, 3]]
+    assert sorted(sol.merge([[1, 4], [2, 3]])) == [[1, 4]]

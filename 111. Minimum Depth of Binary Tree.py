@@ -1,15 +1,20 @@
+# 111. Minimum Depth of Binary Tree
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
 # Breadth-first Search
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-class Solution(object):
+# notes: BFS level by level; the first leaf reached sits at the
+#        minimum depth, so return that level
+class Solution:
     def minDepth(self, root):
         """
         :type root: TreeNode
@@ -32,10 +37,12 @@ class Solution(object):
             level +=1
         return level
 
+
 # Tests:
 tree = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
 tree2 = TreeNode(2, None, TreeNode(3, None, TreeNode(4, None, TreeNode(5, None, TreeNode(6)))))
-result = Solution()
-result.minDepth(tree2)
-
-
+for sol in (Solution(),):
+    assert sol.minDepth(tree) == 2
+    assert sol.minDepth(tree2) == 5
+    assert sol.minDepth(None) == 0
+    assert sol.minDepth(TreeNode(1)) == 1

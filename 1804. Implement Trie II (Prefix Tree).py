@@ -1,15 +1,19 @@
+# 1804. Implement Trie II (Prefix Tree)
+
 # Trie
 # Time: insert, search, search_prefix: O(m)
 # Space: insert: O(m), search, search_prefix: O(1)
 # 2023.07.16: yes
+# notes: each node tracks val (word ends here) and passby (words
+#        passing through), so counts and prefixes are O(m)
 class TrieNode:
     def __init__(self):
         self.val = 0
         self.passby = 0
         self.children = {}
 
-class Trie(object):
 
+class Trie:
     def __init__(self):
         self.root = TrieNode()
 
@@ -63,35 +67,16 @@ class Trie(object):
             node.passby -= 1
         node.val -= 1
 
+
 # Tests:
-obj3 = Trie()
-obj3.countWordsEqualTo("w")
-obj3.insert("w")
-obj3.erase("w")
-obj3.countWordsStartingWith("w")
-obj3.insert("w")
-
-
-obj2 = Trie()
-obj2.insert("cu")
-obj2.countWordsEqualTo("cu")
-obj2.countWordsEqualTo("cu")
-obj2.insert("cu")
-obj2.countWordsStartingWith("c")
-obj2.insert("cye")
-obj2.countWordsStartingWith("c")
-obj2.insert("cu")
-obj2.countWordsStartingWith("c")
-obj2.erase("cu")
-
-obj = Trie()
-obj.insert("apple")
-obj.insert("apple")
-obj.countWordsEqualTo("apple")
-obj.countWordsStartingWith("app")
-obj.erase("apple")
-obj.countWordsEqualTo("apple")
-obj.countWordsStartingWith("app")
-obj.erase("apple")
-obj.countWordsStartingWith("app")
-
+trie = Trie()
+trie.insert("apple")
+trie.insert("apple")
+assert trie.countWordsEqualTo("apple") == 2
+assert trie.countWordsStartingWith("app") == 2
+trie.erase("apple")
+assert trie.countWordsEqualTo("apple") == 1
+assert trie.countWordsStartingWith("app") == 1
+trie.erase("apple")
+assert trie.countWordsStartingWith("app") == 0
+assert trie.countWordsEqualTo("apple") == 0

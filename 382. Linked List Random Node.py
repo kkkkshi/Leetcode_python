@@ -1,14 +1,26 @@
+# 382. Linked List Random Node
+
 # Fisher-Yates Algorithm
 # Time: O(n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: Reservoir Sampling，水塘抽样法，很玄学，证明更玄学，先跳过
+# notes: reservoir sampling; the math is unintuitive, skip the proof
 import random
+
+
 # Definition for singly-linked list.
 class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+
+
+def build(values):
+    head = None
+    for v in reversed(values):
+        head = ListNode(v, head)
+    return head
+
 
 class Solution:
     def __init__(self, head):
@@ -23,17 +35,17 @@ class Solution:
         i = 0
         res = 0
         p = self.head
-        # while 循环遍历链表
+        # iterate over the linked list
         while p != None:
             i = i + 1
-            # 生成一个 [0, i) 之间的整数
-            # 这个整数等于 0 的概率就是 1/i
+            # generate an integer in [0, i)
+            # the chance it equals 0 is 1/i
             if 0 == r.randint(0, i - 1):
                 res = p.val
             p = p.next
         return res
 
-    # 标答
+    # reference solution
     def getRandom2(self):
         """
         Returns a random node's value.
@@ -50,6 +62,13 @@ class Solution:
             curr = curr.next
             scope += 1
         return chosen_value
+
+
 # Tests:
-obj = Solution(ListNode(1, ListNode(2, ListNode(3))))
-param_1 = obj.getRandom()
+obj = Solution(build([7]))
+assert obj.getRandom() == 7
+assert obj.getRandom2() == 7
+
+obj = Solution(build([1, 2, 3]))
+assert obj.getRandom() in (1, 2, 3)
+assert obj.getRandom2() in (1, 2, 3)

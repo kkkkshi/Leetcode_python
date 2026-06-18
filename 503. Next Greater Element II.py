@@ -1,9 +1,11 @@
+# 503. Next Greater Element II
+
 # Monotonic Stack Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.15: yes
-# notes: 记录序号，环的话，一般用%来解决
-class Solution(object):
+# notes: store indices; handle the circular array with modulo
+class Solution:
     def nextGreaterElements(self, nums):
         """
         :type nums: List[int]
@@ -19,7 +21,10 @@ class Solution(object):
             s.append(nums[i%n])
         return res
 
-# Tests:
-test = Solution()
-test.nextGreaterElements([1,2,1])
 
+# Tests:
+for sol in (Solution(),):
+    assert sol.nextGreaterElements([1, 2, 1]) == [2, -1, 2]
+    assert sol.nextGreaterElements([1, 2, 3, 4, 3]) == [2, 3, 4, -1, 4]
+    assert sol.nextGreaterElements([5, 4, 3, 2, 1]) == [-1, 5, 5, 5, 5]
+    assert sol.nextGreaterElements([1]) == [-1]

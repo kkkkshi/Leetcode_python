@@ -1,15 +1,41 @@
+# 100. Same Tree
+
+from collections import deque
+
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order list -> tree, None marks a missing node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    q = deque([root])
+    i = 1
+    while q and i < len(values):
+        node = q.popleft()
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            q.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            q.append(node.right)
+        i += 1
+    return root
+
+
 # depth-first Search Approach (best approach)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-class Solution(object):
+class Solution:
     def isSameTree(self, p, q):
         """
         :type p: TreeNode
@@ -41,11 +67,12 @@ class Solution(object):
         else:
             return False
 
+
 # depth-first Search Approach (best approach)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-# notes: 一样的方法和上面就是写的简单点
+# notes: same method as above, just written more concisely
 class Solution2:
     def isSameTree(self, p, q):
         """
@@ -65,7 +92,6 @@ class Solution2:
                self.isSameTree(p.left, q.left)
 
 
-from collections import deque
 # breadth-first Search Approach (best approach)
 # Time: O(n)
 # Space: O(d), d is diameter
@@ -77,7 +103,6 @@ class Solution3:
         :type q: TreeNode
         :rtype: bool
         """
-
         def check(p, q):
             # if both are None
             if not p and not q:
@@ -101,14 +126,11 @@ class Solution3:
 
         return True
 
+
 # Tests:
-a = TreeNode(1,
-             TreeNode(3, TreeNode(4), TreeNode(5)),
-             TreeNode(3, TreeNode(6), TreeNode(7))
-             )
-b = TreeNode(1,
-             TreeNode(2, TreeNode(4), TreeNode(5)),
-             TreeNode(3, TreeNode(6), TreeNode(7))
-             )
-test = Solution()
-test.isSameTree(a, b)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isSameTree(build([1, 2, 3]), build([1, 2, 3])) == True
+    assert sol.isSameTree(build([1, 2]), build([1, None, 2])) == False
+    assert sol.isSameTree(build([1, 2, 1]), build([1, 1, 2])) == False
+    assert sol.isSameTree(build([]), build([])) == True
+    assert sol.isSameTree(build([1]), build([])) == False

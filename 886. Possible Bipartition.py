@@ -1,10 +1,15 @@
+# 886. Possible Bipartition
+
 # Depth-First Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.05: yes
+# notes: build the dislike graph, color each node opposite its neighbors
+#        via DFS; if a neighbor already has the same color, not bipartite.
 from collections import deque
 
-class Solution(object):
+
+class Solution:
     def possibleBipartition(self, n, dislikes):
         """
         :type n: int
@@ -31,16 +36,25 @@ class Solution(object):
         graph = [[] for _ in range(n+1)]
         for i in dislikes:
             graph[i[0]].append(i[1])
+            graph[i[1]].append(i[0])
         for j in range(1, len(graph)):
             traverse(graph, j)
         return self.biparted
+
 
 # Breadth-First Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.05: yes
+# notes: same idea with BFS; run it once per connected component and bail
+#        out the moment two disliking nodes share a color.
 class Solution2:
     def possibleBipartition(self, n, dislikes):
+        """
+        :type n: int
+        :type dislikes: List[List[int]]
+        :rtype: bool
+        """
         def bfs(source):
             q = deque([source])
             color[source] = 0  # Start with marking source as 'RED'
@@ -68,10 +82,13 @@ class Solution2:
                     return False
         return True
 
+
 # Union-Find Approach
 # Time: O(n+e)
 # Space: O(n+e)
 # 2023.07.05: yes
+# notes: every node's neighbors must land in one set; if a node and its
+#        own neighbor share a set, they cannot be split, so not bipartite.
 class UnionFind:
     def __init__(self, size):
         self.parent = list(range(size))
@@ -97,8 +114,14 @@ class UnionFind:
             self.parent[yset] = xset
             self.rank[xset] += 1
 
+
 class Solution3:
     def possibleBipartition(self, n, dislikes):
+        """
+        :type n: int
+        :type dislikes: List[List[int]]
+        :rtype: bool
+        """
         adj = [[] for _ in range(n + 1)]
         for dislike in dislikes:
             adj[dislike[0]].append(dislike[1])
@@ -113,7 +136,9 @@ class Solution3:
                 dsu.union_set(adj[node][0], neighbor)
         return True
 
+
 # Tests:
-test = Solution3()
-test.possibleBipartition(n = 3, dislikes = [[1,2],[1,3],[2,3]])
-test.possibleBipartition(n = 4, dislikes = [[1,2],[1,3],[2,4]])
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.possibleBipartition(4, [[1, 2], [1, 3], [2, 4]]) is True
+    assert sol.possibleBipartition(3, [[1, 2], [1, 3], [2, 3]]) is False
+    assert sol.possibleBipartition(5, [[1, 2], [3, 4], [4, 5], [1, 5]]) is True

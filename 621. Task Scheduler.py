@@ -1,12 +1,15 @@
+# 621. Task Scheduler
+
 # Math
 # Time: O(n)
 # Space: O(1)
 # 2023.07.20: yes
-# notes: 两种情况，第一，most_frequency_element太大， 要确认有几个最大frequency,因为要排到后面，用
-# (most_common_frequency-1) * (n+1) + most_common_elements， 或者就是长度更大，取max这两个中的一个
-# 最重要的是确认有几个最大frequency
+# notes: two cases. first, the most frequent task is large: count how
+#        many tasks share that max frequency since they go at the end,
+#        use (most_common_frequency-1) * (n+1) + most_common_elements.
+#        otherwise the length itself is larger; take the max of the two
 from collections import Counter
-class Solution(object):
+class Solution:
     def leastInterval(self, tasks, n):
         """
         :type tasks: List[str]
@@ -22,13 +25,20 @@ class Solution(object):
         else:
             return (most_common_frequency-1) * (n+1) + most_common_elements
 
+
 # Greedy
 # Time: O(n)
 # Space: O(1)
 # 2023.07.20: yes
-# notes: 看消耗了多少idle time，每次只能消耗max_frequencies-1个
+# notes: see how much idle time is used; each step can fill at most
+#        max_frequency-1 slots
 class Solution2:
     def leastInterval(self, tasks, n):
+        """
+        :type tasks: List[str]
+        :type n: int
+        :rtype: int
+        """
         # frequencies of the tasks
         frequencies = [0] * 26
         for t in tasks:
@@ -46,6 +56,10 @@ class Solution2:
 
         return idle_time + len(tasks)
 
+
 # Tests:
-test = Solution2()
-test.leastInterval(tasks = ["A","A","A","B","B","B"], n = 2)
+for sol in (Solution(), Solution2()):
+    assert sol.leastInterval(["A","A","A","B","B","B"], 2) == 8
+    assert sol.leastInterval(["A","A","A","B","B","B"], 0) == 6
+    assert sol.leastInterval(["A","A","A","A","A","A","B","C","D","E","F","G"], 2) == 16
+    assert sol.leastInterval(["A"], 5) == 1

@@ -1,16 +1,40 @@
-class TreeNode(object):
+# 222. Count Complete Tree Nodes
+
+class TreeNode:
     def __init__(self, x, left = None, right = None):
         self.val = x
         self.left = left
         self.right = right
 
+
+def build(values):
+    """Build a tree from a level-order list (None for missing)."""
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # Recursive Approach
 # Time: O(log^2 n)
 # Space: O(1)
 # 2023.07.02: no
-# notes: 普通方法就是遍历，但是巧妙的方法就是下面这个
-# 一颗完全二叉树就是一颗满二叉树+一个完全二叉树，我们算出满二叉树，然后继续分解那个完全二叉树
-class Solution(object):
+# notes: the plain way is to count every node, but the trick below
+# is faster: a complete tree is a full tree plus a complete subtree;
+# count the full part, then recurse into the remaining complete tree
+class Solution:
     def countNodes(self, root):
         l = root
         r = root
@@ -34,10 +58,12 @@ class Solution(object):
         # If the heights are not equal, calculate recursively
         return 1 + self.countNodes(root.left) + self.countNodes(root.right)
 
+
 # Recursive Approach
 # Time: O(log^2 n)
 # Space: O(1)
 # 2023.07.02: no
+# notes: binary search the last level to see which of its nodes exist
 class Solution3:
     def compute_depth(self, node: TreeNode) -> int:
         """
@@ -90,8 +116,10 @@ class Solution3:
         # and left nodes on the last level.
         return (2 ** d - 1) + left
 
+
 # Tests:
-tree = TreeNode(1, TreeNode(2, TreeNode(4, TreeNode(8), TreeNode(9)), TreeNode(5, TreeNode(10))),
-                TreeNode(3, TreeNode(6), TreeNode(7)))
-test = Solution3()
-test.countNodes(tree)
+for sol in (Solution(), Solution3()):
+    assert sol.countNodes(build([1, 2, 3, 4, 5, 6])) == 6
+    assert sol.countNodes(build([])) == 0
+    assert sol.countNodes(build([1])) == 1
+    assert sol.countNodes(build([1, 2, 3, 4, 5, 6, 7])) == 7

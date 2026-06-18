@@ -1,13 +1,16 @@
+# 847. Shortest Path Visiting All Nodes
+
 # DFS + Memoization (Top-Down DP):
 # Time: O(2^n*n^2)
 # Space: O(2^n*n)
 # 2023.09.01: no
-# notes: Travelling Sailing Problem
-# 因为n<=12，所以可以用暴力解
-# dp等式： dp(node, mask) = 1 + min(dp(neighbor, mask), dp(neighbor, mask ^ (1 << node))), for all neighbors in graph[node]
-# 下一步有两个状态，回到之前走过的点，或者去一个新的点，对应的就是，bitmask不变或者bitmask变化一位
-# infinite的意义是防止在还没cahce[state]之前就调用了，防止返回原路的可能
+# notes: Travelling Salesman style; since n <= 12 brute force works.
+#        dp(node, mask) = 1 + min over neighbors of dp on the same
+#        mask (revisit) or mask with this node cleared (new node).
+#        Seed the cache with infinity to block returning by the path
+#        before it is computed.
 from typing import List
+
 
 class Solution:
     def shortestPathLength(self, graph):
@@ -32,12 +35,12 @@ class Solution:
         return min(dp(node, ending_mask) for node in range(n))
 
 
-# BFS :
+# BFS:
 # Time: O(2^n*n^2)
 # Space: O(2^n*n)
 # 2023.09.03: no
-# notes: seen是见过的可能性(node, mask)，当前节点以其当前节点已经遇到的所有的点，就是存储的路径
-# 把当前节点和当前路径存储，并且拓展一次step就+1即可
+# notes: state is (node, mask) of nodes seen on the way here; that mask
+#        is the path. Expand level by level, each layer adds one step.
 class Solution2:
     def shortestPathLength(self, graph: List[List[int]]) -> int:
         if len(graph) == 1:
@@ -65,6 +68,9 @@ class Solution2:
             steps += 1
             queue = next_queue
 
+
 # Tests:
-test = Solution2()
-test.shortestPathLength(graph = [[1,2,3],[0],[0],[0]])
+for sol in (Solution(), Solution2()):
+    assert sol.shortestPathLength([[1, 2, 3], [0], [0], [0]]) == 4
+    assert sol.shortestPathLength([[1], [0, 2, 4], [1, 3, 4], [2], [1, 2]]) == 4
+    assert sol.shortestPathLength([[0]]) == 0

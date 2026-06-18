@@ -1,17 +1,23 @@
+# 122. Best Time to Buy and Sell Stock II
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# 参考神中神六六归一算法
+# notes: reference the labuladong unified stock framework
 # https://labuladong.github.io/algo/di-er-zhan-a01c6/yong-dong--63ceb/yi-ge-fang-3b01b/
-# base case：
+# base case:
 # dp[-1][0] = dp[...][0] = 0
 # dp[-1][1] = dp[...][1] = -infinity
-# 状态转移方程：
+# transition:
 # dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
 # dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
 class Solution:
-    def maxProfit_k_inf(self, prices):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         dp = [[0]*2 for _ in range(n)]
         for i in range(n):
@@ -24,12 +30,18 @@ class Solution:
             dp[i][1] = max(dp[i-1][1], dp[i-1][0] - prices[i])
         return dp[n - 1][0]
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-class Solution2(object):
+# notes: same transition collapsed to two rolling variables
+class Solution2:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         # base case: dp[-1][0] = 0, dp[-1][1] = -infinity
         dp_i_0, dp_i_1 = 0, float('-inf')
@@ -37,15 +49,21 @@ class Solution2(object):
             dp_i_0, dp_i_1 = max(dp_i_0, dp_i_1 + prices[i]), max(dp_i_1, dp_i_0 - prices[i])
         return dp_i_0
 
-# Brute Force方法不列在这
+
+# Brute force method not listed here
 
 # Peak Valley Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 比起下面方法一步到位，但是浪费很多时间在找local min，虽然也是O(n)，因为所有元素只跑一遍
+# notes: sum each valley-to-peak rise; still O(n) but spends extra
+#        time scanning for each local min
 class Solution3:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         if n == 0:
             return 0
@@ -64,21 +82,28 @@ class Solution3:
             maxprofit += peak - valley
         return maxprofit
 
+
 # One Pass Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 一步步算，比后一步高就加
+# notes: add every step that goes up versus the previous day
 class Solution4:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         maxprofit = 0
         for i in range(1, len(prices)):
             if prices[i] > prices[i - 1]:
                 maxprofit += prices[i] - prices[i - 1]
         return maxprofit
 
+
 # Tests:
-test = Solution4()
-test.maxProfit([1,2,3,4,5])
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.maxProfit([7, 1, 5, 3, 6, 4]) == 7
+    assert sol.maxProfit([1, 2, 3, 4, 5]) == 4
+    assert sol.maxProfit([7, 6, 4, 3, 1]) == 0
+    assert sol.maxProfit([5]) == 0

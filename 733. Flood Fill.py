@@ -1,8 +1,12 @@
+# 733. Flood Fill
+
 # DFS Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.13: yes
-class Solution(object):
+# notes: DFS from the start cell, recolor every 4-directionally
+#        connected cell that shares the original color
+class Solution:
     def floodFill(self, image, sr, sc, color):
         """
         :type image: List[List[int]]
@@ -29,6 +33,9 @@ class Solution(object):
             dfs(image, sr, sc, color)
         return image
 
+
 # Tests:
-test = Solution()
-test.floodFill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2)
+for sol in (Solution(),):
+    assert sol.floodFill([[1,1,1],[1,1,0],[1,0,1]], 1, 1, 2) == [[2,2,2],[2,2,0],[2,0,1]]
+    assert sol.floodFill([[0,0,0],[0,0,0]], 0, 0, 0) == [[0,0,0],[0,0,0]]
+    assert sol.floodFill([[0,0,0],[0,1,1]], 1, 1, 1) == [[0,0,0],[0,1,1]]

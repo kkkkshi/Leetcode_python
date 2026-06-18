@@ -1,5 +1,16 @@
-class Solution(object):
+# 525. Contiguous Array
+
+# Prefix Count with Hashmap
+# Time: O(n)
+# Space: O(n)
+# notes: treat 0 as -1, track the running count; equal 0s and 1s means
+#        the same count repeats, so the span between them is balanced
+class Solution:
     def findMaxLength(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         count = 0
         max_length = 0
         table = {0: 0}
@@ -17,5 +28,9 @@ class Solution(object):
         return max_length
 
 
-test = Solution()
-test.findMaxLength([0,1,0,0,1,1,0])
+# Tests:
+for sol in (Solution(),):
+    assert sol.findMaxLength([0, 1]) == 2
+    assert sol.findMaxLength([0, 1, 0]) == 2
+    assert sol.findMaxLength([0, 1, 0, 0, 1, 1, 0]) == 6
+    assert sol.findMaxLength([1, 1, 1]) == 0

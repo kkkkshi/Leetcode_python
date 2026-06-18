@@ -1,16 +1,20 @@
+# 410. Split Array Largest Sum
+
 # Binary Search Approach (best approach)
 # Time: O(NlogS)
 # Space: O(1)
 # 2023.06.22: yes
-class Solution(object):
+# notes: binary-search the answer (largest subarray sum); for a guess,
+#        greedily count how many subarrays it needs and shrink to fit k.
+class Solution:
     def splitArray(self, nums, k):
         """
         :type nums: List[int]
         :type k: int
         :rtype: int
         """
-        # left: 一次必须至少包含最大值
-        # right: 一次必须包含所有值
+        # left: each part must hold at least the max value
+        # right: one part holding all values
         left, right = 0, 0
         for num in nums:
             left = max(left, num)
@@ -38,13 +42,15 @@ class Solution(object):
         return num_arrays
 
 
-
 # Top-Down Dynamic Programming
 # Time: O(n^2*m)
 # Space: O(mn)
 # 2023.06.22: no
+# notes: dp over (start index, parts left) using prefix sums; minimize
+#        the largest split sum, with pruning when it can only get worse.
 import functools
 import itertools
+
 
 class Solution2:
     def splitArray(self, nums, m):
@@ -86,6 +92,7 @@ class Solution2:
 # Time: O(n^2*m)
 # Space: O(mn)
 # 2023.06.22: no
+# notes: same recurrence filled iteratively into a memo table.
 class Solution3:
     def splitArray(self, nums, m):
         n = len(nums)
@@ -122,7 +129,9 @@ class Solution3:
 
         return memo[0][m]
 
+
 # Tests:
-test = Solution3()
-test.splitArray(nums = [7,2,5,10,8], m = 2)
-test.splitArray(nums = [1,2,3,4,5], m = 2)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.splitArray([7, 2, 5, 10, 8], 2) == 18
+    assert sol.splitArray([1, 2, 3, 4, 5], 2) == 9
+    assert sol.splitArray([1, 4, 4], 3) == 4

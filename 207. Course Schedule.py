@@ -1,10 +1,15 @@
+# 207. Course Schedule
+
+from collections import deque
+
+
 # Depth First Search Approach
 # Time: O(m+n)
 # Space: O(n)
 # 2023.07.04: yes
-from collections import deque
-
-class Solution(object):
+# notes: DFS each node tracking the current path; if we revisit a
+#        node already on the path there is a cycle, so it fails
+class Solution:
     def canFinish(self, numCourses, prerequisites):
         """
         :type numCourses: int
@@ -14,8 +19,8 @@ class Solution(object):
         def traverse(graph, s):
             if self.onPath[s]:
                 self.hasCycle = True
-            # 这里用visited的意思是，这个点以前走过了，所以他的后续以前也走过了，不要重复运算了
-            # hasCycle的话就直接返回就行了，已经有环了
+            # visited means we already explored this node and all its
+            # descendants, so skip it; also bail out once a cycle is found
             if self.visited[s] or self.hasCycle:
                 return
             self.visited[s] = True
@@ -34,19 +39,27 @@ class Solution(object):
             traverse(graph, i)
         return not self.hasCycle
 
+
 # Topological Sort Using Kahn's Algorithm Approach
 # Time: O(m+n)
 # Space: O(m+n)
 # 2023.07.04: yes
+# notes: repeatedly remove nodes with indegree 0; if we can remove
+#        all of them there is no cycle and every course is doable
 class Solution2:
     def canFinish(self, numCourses, prerequisites):
+        """
+        :type numCourses: int
+        :type prerequisites: List[List[int]]
+        :rtype: bool
+        """
         indegree = [0] * numCourses
         adj = [[] for _ in range(numCourses)]
-        # 构建图
+        # build the graph
         for prerequisite in prerequisites:
             adj[prerequisite[1]].append(prerequisite[0])
             indegree[prerequisite[0]] += 1
-        # 找到没有in_degree的nodes，从他们开始
+        # find nodes with no indegree and start from them
         queue = deque()
         for i in range(numCourses):
             if indegree[i] == 0:
@@ -55,7 +68,7 @@ class Solution2:
         while queue:
             node = queue.popleft()
             nodesVisited += 1
-            # 把与之相关联的nodes入度减一，如果入度为0，加到queue里面去
+            # drop each neighbor's indegree by one; enqueue it at zero
             for neighbor in adj[node]:
                 indegree[neighbor] -= 1
                 if indegree[neighbor] == 0:
@@ -63,8 +76,9 @@ class Solution2:
 
         return nodesVisited == numCourses
 
+
 # Tests:
-test = Solution()
-test.canFinish(numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]])
-test.canFinish(numCourses = 2, prerequisites = [[1,0]])
-test.canFinish(numCourses = 2, prerequisites = [[1,0],[0,1]])
+for sol in (Solution(), Solution2()):
+    assert sol.canFinish(4, [[1, 0], [2, 0], [3, 1], [3, 2]]) is True
+    assert sol.canFinish(2, [[1, 0]]) is True
+    assert sol.canFinish(2, [[1, 0], [0, 1]]) is False

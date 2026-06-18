@@ -6,7 +6,7 @@
 # 2023.06.24: yes
 # notes: walk two pointers inward, skip non-alphanumeric chars, and
 #        compare the rest case-insensitively
-class Solution(object):
+class Solution:
     def isPalindrome(self, s: str) -> bool:
         """
         :type s: str

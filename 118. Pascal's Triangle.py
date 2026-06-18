@@ -1,9 +1,14 @@
+# 118. Pascal's Triangle
+
+from typing import List
+
+
 # Level Order Traversal Approach
 # Time: O(n^2)
 # Space: O(1)
 # 2023.09.10: yes
-from typing import List
-
+# notes: build each row from the previous one, summing adjacent
+#        pairs and padding 1 on both ends
 class Solution:
     def nextrow(self, lsts):
         cur_row = [1]
@@ -13,6 +18,10 @@ class Solution:
         return cur_row
 
     def generate(self, numRows: int) -> List[List[int]]:
+        """
+        :type numRows: int
+        :rtype: List[List[int]]
+        """
         results = []
         if numRows > 0:
             results.append([1])
@@ -24,13 +33,18 @@ class Solution:
             count += 1
         return results
 
+
 # Level Order Traversal Approach
 # Time: O(n^2)
 # Space: O(1)
 # 2023.09.10: yes
-# notes: 标答，大差不差吧
+# notes: same row-building idea as the approach above
 class Solution2:
     def generate(self, num_rows: int) -> List[List[int]]:
+        """
+        :type num_rows: int
+        :rtype: List[List[int]]
+        """
         triangle = []
 
         for row_num in range(num_rows):
@@ -47,6 +61,11 @@ class Solution2:
 
         return triangle
 
+
 # Tests:
-test = Solution2()
-test.generate(5)
+for sol in (Solution(), Solution2()):
+    assert sol.generate(1) == [[1]]
+    assert sol.generate(2) == [[1], [1, 1]]
+    assert sol.generate(5) == [[1], [1, 1], [1, 2, 1],
+                               [1, 3, 3, 1], [1, 4, 6, 4, 1]]
+    assert sol.generate(0) == []

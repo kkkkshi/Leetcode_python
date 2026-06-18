@@ -1,11 +1,19 @@
+# 315. Count of Smaller Numbers After Self
+
 # Merge sort Approach
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.28: no
-# notes: 重点是排序的时候，j-i+1中间的部分也就是mid+1 到j的部分就是小于i的部分，把这部分加到Results就可以
-# 保持最初的value和index对应，才可以加到results里面去
+# notes: during the merge, when arr[i] is placed the elements already
+#        taken from the right half (mid..j) are all smaller than it, so
+#        add that count to result. keep (value, index) pairs so each
+#        count lands on the right original position
 class Solution:
     def countSmaller(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
         n = len(nums)
         arr = [[v, i] for i, v in enumerate(nums)]  # record value and index
         result = [0] * n
@@ -56,11 +64,16 @@ class Solution:
 # Time: O(nlogm)
 # Space: O(m)
 # 2023.06.28: no
-# notes: 第二遍刷的话，还是重新看一下segment tree的implementation吧，虽然这道题的重点不是segmentation tree
+# notes: on a second pass, revisit the segment tree implementation;
+#        the focus of this problem is not the segment tree itself
 class Solution2:
     def countSmaller(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
         # implement segment tree
-        # 更新index点上的值，因为遇到一个就加一个
+        # update the value at index, adding one for each occurrence
         def update(index, value, tree, size):
             index += size  # shift the index to the leaf
             # update from leaf to root
@@ -68,7 +81,7 @@ class Solution2:
             while index > 1:
                 index //= 2
                 tree[index] = tree[index * 2] + tree[index * 2 + 1]
-        # 找到left和right中间的和
+        # find the sum between left and right
         def query(left, right, tree, size):
             # return sum of [left, right)
             result = 0
@@ -77,7 +90,7 @@ class Solution2:
             while left < right:
                 # if left is a right node
                 # bring the value and move to parent's right node
-                # 并不一定直接都被计算出来，多余的部分在left上面
+                # the leftover part sits on the left side
                 if left % 2 == 1:
                     result += tree[left]
                     left += 1
@@ -85,7 +98,7 @@ class Solution2:
                 left //= 2
                 # if right is a right node
                 # bring the value of the left node and move to parent
-                # 多余的部分在right上面3
+                # the leftover part sits on the right side
                 if right % 2 == 1:
                     right -= 1
                     result += tree[right]
@@ -110,15 +123,19 @@ class Solution2:
 # 2023.06.28: no
 class Solution3:
     def countSmaller(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[int]
+        """
         # implement Binary Index Tree
-        # 更新BIT，把当前节点加一
+        # update the BIT, adding one to the current node
         def update(index, value, tree, size):
             index += 1  # index in BIT is 1 more than the original index
             while index < size:
                 tree[index] += value
                 index += index & -index  # add the last bit which is remove
 
-        # 加起来
+        # sum it up
         def query(index, tree):
             # return sum of [0, index)
             result = 0
@@ -137,7 +154,11 @@ class Solution3:
             update(num + offset, 1, tree, size)
         return reversed(result)
 
-# Tests:
-test = Solution3()
-test.countSmaller([4,3,2,1,0])
 
+# Tests:
+# note: Solution2 limits values to the range [-10, 10]
+for sol in (Solution(), Solution2(), Solution3()):
+    assert list(sol.countSmaller([5, 2, 6, 1])) == [2, 1, 1, 0]
+    assert list(sol.countSmaller([4, 3, 2, 1, 0])) == [4, 3, 2, 1, 0]
+    assert list(sol.countSmaller([-1, -1])) == [0, 0]
+    assert list(sol.countSmaller([1])) == [0]

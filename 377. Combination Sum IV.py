@@ -1,4 +1,6 @@
-# Backtracking (超时)
+# 377. Combination Sum IV
+
+# Backtracking (times out)
 # Time: O(2^n)
 # Space: O(1)
 # 2023.09.11: no
@@ -8,6 +10,11 @@ from typing import List
 
 class Solution:
     def combinationSum4(self, nums: List[int], target: int) -> int:
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         def backtrack(cur_target):
             nonlocal results
             if cur_target == 0:
@@ -28,6 +35,11 @@ class Solution:
 # 2023.09.11: no
 class Solution2:
     def combinationSum4(self, nums: List[int], target: int) -> int:
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         @functools.lru_cache(maxsize=None)
         def backtrack(cur_target):
             if cur_target == 0:
@@ -47,6 +59,11 @@ class Solution2:
 # 2023.09.11: no
 class Solution3:
     def combinationSum4(self, nums: List[int], target: int) -> int:
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         dp = [0] * (target + 1)
         dp[0] = 1
         for i in range(1, len(dp)):
@@ -57,6 +74,8 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.combinationSum4(nums=[3, 2, 1], target=4)
-test.combinationSum4(nums=[9], target=3)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.combinationSum4([1, 2, 3], 4) == 7
+    assert sol.combinationSum4([9], 3) == 0
+    assert sol.combinationSum4([3, 2, 1], 4) == 7
+    assert sol.combinationSum4([2], 4) == 1

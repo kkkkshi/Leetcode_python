@@ -1,8 +1,11 @@
+# 875. Koko Eating Bananas
+
 # Binary Search Approach
 # Time: O(nlogm), n is len(pile), m is maximum banana in a single pile
 # Space: O(1)
 # 2023.06.21: no
-# notes: Binary Search也需要一个变通，而不是直接就可以用，但是大纲是一样的
+# notes: binary search the eating speed; f(speed) gives the hours needed,
+#        find the smallest speed that finishes within H hours.
 import math
 
 
@@ -29,9 +32,8 @@ class Solution:
         return hours
 
 
-
-
-
-
-
-
+# Tests:
+for sol in (Solution(),):
+    assert sol.minEatingSpeed([3, 6, 7, 11], 8) == 4
+    assert sol.minEatingSpeed([30, 11, 23, 4, 20], 5) == 30
+    assert sol.minEatingSpeed([30, 11, 23, 4, 20], 6) == 23

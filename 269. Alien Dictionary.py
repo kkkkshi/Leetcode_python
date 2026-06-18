@@ -1,10 +1,20 @@
+# 269. Alien Dictionary
+
+from collections import defaultdict, Counter, deque
+
+
 # Breadth First Search Approach
 # Time: O(c)
 # Space: O(1)
 # 2023.07.14: no
-from collections import defaultdict, Counter, deque
-class Solution(object):
+# notes: build a graph from the first differing letter of adjacent
+#        words, then topological sort with in-degrees (Kahn's)
+class Solution:
     def alienOrder(self, words):
+        """
+        :type words: List[str]
+        :rtype: str
+        """
         # Step 0: create data structures + the in_degree of each unique letter to 0.
         adj_list = defaultdict(set)
         in_degree = Counter({c: 0 for word in words for c in word})
@@ -44,9 +54,14 @@ class Solution(object):
 # Time: O(c)
 # Space: O(1)
 # 2023.07.14: no
-class Solution2(object):
+# notes: build the reverse graph, then DFS post-order; a grey node
+#        seen again means a cycle, so return ""
+class Solution2:
     def alienOrder(self, words):
-
+        """
+        :type words: List[str]
+        :rtype: str
+        """
         # Step 0: Put all unique letters into the adj list.
         reverse_adj_list = {c : [] for word in words for c in word}
 
@@ -78,10 +93,10 @@ class Solution2(object):
             return ""
         return "".join(output)
 
+
 # Tests:
-test = Solution2()
-test.alienOrder(["wrt","wrf","er","ett","rftt"])
-
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.alienOrder(["wrt","wrf","er","ett","rftt"]) == "wertf"
+    assert sol.alienOrder(["z","x"]) == "zx"
+    assert sol.alienOrder(["z","x","z"]) == ""
+    assert sol.alienOrder(["abc","ab"]) == ""

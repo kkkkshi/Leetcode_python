@@ -1,9 +1,15 @@
+# 712. Minimum ASCII Delete Sum for Two Strings
+
 # Bottom-up Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
+# notes: dp[i][j] is the min delete sum for s1[:i] and s2[:j]; match
+#        carries the diagonal, else delete the cheaper side
 import copy
-class Solution(object):
+
+
+class Solution:
     def minimumDeleteSum(self, s1, s2):
         """
         :type s1: str
@@ -26,19 +32,25 @@ class Solution(object):
                     dp[i][j] = min(dp[i - 1][j] + ord(s1[i-1]), dp[i][j - 1] + ord(s2[j-1]))
         return dp[m][n]
 
+
 # Top-down Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
+# notes: recurse from the string ends, memoizing each (i, j); empty
+#        side costs the ASCII sum of the remaining other side
 class Solution2:
     def minimumDeleteSum(self, s1: str, s2: str) -> int:
-
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: int
+        """
         # Dictionary to store the result of each sub-problem
         saved_result = {}
 
         # Return minimum cost to make s1[0...i] and s2[0...j] equal
         def compute_cost(i, j):
-
             # If both strings are empty, then no deletion is required
             if i < 0 and j < 0:
                 return 0
@@ -75,8 +87,9 @@ class Solution2:
 # Time: O(mn)
 # Space: O(m)
 # 2023.07.25: yes
-# notes: 我自己的方法用了两行，上一行和本行，本质上也是保存左边，上面，左上三个点
-class Solution4(object):
+# notes: my own version uses two rows, previous and current, which
+#        still amounts to keeping the left, top and top-left cells
+class Solution4:
     def minimumDeleteSum(self, s1, s2):
         """
         :type s1: str
@@ -101,15 +114,21 @@ class Solution4(object):
             temp = copy.deepcopy(dp)
         return dp[n]
 
+
 # Space-Optimized Bottom-up Dynamic Programming
 # Time: O(mn)
 # Space: O(min(n,m))
 # 2023.07.25: no
-# notes: 这道题确实可以只用一行，但是要存储左上角的值，因为如果两个字符相同，不需要做任何变化，就需要左上角的值
-# 左边的值就是更新过的左边的值，上行的值就是未更新的列，只有左上角的值需要单独用一个字符记录下来
+# notes: only one row is needed, but the top-left value must be saved
+#        in a single variable since equal chars reuse the diagonal;
+#        left is the updated left, top is the not-yet-updated column
 class Solution5:
     def minimumDeleteSum(self, s1, s2):
-
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: int
+        """
         # Make sure s2 is smaller string
         if len(s1) < len(s2):
             return self.minimumDeleteSum(s1=s2, s2=s1)
@@ -122,12 +141,10 @@ class Solution5:
 
         # Compute answer row-by-row
         for i in range(1, m + 1):
-
             diag = curr_row[0]
             curr_row[0] += ord(s1[i - 1])
 
             for j in range(1, n + 1):
-
                 # If characters are the same, the answer is top-left-diagonal value
                 if s1[i - 1] == s2[j - 1]:
                     answer = diag
@@ -148,8 +165,10 @@ class Solution5:
         # Return answer
         return curr_row[-1]
 
-# Tests:
-test = Solution5()
-test.minimumDeleteSum(s1 = "sea", s2 = "eat")
-test.minimumDeleteSum(s1 = "delete", s2 = "leet")
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution4(), Solution5()):
+    assert sol.minimumDeleteSum("sea", "eat") == 231
+    assert sol.minimumDeleteSum("delete", "leet") == 403
+    assert sol.minimumDeleteSum("", "abc") == 294
+    assert sol.minimumDeleteSum("abc", "abc") == 0

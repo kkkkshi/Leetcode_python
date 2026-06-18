@@ -1,11 +1,18 @@
+# 135. Candy
+
 # BruteForce (TLE)
 # Time: O(n^2)
 # Space: O(n)
 # 2023.09.13: no
 from typing import List
-# notes: 如果当前比前面大，就+1， 比前面小就-1，有更改就changed = True，直到没有changed，就结束了
+# notes: repeatedly bump a child above a smaller neighbor and set
+#        changed=True; stop once a full pass makes no change
 class Solution:
     def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
         n = len(ratings)
         candies = [1] * n
         has_changed = True
@@ -34,9 +41,14 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.09.13: no
-# notes: 列两个array，一个从左到右，一个从右到左，遇到更大的就+1，遍历完两个array之后取max即可
+# notes: one left-to-right pass and one right-to-left pass, each
+#        adding 1 over a smaller neighbor, then take the max
 class Solution2:
     def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
         n = len(ratings)
         sum = 0
         left2right = [1] * n
@@ -63,9 +75,14 @@ class Solution2:
 # Time: O(n)
 # Space: O(n)
 # 2023.09.13: no
-# notes: 和上面差不多，只是用一个来存罢了，记录一下最右边的点就可以优化一点空间，有用，但不多
+# notes: like above but reuse one array; tracking the rightmost
+#        value saves a bit of space, helps a little
 class Solution3:
     def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
         n = len(ratings)
         candies = [1] * n
         # Scan from left to right
@@ -85,12 +102,17 @@ class Solution3:
 # Time: O(n)
 # Space: O(1)
 # 2023.09.13: no
-# notes: 没看懂，但是solution5写了O(1)的方法，也有一部分没懂，之后update
+# notes: didn't fully get it; Solution5 has the O(1) way, parts of
+#        this one are still unclear, will update later
 class Solution4:
     def count(self, n):
         return (n * (n + 1)) // 2
 
     def candy(self, ratings):
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
         if len(ratings) <= 1:
             return len(ratings)
 
@@ -128,16 +150,22 @@ class Solution4:
 # Time: O(n)
 # Space: O(1)
 # 2023.09.13: no
-# notes: 根据每个点的状态和前一个的状态，考虑当前应该加多少点数
-# 如果是单纯increase，直接加这是第几个增加的点即可，但是如果increase的时候，之前有down的情况，说明这是个谷底，这时候
-# 就可以reset, down, up = 0, 1让这个点作为起始点，因为down下来的时候，3,2,1最后一定是1，否则就拿多candy了
-# 所以新的起始点，是1+1 = 2
-# 如果是平的情况，也是reset, down, up = 0, 1但是这次是平，所以up不需要+2，只需要+1即可
-# 如果是down的情况，比如4,3,2这样下来，完全可以给他赋予1,2,3个candy，是可以交换的，所以每次只要计算有几个down即可
-# 如果down >= up 唯一的情况就是平之后直接down，否则其余情况会被increase覆盖，直接down的话，就在平的基础上
-# 1+1，因为平的时候是1，现在比平要低，起始点就是2了
+# notes: decide each child's candy from its slope vs the previous.
+# On a plain rise, just add how many steps up so far. If a rise
+# follows a descent, it's a valley, so reset down,up = 0,1 to start
+# fresh, since a 3,2,1 descent must end at 1 or you overpay; the new
+# start is then 1+1 = 2.
+# On a flat spot also reset down,up = 0,1, but here up only needs +1.
+# On a descent like 4,3,2 you can hand out 1,2,3 by swapping, so just
+# count how many steps down. When down >= up (only when a descent
+# directly follows a flat) the start is 1+1 = 2, since the flat is 1
+# and this child is lower.
 class Solution5:
     def candy(self, ratings: List[int]) -> int:
+        """
+        :type ratings: List[int]
+        :rtype: int
+        """
         ans = down = up = 0
         for i in range(len(ratings)):
             if not i or ratings[i - 1] < ratings[i]:
@@ -155,8 +183,8 @@ class Solution5:
 
 
 # Tests:
-test = Solution5()
-#           1  2  3  4  5  1  2  3 1+1 3  1  2  3  1  2  3  1  2  1  1  2  1
-test.candy([1, 2, 3, 4, 5, 3, 2, 1, 2, 6, 5, 4, 3, 3, 2, 1, 1, 3, 3, 3, 4, 2])
-test.candy([1, 3, 2, 2, 1])  # 7
-test.candy([1, 0, 2])
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.candy([1, 0, 2]) == 5
+    assert sol.candy([1, 2, 2]) == 4
+    assert sol.candy([1, 3, 2, 2, 1]) == 7
+    assert sol.candy([1, 2, 3, 4, 5, 3, 2, 1, 2, 6, 5, 4, 3, 3, 2, 1, 1, 3, 3, 3, 4, 2]) == 47

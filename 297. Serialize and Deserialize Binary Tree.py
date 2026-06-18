@@ -1,11 +1,14 @@
+# 297. Serialize and Deserialize Binary Tree
+
 # Depth-First Search Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.27: no
-# notes: 这道题考察的重点是哪些方法可以序列化和反序列化，只有DFS的先序遍历，后序遍历，BFS可以
-# 中序遍历不可以，因为root节点并不是唯一的，其他三个方法必须要加Null才可以唯一
+# notes: only DFS preorder/postorder or BFS can serialize uniquely;
+#        inorder can't since the root isn't fixed, and the others
+#        must record nulls to stay unique
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, x):
         self.val = x
         self.left = None
@@ -56,8 +59,34 @@ class Codec:
         root = rdeserialize(data_list)
         return root
 
+
 # Tests:
-root = TreeNode(1)
-ser = Codec()
-deser = Codec()
-ans = deser.deserialize(ser.serialize(root))
+def build(values):
+    """Build a tree from a level-order list with None for missing."""
+    if not values or values[0] is None:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
+codec = Codec()
+for values in ([1, 2, 3, None, None, 4, 5], [1], []):
+    tree = build(values)
+    restored = codec.deserialize(codec.serialize(tree))
+    # round trip must be stable
+    assert codec.serialize(restored) == codec.serialize(tree)
+
+assert codec.serialize(build([1, 2, 3])) == '1,2,None,None,3,None,None,'
+assert codec.serialize(build([])) == 'None,'

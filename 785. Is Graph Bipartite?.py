@@ -1,8 +1,12 @@
+# 785. Is Graph Bipartite?
+
 # Depth-First Search Approach
 # Time: O(n)
 # Space: O(n+e)
 # 2023.07.05: yes
-class Solution(object):
+# notes: color each node opposite to its neighbor while exploring; if a
+#        neighbor already has the same color, it's not bipartite
+class Solution:
     def isBipartite(self, graph):
         """
         :type graph: List[List[int]]
@@ -27,8 +31,9 @@ class Solution(object):
             traverse(graph, i)
         return self.bipartite
 
+
 # Tests:
-test = Solution()
-test.isBipartite([[1],[0,3],[3],[1,2]])
-test.isBipartite([[1,2,3],[0,2],[0,1,3],[0,2]])
-test.isBipartite([[1,3],[0,2],[1,3],[0,2]])
+for sol in (Solution(),):
+    assert sol.isBipartite([[1,3],[0,2],[1,3],[0,2]]) is True
+    assert sol.isBipartite([[1,2,3],[0,2],[0,1,3],[0,2]]) is False
+    assert sol.isBipartite([[1],[0,3],[3],[1,2]]) is True

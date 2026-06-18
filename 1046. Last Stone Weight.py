@@ -1,14 +1,22 @@
+# 1046. Last Stone Weight
+
+import heapq
+from bisect import insort
+from typing import List
+
+
 # Heap-Based Simulation (second best appraoch)
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.10.30: yes
-import heapq
-from bisect import bisect
-from typing import List
-
-
+# notes: max-heap of negated weights; pop the two heaviest, push back the
+#        difference until at most one stone remains.
 class Solution:
     def lastStoneWeight(self, stones: List[int]) -> int:
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
         stones = [-x for x in stones]
         heapq.heapify(stones)
         while len(stones) > 1:
@@ -25,9 +33,14 @@ class Solution:
 # Time: O(n^2)
 # Space: O(n)
 # 2023.10.30: yes
+# notes: repeatedly find and remove the two largest stones by scanning
+#        the list, pushing back their difference.
 class Solution2:
     def lastStoneWeight(self, stones: List[int]) -> int:
-
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
         def remove_largest():
             index_of_largest = stones.index(max(stones))
             # Swap the stone to be removed with the end.
@@ -47,27 +60,39 @@ class Solution2:
 # Time: O(n^2)
 # Space: O(n)
 # 2023.10.30: yes
+# notes: keep the list sorted, pop the two largest, and reinsert their
+#        difference with bisect.
 class Solution3:
     def lastStoneWeight(self, stones: List[int]) -> int:
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
         stones.sort()
         while len(stones) > 1:
             stone_1 = stones.pop()
             stone_2 = stones.pop()
             if stone_1 != stone_2:
-                bisect.insort(stones, stone_1 - stone_2)
+                insort(stones, stone_1 - stone_2)
         return stones[0] if stones else 0
+
 
 # Bucket Sort (best approach)
 # Time: O(n+w)
 # Space: O(w)
 # 2023.10.30: yes
-# notes: 这个桶排序有点抽象，先把数字根据桶排序好，确定最大值，有两个变量，biggest_weight和current_weight，
-# 如果biggest_weight是空的话，就可以%2消除多的部分，最后没有多的话，直接降低下一个值，有多的话，就biggest_weight变成这个值
-# 然后降低成下一个值，取减下一个值，如果够减两倍，那就继续保留biggest_weight,如果不够减两倍，就biggest-current然后存
-# 到bucket里面去，直到运行到n = 1位置，其实只需要遍历两遍即可，所以是2n
+# notes: bucket-sort the weights by count. carry a biggest_weight; when it
+#        is empty, the duplicates at a weight cancel in pairs (%2), leaving
+#        at most one as biggest_weight. otherwise smash biggest_weight
+#        against the current weight: if the remainder still fits within the
+#        current weight, drop it back into the bucket and reset, else
+#        shrink biggest_weight. two scans only, so 2n.
 class Solution4:
     def lastStoneWeight(self, stones: List[int]) -> int:
-
+        """
+        :type stones: List[int]
+        :rtype: int
+        """
         # Set up the bucket array.
         max_weight = max(stones)
         buckets = [0] * (max_weight + 1)
@@ -97,7 +122,9 @@ class Solution4:
         return biggest_weight
 
 
-# Test:
-test = Solution4()
-test.lastStoneWeight([2,7,4,1,8,1])
-test.lastStoneWeight([1])
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.lastStoneWeight([2,7,4,1,8,1]) == 1
+    assert sol.lastStoneWeight([1]) == 1
+    assert sol.lastStoneWeight([2,2]) == 0
+    assert sol.lastStoneWeight([3,7,2]) == 2

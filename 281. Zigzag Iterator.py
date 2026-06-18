@@ -1,7 +1,11 @@
+# 281. Zigzag Iterator
+
 # Two-Pointers
 # Time: next: O(k), hasNext: O(1)
 # Space: next: O(k), hasNext: O(k)
 # 2023.07.07: no
+# notes: cycle through the vectors, advancing the element index after
+#        a full pass, skipping vectors that ran out
 from collections import deque
 
 
@@ -37,13 +41,16 @@ class ZigzagIterator:
         # no more element to output
         raise Exception
 
-
     def hasNext(self):
         return self.output_count < self.total_num
+
+
 # Queue of Pointers
 # Time: next: O(1), hasNext: O(1)
 # Space: next: O(k), hasNext: O(k)
 # 2023.07.07: no
+# notes: queue (vector, index) entries; pop one each next and requeue
+#        it with the following index if the vector has more
 class ZigzagIterator2:
     def __init__(self, v1, v2):
         self.vectors = [v1, v2]
@@ -54,7 +61,6 @@ class ZigzagIterator2:
                 self.queue.append((index, 0))
 
     def next(self):
-
         if self.queue:
             vec_index, elem_index = self.queue.popleft()
             next_elem_index = elem_index + 1
@@ -68,11 +74,23 @@ class ZigzagIterator2:
         # no more element to output
         raise Exception
 
-    def hasNext(self) -> bool:
+    def hasNext(self):
         return len(self.queue) > 0
 
 
 # Tests:
-i, v = ZigzagIterator2(v1 = [1,2], v2 = [3,4,5,6]), []
-while i.hasNext():
-    v.append(i.next())
+for cls in (ZigzagIterator, ZigzagIterator2):
+    it, out = cls([1, 2], [3, 4, 5, 6]), []
+    while it.hasNext():
+        out.append(it.next())
+    assert out == [1, 3, 2, 4, 5, 6]
+
+    it, out = cls([1], []), []
+    while it.hasNext():
+        out.append(it.next())
+    assert out == [1]
+
+    it, out = cls([], []), []
+    while it.hasNext():
+        out.append(it.next())
+    assert out == []

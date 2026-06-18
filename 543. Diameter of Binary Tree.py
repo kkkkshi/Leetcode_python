@@ -1,16 +1,20 @@
-# Depth-first Search Approach:
-# Time: O(n)
-# Space: O(n)
-# 2023.06.26: yes
-# notes: 细节问题，返回值，增加长度增加多少等
+# 543. Diameter of Binary Tree
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
-class Solution(object):
+
+# Depth-first Search Approach:
+# Time: O(n)
+# Space: O(n)
+# 2023.06.26: yes
+# notes: post-order; each node returns its height, and the
+#        diameter is the best left+right height seen
+class Solution:
     def diameterOfBinaryTree(self, root):
         """
         :type root: TreeNode
@@ -27,9 +31,12 @@ class Solution(object):
         diameter(root)
         return self.max_diameter
 
+
+# Tests:
 a = TreeNode(1, TreeNode(2, TreeNode(4), TreeNode(5)), TreeNode(3))
 b = TreeNode(1, TreeNode(2))
-test = Solution()
-test.diameterOfBinaryTree(b)
-test.diameterOfBinaryTree(a)
-
+for sol in (Solution(),):
+    assert sol.diameterOfBinaryTree(a) == 3
+    assert sol.diameterOfBinaryTree(b) == 1
+    assert sol.diameterOfBinaryTree(TreeNode(1)) == 0
+    assert sol.diameterOfBinaryTree(None) == 0

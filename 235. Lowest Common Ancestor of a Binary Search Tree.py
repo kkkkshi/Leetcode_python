@@ -1,14 +1,18 @@
-class TreeNode(object):
+# 235. Lowest Common Ancestor of a Binary Search Tree
+
+class TreeNode:
     def __init__(self, x, left = None, right = None):
         self.val = x
         self.left = left
         self.right = right
 
+
 # Recursive Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-# notes: 其实有个trick吧，就是都在左边就在左边递归，都在右边就在右边递归，否则就是他们的共同节点了
+# notes: use the BST order; if both values are larger go right, if both
+#        are smaller go left, otherwise this node is the split point
 class Solution:
     def lowestCommonAncestor(self, root, p, q):
         """
@@ -27,10 +31,13 @@ class Solution:
         else:
             return root
 
+
 # Iterative Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
+# notes: same split-point idea but walk down the tree with a loop
+#        instead of recursion
 class Solution2:
     def lowestCommonAncestor(self, root, p, q):
         """
@@ -51,17 +58,19 @@ class Solution2:
             else:
                 return node
 
+
 # Tests:
-root = TreeNode(3)
-root.left = TreeNode(5)
-root.right = TreeNode(1)
-root.left.left = p = TreeNode(6)
-root.left.right = TreeNode(2)
-root.left.right.left = TreeNode(7)
-root.left.right.right = q = TreeNode(4)
-root.right.left = TreeNode(0)
-root.right.right = TreeNode(8)
+root = TreeNode(6)
+root.left = TreeNode(2)
+root.right = TreeNode(8)
+root.left.left = TreeNode(0)
+root.left.right = node4 = TreeNode(4)
+root.right.left = TreeNode(7)
+root.right.right = TreeNode(9)
+root.left.right.left = node3 = TreeNode(3)
+root.left.right.right = node5 = TreeNode(5)
 
-
-test = Solution()
-test.lowestCommonAncestor(root, p, q)
+for sol in (Solution(), Solution2()):
+    assert sol.lowestCommonAncestor(root, root.left, root.right).val == 6
+    assert sol.lowestCommonAncestor(root, root.left, node4).val == 2
+    assert sol.lowestCommonAncestor(root, node3, node5).val == 4

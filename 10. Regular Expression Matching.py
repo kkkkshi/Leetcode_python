@@ -1,11 +1,19 @@
+# 10. Regular Expression Matching
+
 # Bottom Up Dynamic Programming
 # Time: O(TP)
 # Space: O(TP)
 # 2023.07.27: no
-# notes: aa可以匹配a*b*c*，因为bc的数量可以为0，这一行ans = dp(i, j+2) or first_match and dp(i+1, j)，考虑到了
-# 如果当前字符是不匹配但是有*的情况，注意
-class Solution(object):
+# notes: aa can match a*b*c* since b* and c* can be zero. the line
+#        ans = dp(i, j+2) or first_match and dp(i+1, j) covers the case
+#        where the current char does not match but a * follows it.
+class Solution:
     def isMatch(self, text, pattern):
+        """
+        :type text: str
+        :type pattern: str
+        :rtype: bool
+        """
         memo = {}
         def dp(i, j):
             if (i, j) not in memo:
@@ -21,15 +29,21 @@ class Solution(object):
             return memo[i, j]
         return dp(0, 0)
 
+
 # Top Down Dynamic Programming
 # Time: O(TP)
 # Space: O(TP)
 # 2023.07.27: no
-# notes: and has higher precedence than or，其次，思路和前一个方法一样
-# 发现了一点新东西： dp的base case就是dp递归到最后的base case，其实根本不需要多想
-# 所以逆推的时候就跟递归是一样的，如果是正着推，思路会有点不一样，而且也不一定推的出来
-class Solution2(object):
+# notes: and binds tighter than or; otherwise the idea is the same as
+#        the previous method. the dp base case is just the recursion
+#        base case, so building it backwards mirrors the recursion.
+class Solution2:
     def isMatch(self, text, pattern):
+        """
+        :type text: str
+        :type pattern: str
+        :rtype: bool
+        """
         dp = [[False] * (len(pattern) + 1) for _ in range(len(text) + 1)]
         dp[-1][-1] = True
         for i in range(len(text), -1, -1):
@@ -42,15 +56,20 @@ class Solution2(object):
         return dp[0][0]
 
 
-
 # Recursion (exceed time limit)
 # Time: O((T+P)^(2^(T+P/2)))
 # Space: O(T^2+P^2)
 # 2023.07.27: no
-# notes: recursion每次需要确认第一个字符match不match，match的话，再考虑剩下的pattern
-# 如果是*的话，要不就是匹配两个字符后的pattern，要不就是继续匹配当前字符
-class Solution3(object):
+# notes: each call checks if the first char matches; if it does, match
+#        the rest. with a *, either skip two pattern chars or keep
+#        matching the current char.
+class Solution3:
     def isMatch(self, text, pattern):
+        """
+        :type text: str
+        :type pattern: str
+        :rtype: bool
+        """
         if not pattern:
             return not text
 
@@ -62,8 +81,12 @@ class Solution3(object):
         else:
             return first_match and self.isMatch(text[1:], pattern[1:])
 
+
 # Tests:
-test = Solution2()
-test.isMatch("aa","a*b*c*")
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isMatch("aa", "a") == False
+    assert sol.isMatch("aa", "a*") == True
+    assert sol.isMatch("ab", ".*") == True
+    assert sol.isMatch("aab", "c*a*b") == True
+    assert sol.isMatch("mississippi", "mis*is*p*.") == False
+    assert sol.isMatch("aa", "a*b*c*") == True

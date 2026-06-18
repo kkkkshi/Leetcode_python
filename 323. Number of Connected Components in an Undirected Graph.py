@@ -1,8 +1,12 @@
+# 323. Number of Connected Components in an Undirected Graph
+
 # Depth-First Search Approach
 # Time: O(n+e)
 # Space: O(n+e)
 # 2023.07.05: yes
-class Solution(object):
+# notes: build the adjacency list, run DFS from each unvisited node,
+#        count one component per DFS that starts
+class Solution:
     def countComponents(self, n, edges):
         """
         :type n: int
@@ -29,12 +33,19 @@ class Solution(object):
                 components += 1
         return components
 
+
 # Union-Find Approach
 # Time: O(e)
 # Space: O(v)
 # 2023.07.05: yes
-class Solution2(object):
+# notes: union every edge, the remaining group count is the answer
+class Solution2:
     def countComponents(self, n, edges):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :rtype: int
+        """
         class Union_Find:
             def __init__(self, n):
                 self.count = n
@@ -63,6 +74,10 @@ class Solution2(object):
             ufs.union(e[0], e[1])
         return ufs.count
 
-test = Solution2()
-test.countComponents(n = 5, edges = [[0,1],[1,2],[3,4]])
-test.countComponents(n = 5, edges = [[0,1],[1,2],[2,3],[3,4]])
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.countComponents(5, [[0, 1], [1, 2], [3, 4]]) == 2
+    assert sol.countComponents(5, [[0, 1], [1, 2], [2, 3], [3, 4]]) == 1
+    assert sol.countComponents(4, []) == 4
+    assert sol.countComponents(1, []) == 1

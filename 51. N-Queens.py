@@ -1,9 +1,11 @@
+# 51. N-Queens
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.01: no
-# notes: 这里最好的一个点是检查斜线，对于右斜线来说，row-col是固定值，对于左斜线来说,row+col是固定值
-# 只要值一样，就可以判断他们在一条斜线上
+# notes: track diagonals by row-col and anti-diagonals by row+col;
+#        two queens share a diagonal when those values match
 class Solution:
     def solveNQueens(self, n):
         # Making use of a helper function to get the
@@ -50,6 +52,13 @@ class Solution:
         backtrack(0, set(), set(), set(), empty_board)
         return ans
 
-test = Solution()
-test.solveNQueens(4)
 
+# Tests:
+for sol in (Solution(),):
+    assert sol.solveNQueens(1) == [["Q"]]
+    assert sol.solveNQueens(2) == []
+    assert sol.solveNQueens(3) == []
+    assert len(sol.solveNQueens(4)) == 2
+    assert sorted(sol.solveNQueens(4)) == sorted(
+        [[".Q..", "...Q", "Q...", "..Q."],
+         ["..Q.", "Q...", "...Q", ".Q.."]])

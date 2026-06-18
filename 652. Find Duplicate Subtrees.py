@@ -1,17 +1,31 @@
+# 652. Find Duplicate Subtrees
+
 # A String Representation Approach
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.06.27: no
-# notes: 序列化一个树，然后看这个树的序列化在不在里面
+# notes: serialize each subtree to a string and record duplicates the
+#        moment a serialization is seen a second time
 import collections
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def serialize(node):
+    if not node:
+        return "#"
+    return str(node.val) + "," + serialize(node.left) + "," + serialize(node.right)
+
+
 class Solution:
     def findDuplicateSubtrees(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[TreeNode]
+        """
         def traverse(node):
             if not node:
                 return ""
@@ -31,9 +45,15 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.27: no
-# notes: 用triplet来表示一个树，如果出现过这个点，就记录并给一个id，下次再出现就可以直接调用这个id，并且一个id数字就记录了一种树
+# notes: represent each subtree as a triplet and give it an id; reusing
+#        an id means the subtree repeated, so one id stands for one
+#        unique subtree shape
 class Solution2:
     def findDuplicateSubtrees(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[TreeNode]
+        """
         def traverse(node):
             if not node:
                 return 0
@@ -51,6 +71,7 @@ class Solution2:
         traverse(root)
         return res
 
+
 # Tests:
 t = TreeNode(1)
 t.left = TreeNode(2)
@@ -59,5 +80,10 @@ t.right = TreeNode(3)
 t.right.left = TreeNode(2)
 t.right.left.left = TreeNode(4)
 t.right.right = TreeNode(4)
-test = Solution2()
-test.findDuplicateSubtrees(t)
+for sol in (Solution(), Solution2()):
+    dups = sorted(serialize(node) for node in sol.findDuplicateSubtrees(t))
+    assert dups == ["2,4,#,#,#", "4,#,#"]
+    assert sol.findDuplicateSubtrees(TreeNode(1)) == []
+    leaf = TreeNode(1, TreeNode(1), TreeNode(1))
+    dups2 = sorted(serialize(node) for node in sol.findDuplicateSubtrees(leaf))
+    assert dups2 == ["1,#,#"]

@@ -1,8 +1,12 @@
+# 96. Unique Binary Search Trees
+
 # Dynamic Programming Approach
 # Time: O(logn)
 # Space: O(h)
 # 2023.06.30: no
-# notes: 动规，建议以后重看一遍，明白思路，但是不会写，核心只有一句话，res = left*right，其他都是初始化+保存递归的过程
+# notes: dp; G[i] is the count for i nodes, and the only real step is
+#        res = left * right, the rest is init and accumulating the
+#        recursion; worth revisiting later, idea is clear but hard to write
 class Solution:
     def numTrees(self, n):
         """
@@ -19,12 +23,19 @@ class Solution:
                 G[i] += G[left] * G[right]
         return G[n]
 
+
 # Recursion Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.30: no
-class Solution2(object):
+# notes: for each range pick every value as root, count the BSTs on the
+#        left and right ranges and multiply, memoize by (lo, hi)
+class Solution2:
     def numTrees(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
         # Initialize memo with 0 values
         self.memo = [[0] * (n + 1) for _ in range(n + 1)]
         return self.count(1, n)
@@ -40,17 +51,20 @@ class Solution2(object):
         for mid in range(lo, hi + 1):
             left = self.count(lo, mid - 1)  # Fixed method call
             right = self.count(mid + 1, hi)  # Fixed method call
-            res += left * right   # 核心
+            res += left * right   # core
         # Store the result in the memoization table
         self.memo[lo][hi] = res
 
         return res
 
+
 # Mathematical Deduction Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.30: yes
-class Solution2(object):
+# notes: compute the nth Catalan number directly with the product
+#        formula C(i+1) = C(i) * 2(2i+1)/(i+2)
+class Solution3:
     def numTrees(self, n):
         """
         :type n: int
@@ -61,6 +75,11 @@ class Solution2(object):
             C = C * 2*(2*i+1)/(i+2)
         return int(C)
 
+
 # Tests:
-test = Solution()
-test.numTrees(3)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.numTrees(1) == 1
+    assert sol.numTrees(2) == 2
+    assert sol.numTrees(3) == 5
+    assert sol.numTrees(4) == 14
+    assert sol.numTrees(5) == 42

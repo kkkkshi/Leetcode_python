@@ -1,10 +1,14 @@
+# 354. Russian Doll Envelopes
+
+from bisect import bisect_left
+
+
 # Sort + Longest Increasing Subsequence
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.21: no
-# notes: 按照宽度排序之后，直接用LIS的方法排序高度就可以得出结果了
-from bisect import bisect_left
-class Solution(object):
+# notes: sort by width, then run LIS on the heights to get the answer
+class Solution:
     def maxEnvelopes(self, envelopes):
         """
         :type envelopes: List[List[int]]
@@ -24,7 +28,7 @@ class Solution(object):
 
 
 # Tests:
-test = Solution()
-test.maxEnvelopes([[5,4],[6,4],[6,7],[2,3]])
-
-
+for sol in (Solution(),):
+    assert sol.maxEnvelopes([[5, 4], [6, 4], [6, 7], [2, 3]]) == 3
+    assert sol.maxEnvelopes([[1, 1], [1, 1], [1, 1]]) == 1
+    assert sol.maxEnvelopes([[4, 5], [4, 6], [6, 7], [2, 3], [1, 1]]) == 4

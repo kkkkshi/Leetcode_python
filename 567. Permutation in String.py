@@ -1,10 +1,15 @@
+# 567. Permutation in String
+
+from collections import Counter
+
+
 # Sliding Window Approach
 # Time: O(l1+ (l2-l1)), l1 is length of s1, l2 is length of s2
 # Space: O(1)
 # 2023.06.20: no
-# notes: 重点是s1的排列是不是s2的子串，代表子串长度是固定的，所以检查的条件是固定长度的时候，是不是needs里的东西都符合
-from collections import Counter
-class Solution(object):
+# notes: a permutation of s1 is a fixed-length substring, so slide a
+#        window of len(s1) and check all needed counts are matched
+class Solution:
     def checkInclusion(self, s1, s2):
         """
         :type s1: str
@@ -31,13 +36,20 @@ class Solution(object):
                     window[d] -= 1
         return False
 
+
 # Optimized Sliding Window Approach
 # Time: O(l1+ 26*(l2-l1)), l1 is length of s1, l2 is length of s2
 # Space: O(1)
 # 2023.06.20: no
-# notes: 核心观点是把这段长度记录下来和原始的对比，每次右移一次，都会进行更新
+# notes: keep two count arrays and compare; each right shift updates
+#        the counts and how many letters still match
 class Solution2:
     def checkInclusion(self, s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: bool
+        """
         if len(s1) > len(s2):
             return False
 
@@ -74,13 +86,20 @@ class Solution2:
 
         return count == 26
 
+
 # Using sorting Approach
 # Time: O(l1*logl1+ l1*logl1*(l2-l1)), l1 is length of s1, l2 is length of s2
 # Space: O(l1)
 # 2023.06.20: no
-# notes: 写起来是真的容易啊，就是效率偏慢，因为转成了array,不过也不失为一种方法
+# notes: easiest to write but slow; turns each window into a sorted
+#        array and compares it to sorted s1
 class Solution3:
     def checkInclusion(self, s1: str, s2: str) -> bool:
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: bool
+        """
         s1 = self.sort(s1)
         for i in range(len(s2) - len(s1) + 1):
             if s1 == self.sort(s2[i:i + len(s1)]):
@@ -90,12 +109,18 @@ class Solution3:
     def sort(self, s: str) -> str:
         return ''.join(sorted(s))
 
+
 # Using hashmap Approach
 # Time: O(l1*logl1+ l1*logl1*(l2-l1)), l1 is length of s1, l2 is length of s2
 # Space: O(l1)
 # 2023.06.20: no
 class Solution4:
     def checkInclusion(self, s1: str, s2: str) -> bool:
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: bool
+        """
         if len(s1) > len(s2):
             return False
         s1map = {}
@@ -116,12 +141,18 @@ class Solution4:
                 return False
         return True
 
+
 # Using Array Approach
 # Time: O(l1+ 26*l1*(l2-l1)), l1 is length of s1, l2 is length of s2
 # Space: O(l1)
 # 2023.06.20: no
 class Solution5:
     def checkInclusion(self, s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: bool
+        """
         if len(s1) > len(s2):
             return False
         s1map = [0] * 26
@@ -142,8 +173,9 @@ class Solution5:
         return True
 
 
-test = Solution2()
-test.checkInclusion(s1="ab", s2="eidboaoo")
-test.checkInclusion(s1="ab", s2="eidbaooo")
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.checkInclusion(s1="ab", s2="eidbaooo") is True
+    assert sol.checkInclusion(s1="ab", s2="eidboaoo") is False
+    assert sol.checkInclusion(s1="a", s2="a") is True
+    assert sol.checkInclusion(s1="abc", s2="ab") is False

@@ -1,14 +1,18 @@
+# 211. Design Add and Search Words Data Structure
+
 # Trie
 # Time: O(n)
 # Space: O(n)
 # 2023.07.16: yes
-
+# notes: store words in a trie; on search, when we hit '.' recurse
+#        into every child, otherwise follow the matching child
 class TrieNode:
     def __init__(self):
         self.val = False
         self.children = {}
 
-class WordDictionary(object):
+
+class WordDictionary:
     def __init__(self):
         self.root = TrieNode()
 
@@ -55,5 +59,9 @@ test.addWord("dad")
 test.addWord("mad")
 test.addWord("pad")
 test.addWord("bad")
-test.search(".ad")
-test.search("b..")
+assert test.search("pad") is True
+assert test.search("bad") is True
+assert test.search("ba") is False
+assert test.search(".ad") is True
+assert test.search("b..") is True
+assert test.search("b.x") is False

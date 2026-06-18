@@ -1,8 +1,5 @@
-# Linked Lists
-# Time: O(1)
-# Space: O(1)
-# 2023.09.05: yes
-# notes: 注意一下None就行，新节点的后续有可能是none, random也有可能指none，所以random.next不一定可以
+# 138. Copy List with Random Pointer
+
 # Definition for a Node.
 from typing import Optional
 class Node:
@@ -10,6 +7,44 @@ class Node:
         self.val = int(x)
         self.next = next
         self.random = random
+
+
+def build(data):
+    # data is a list of [val, random_index]; random_index is None or
+    # the index of the node pointed to by random
+    if not data:
+        return None
+    nodes = [Node(val) for val, _ in data]
+    for i in range(len(nodes)):
+        nodes[i].next = nodes[i + 1] if i + 1 < len(nodes) else None
+        rand = data[i][1]
+        nodes[i].random = nodes[rand] if rand is not None else None
+    return nodes[0]
+
+
+def serialize(head):
+    # turn a random-pointer list back into [val, random_index] form
+    order = []
+    index = {}
+    cur = head
+    while cur:
+        index[cur] = len(order)
+        order.append(cur)
+        cur = cur.next
+    out = []
+    for node in order:
+        rand = index[node.random] if node.random is not None else None
+        out.append([node.val, rand])
+    return out
+
+
+# Linked Lists
+# Time: O(1)
+# Space: O(1)
+# 2023.09.05: yes
+# notes: watch out for None; a new node's next may be none and random
+# may point to none, so random.next is not always usable.
+# interleave each clone after its original, then unweave.
 class Solution:
     def copyRandomList(self, head: 'Optional[Node]') -> 'Optional[Node]':
         if head == None:
@@ -33,12 +68,13 @@ class Solution:
             cur = tmp
         return head.next
 
-#  Iterative with O(N) Space
+
+# Iterative with O(N) Space
 # Time: O(n)
 # Space: O(n)
 # 2023.09.05: yes
-# notes: 最简单的一种，用hashmap对应
-class Solution2(object):
+# notes: simplest one, map old node -> new node in a hashmap
+class Solution2:
     def __init__(self):
         # Creating a visited dictionary to hold old node reference as "key" and new node reference as the "value"
         self.visited = {}
@@ -88,18 +124,18 @@ class Solution2(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.09.05: yes
-# notes: 递归方法，遇到一个新node就新建一个node，然后用hashmap对应关系即可，递归调用node.next和node.random
-class Solution3(object):
-    """
-    :type head: Node
-    :rtype: Node
-    """
+# notes: recursive; on each new node make a clone and map it, then
+#        recurse on node.next and node.random
+class Solution3:
     def __init__(self):
         # Dictionary which holds old nodes as keys and new nodes as its values.
         self.visitedHash = {}
 
     def copyRandomList(self, head):
-
+        """
+        :type head: Node
+        :rtype: Node
+        """
         if head == None:
             return None
 
@@ -123,20 +159,11 @@ class Solution3(object):
 
         return node
 
+
 # Tests:
-c = Node(3)
-d = Node(3)
-e = Node(3)
-c.next = d
-d.next = e
-d.random = c
-test = Solution3()
-t = test.copyRandomList(c)
-a = Node(1)
-b = Node(2)
-a.next = b
-a.random = b
-b.random = b
-test.copyRandomList(a)
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert serialize(sol.copyRandomList(build([[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]))) \
+        == [[7, None], [13, 0], [11, 4], [10, 2], [1, 0]]
+    assert serialize(sol.copyRandomList(build([[1, 1], [2, 1]]))) == [[1, 1], [2, 1]]
+    assert serialize(sol.copyRandomList(build([]))) == []
+    assert serialize(sol.copyRandomList(build([[3, None]]))) == [[3, None]]

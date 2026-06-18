@@ -7,7 +7,7 @@
 # notes: keep each number's index in a map; for each num, check if its
 #        complement (target - num) was already seen
 # skipped the brute force and two-pass hash table versions, not worth it
-class Solution(object):
+class Solution:
     def twoSum(self, nums, target):
         """
         :type nums: List[int]

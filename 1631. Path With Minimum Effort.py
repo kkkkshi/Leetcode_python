@@ -1,9 +1,15 @@
-# Variations of Dijkstra's Algorithm Approach
-# Time: O(m⋅nlog(m⋅n))
-# Space: O(m⋅n)
-# 2023.07.12: yes
+# 1631. Path With Minimum Effort
+
 from queue import PriorityQueue
-class Solution(object):
+
+
+# Variations of Dijkstra's Algorithm Approach
+# Time: O(m*nlog(m*n))
+# Space: O(m*n)
+# 2023.07.12: yes
+# notes: Dijkstra where a path cost is the largest height jump on it;
+#        pop the cell with the smallest such cost first
+class Solution:
     def minimumEffortPath(self, heights):
         """
         :type heights: List[List[int]]
@@ -33,12 +39,19 @@ class Solution(object):
                     min_efforts[next_row][next_col] = next_weight
                     pq.put((next_weight, next_row, next_col, next_val))
 
+
 # Union Find - Disjoint Set Approach
-# Time: O(m⋅nlog(m⋅n))
-# Space: O(m⋅n)
+# Time: O(m*nlog(m*n))
+# Space: O(m*n)
 # 2023.07.12: no
+# notes: sort edges by height difference and union cells; the answer is
+#        the difference of the edge that first connects start and end
 class Solution2:
     def minimumEffortPath(self, heights):
+        """
+        :type heights: List[List[int]]
+        :rtype: int
+        """
         class UnionFind:
             def __init__(self, size):
                 self.parent = [x for x in range(size)]
@@ -92,12 +105,19 @@ class Solution2:
                 return difference
         return -1
 
+
 # Binary Search Using BFS Approach
 # Time: O(mn) for sorting
 # Space: O(mn)
 # 2023.07.12: no
+# notes: binary search the effort limit; BFS checks if the end is
+#        reachable using only steps within that limit
 class Solution3:
     def minimumEffortPath(self, heights) -> int:
+        """
+        :type heights: List[List[int]]
+        :rtype: int
+        """
         row = len(heights)
         col = len(heights[0])
         def canReachDestinaton(mid):
@@ -127,19 +147,19 @@ class Solution3:
                 left = mid + 1
         return left
 
-# Tests:
-test = Solution3()
-test.minimumEffortPath([[1,2,2],[3,8,2],[5,3,5]])
-test.minimumEffortPath([[1,2,3],[3,8,4],[5,3,5]])
-test.minimumEffortPath([[1,2,1,1,1],[1,2,1,2,1],[1,2,1,2,1],[1,2,1,2,1],[1,1,1,2,1]])
-
 
 # Binary Search Using DFS Approach
-# Time: O(m⋅nlog(m⋅n)) for sorting
-# Space: O(m⋅n)
+# Time: O(m*nlog(m*n)) for sorting
+# Space: O(m*n)
 # 2023.07.12: no
+# notes: same binary search on the effort limit, but DFS does the
+#        reachability check instead of BFS
 class Solution4:
     def minimumEffortPath(self, heights):
+        """
+        :type heights: List[List[int]]
+        :rtype: int
+        """
         row = len(heights)
         col = len(heights[0])
         def canReachDestinaton(x, y, mid):
@@ -168,3 +188,11 @@ class Solution4:
                 left = mid + 1
         return left
 
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minimumEffortPath([[1,2,2],[3,8,2],[5,3,5]]) == 2
+    assert sol.minimumEffortPath([[1,2,3],[3,8,4],[5,3,5]]) == 1
+    assert sol.minimumEffortPath(
+        [[1,2,1,1,1],[1,2,1,2,1],[1,2,1,2,1],[1,2,1,2,1],[1,1,1,2,1]]) == 0
+    assert sol.minimumEffortPath([[1]]) == 0

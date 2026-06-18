@@ -1,7 +1,6 @@
-# Split Input List (best approach)
-# Time: O(n+k)
-# Space: O(k)
-# 2023.09.10: yes
+# 725. Split Linked List in Parts
+
+from typing import Optional, List
 
 
 # Definition for singly-linked list.
@@ -11,9 +10,27 @@ class ListNode:
         self.next = next
 
 
-from typing import Optional, List
+def build(vals):
+    head = cur = ListNode(0)
+    for v in vals:
+        cur.next = cur = ListNode(v)
+    return head.next
 
 
+def to_list(node):
+    out = []
+    while node:
+        out.append(node.val)
+        node = node.next
+    return out
+
+
+# Split Input List (best approach)
+# Time: O(n+k)
+# Space: O(k)
+# 2023.09.10: yes
+# notes: count length, give each part length//k plus one extra to the
+#        first length%k parts, then cut the links in place
 class Solution:
     def splitListToParts(
         self, head: Optional[ListNode], k: int
@@ -52,7 +69,9 @@ class Solution:
 # Time: O(n+k)
 # Space: O(max(n, k))
 # 2023.09.10: yes
-class Solution2(object):
+# notes: copy values into k fresh lists, giving the first remainder
+#        parts one extra node each
+class Solution2:
     def splitListToParts(self, root, k):
         cur = root
         for N in range(1001):
@@ -74,22 +93,12 @@ class Solution2(object):
 
 
 # Tests:
-a = ListNode(1, ListNode(2, ListNode(3)))
-b = ListNode(
-    1,
-    ListNode(
-        2,
-        ListNode(
-            3,
-            ListNode(
-                4,
-                ListNode(
-                    5, ListNode(6, ListNode(7, ListNode(8, ListNode(9, ListNode(10)))))
-                ),
-            ),
-        ),
-    ),
-)
-test = Solution()
-c = test.splitListToParts(a, 5)
-d = test.splitListToParts(b, 3)
+for sol in (Solution(), Solution2()):
+    parts = sol.splitListToParts(build([1, 2, 3]), 5)
+    assert [to_list(p) for p in parts] == [[1], [2], [3], [], []]
+    parts = sol.splitListToParts(build([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]), 3)
+    assert [to_list(p) for p in parts] == [
+        [1, 2, 3, 4], [5, 6, 7], [8, 9, 10]
+    ]
+    parts = sol.splitListToParts(build([1, 2, 3]), 1)
+    assert [to_list(p) for p in parts] == [[1, 2, 3]]

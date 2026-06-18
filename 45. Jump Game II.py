@@ -1,8 +1,11 @@
+# 45. Jump Game II
+
 # Greedy
 # Time: O(n)
 # Space: O(1)
 # 2023.07.29: yes
-# notes: 每次找最远的子节点即可
+# notes: each jump, reach the farthest index possible; count a jump
+#        whenever the current range is exhausted
 class Solution:
     def jump(self, nums):
         # The starting range of the first jump is [0, 0]
@@ -21,7 +24,10 @@ class Solution:
 
         return answer
 
+
 # Tests:
-test = Solution()
-test.jump([2,3,0,1,4])
-test.jump([2,3,1,4,4])
+for sol in (Solution(),):
+    assert sol.jump([2,3,0,1,4]) == 2
+    assert sol.jump([2,3,1,1,4]) == 2
+    assert sol.jump([0]) == 0
+    assert sol.jump([1,2]) == 1

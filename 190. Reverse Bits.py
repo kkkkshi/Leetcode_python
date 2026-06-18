@@ -1,8 +1,10 @@
+# 190. Reverse Bits
+
 # Bit by Bit
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: and 1 然后右移，循环往复
+# notes: take the lowest bit then shift right, repeating each step
 class Solution:
     def reverseBits(self, n):
         ret, power = 0, 31
@@ -12,13 +14,14 @@ class Solution:
             power -= 1
         return ret
 
+
 # Byte by Byte with Memoization
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: (byte * 0x0202020202 & 0x010884422010) % 1023是一个公式，就是把一个byte里面的bit逆转过来
-# 这道题的思路是，先把Byte和byte转过来，再把每个Byte中的bit逆转过来
-# 网址是: http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith64BitsDiv
+# notes: reverse byte order, then reverse the bits inside each byte;
+#        (byte * 0x0202020202 & 0x010884422010) % 1023 flips one byte
+# http://graphics.stanford.edu/~seander/bithacks.html#ReverseByteWith64BitsDiv
 class Solution2:
     def reverseBits(self, n):
         ret, power = 0, 24
@@ -39,9 +42,8 @@ class Solution2:
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: https://leetcode.com/problems/reverse-bits/editorial/
-# 标答的图画的非常清晰，哪怕我根本不知道下面这一坨东西是什么，思路大概是把32bit分成16，然后交换16
-# 分成8，,8，交换8，8，分成4，4交换以此类推
+# notes: swap halves repeatedly: 16 with 16, then 8s, 4s, 2s, 1s
+# https://leetcode.com/problems/reverse-bits/editorial/
 class Solution3:
     def reverseBits(self, n):
         n = (n >> 16) | (n << 16)
@@ -51,6 +53,9 @@ class Solution3:
         n = ((n & 0xaaaaaaaa) >> 1) | ((n & 0x55555555) << 1)
         return n
 
+
 # Tests:
-test = Solution()
-test.reverseBits()
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.reverseBits(0b00000010100101000001111010011100) == 964176192
+    assert sol.reverseBits(0b11111111111111111111111111111101) == 3221225471
+    assert sol.reverseBits(0) == 0

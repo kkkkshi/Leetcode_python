@@ -1,12 +1,25 @@
+# 142. Linked List Cycle II
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, x, next=None):
         self.val = x
         self.next = next
 
 
-class Solution(object):
+def build(values, pos):
+    # build a list; pos is the index the tail links back to, -1 for none
+    nodes = [ListNode(v) for v in values]
+    for i in range(len(nodes) - 1):
+        nodes[i].next = nodes[i + 1]
+    if pos != -1 and nodes:
+        nodes[-1].next = nodes[pos]
+    return nodes[0] if nodes else None
+
+
+class Solution:
     # simple solution what I first thought
+    # notes: record visited nodes; first repeat is the cycle entrance
     def detectCycle(self, head):
         visited = set()
 
@@ -20,8 +33,10 @@ class Solution(object):
         return None
 
 
-class Solution2(object):
+class Solution2:
     # Floyd's Tortoise and Hare method
+    # notes: find the meeting point, then walk one pointer from head and
+    #        one from the meeting point; they meet at the entrance
     def getIntersect(self, head):
         tortoise = head
         hare = head
@@ -59,7 +74,9 @@ class Solution2(object):
         return ptr1
 
 
-class Solution3(object):
+class Solution3:
+    # notes: same Floyd idea, fast starts two ahead and handles the
+    #        no-cycle exits before resetting one pointer to head
     def detectCycle(self, head):
         """
         :type head: ListNode
@@ -83,20 +100,11 @@ class Solution3(object):
         return p1
 
 
-a = ListNode(3)
-b = ListNode(2)
-c = ListNode(0)
-d = ListNode(4)
-a.next = b
-b.next = c
-c.next = d
-d.next = b
-e = None
-f = ListNode(1)
-g = ListNode(2)
-f.next = g
-g.next = f
-test = Solution3()
-test.detectCycle(a)
-test.detectCycle(e)
-test.detectCycle(f)
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    head = build([3, 2, 0, -4], 1)
+    assert sol.detectCycle(head).val == 2
+    head = build([1, 2], 0)
+    assert sol.detectCycle(head).val == 1
+    assert sol.detectCycle(build([1], -1)) is None
+    assert sol.detectCycle(None) is None

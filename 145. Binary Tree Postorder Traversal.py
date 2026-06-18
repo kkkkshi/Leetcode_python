@@ -1,18 +1,42 @@
+# 145. Binary Tree Postorder Traversal
+
 # Definition for a binary tree node.
 from queue import LifoQueue
 
 
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order build; None marks a missing child
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # Recursion Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.30: yes
-class Solution(object):
+# notes: recurse left, recurse right, then visit root
+class Solution:
     def postorderTraversal(self, root):
         """
         :type root: TreeNode
@@ -28,12 +52,13 @@ class Solution(object):
         traversal(root)
         return results
 
+
 # Iteration Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.30: yes
-# notes: 弹出当前节点，把当前节点放到results里面，压左压右到stack
-# 回归空的时候，弹出收集栈
+# notes: pop a node, save it, push left then right; drain the save
+#        stack at the end to reverse into postorder
 class Solution2:
     def postorderTraversal(self, root):
         results = []
@@ -52,13 +77,15 @@ class Solution2:
             results.append(cur.val)
         return results
 
-# Morris Approach:
 
+# Morris Approach:
+# notes: thread the tree; for each subtree with a left child, print the
+#        reversed right edge of that left subtree, then the root's edge
 class Solution3:
     def postorderTraversal(self, root):
         self.result = []
         if root == None:
-            return
+            return self.result
         cur = root
         while cur != None:
             most_right = cur.left
@@ -76,15 +103,13 @@ class Solution3:
         self.print_edge(root)
         return self.result
 
-
     def print_edge(self, root):
         tail = self.reverse_edge(root)
         cur = tail
         while cur:
             self.result.append(cur.val)
             cur = cur.right
-        self.reverse_edge(root)
-
+        self.reverse_edge(tail)
 
     def reverse_edge(self, head):
         pre = None
@@ -95,7 +120,10 @@ class Solution3:
             head = next
         return pre
 
+
 # Tests:
-tree = TreeNode(1, None, TreeNode(2, TreeNode(3), None))
-test = Solution3()
-test.postorderTraversal(tree)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.postorderTraversal(build([1, None, 2, 3])) == [3, 2, 1]
+    assert sol.postorderTraversal(build([1, 2, 3, 4, 5])) == [4, 5, 2, 3, 1]
+    assert sol.postorderTraversal(build([])) == []
+    assert sol.postorderTraversal(build([1])) == [1]

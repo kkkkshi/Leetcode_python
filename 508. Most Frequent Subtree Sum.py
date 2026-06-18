@@ -1,14 +1,47 @@
+# 508. Most Frequent Subtree Sum
+
+from collections import deque
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(vals):
+    if not vals:
+        return None
+    it = iter(vals)
+    root = TreeNode(next(it))
+    q = deque([root])
+    while q:
+        node = q.popleft()
+        try:
+            lv = next(it)
+        except StopIteration:
+            break
+        if lv is not None:
+            node.left = TreeNode(lv)
+            q.append(node.left)
+        try:
+            rv = next(it)
+        except StopIteration:
+            break
+        if rv is not None:
+            node.right = TreeNode(rv)
+            q.append(node.right)
+    return root
+
+
 # Post-Order Recursion Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution(object):
+# notes: post-order sum each subtree, count sums in a map, then
+#        return the most frequent sums
+class Solution:
     def findFrequentTreeSum(self, root):
         """
         :type root: TreeNode
@@ -30,13 +63,18 @@ class Solution(object):
         keys_with_max_value = [key for key, value in self.frquency_map.items() if value == max_value]
         return keys_with_max_value
 
+
 # Pre-Order Recursion Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.29: no
-# notes: 非常复杂，一只重复根本没必要
+# notes: very wasteful, recomputes each subtree sum from scratch
 class Solution2:
     def findFrequentTreeSum(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
         self.sum_freq = {}
         self.max_freq = 0
 
@@ -68,11 +106,9 @@ class Solution2:
 
         return max_freq_sums
 
+
 # Tests:
-a = TreeNode(5, TreeNode(2), TreeNode(-3))
-b = TreeNode(5, TreeNode(2), TreeNode(-5))
-test = Solution()
-test.findFrequentTreeSum(a)
-test.findFrequentTreeSum(b)
-
-
+for sol in (Solution(), Solution2()):
+    assert sorted(sol.findFrequentTreeSum(build([5, 2, -3]))) == [-3, 2, 4]
+    assert sorted(sol.findFrequentTreeSum(build([5, 2, -5]))) == [2]
+    assert sorted(sol.findFrequentTreeSum(build([1]))) == [1]

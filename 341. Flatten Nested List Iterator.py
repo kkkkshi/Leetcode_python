@@ -1,3 +1,5 @@
+# 341. Flatten Nested List Iterator
+
 # """
 # This is the interface that allows for creating nested lists.
 # You should not implement it, or speculate about its implementation
@@ -17,11 +19,30 @@ class NestedInteger:
         return self.list
 
 
+def build(data):
+    """Build a list of NestedInteger from a nested python list."""
+    result = []
+    for item in data:
+        if isinstance(item, list):
+            result.append(NestedInteger(nested_list=build(item)))
+        else:
+            result.append(NestedInteger(val=item))
+    return result
+
+
+def flatten(iterator):
+    """Drain an iterator into a plain list using next/hasNext."""
+    out = []
+    while iterator.hasNext():
+        out.append(iterator.next())
+    return out
+
+
 # Make a Flat List with Recursion Approach
 # Time: constructor: O(n+l), next: O(1), hasnext: O(1)
 # Space: O(n+d)
 # 2023.07.02: no
-# notes: 就像一个多叉树
+# notes: like walking a multi-way tree, flatten everything upfront
 class NestedIterator:
 
     def __init__(self, nestedList):
@@ -41,6 +62,7 @@ class NestedIterator:
 
     def hasNext(self):
         return self._position + 1 < len(self._integers)
+
 
 # Stack Approach
 # Time: constructor: O(n+l), next: O(1), hasnext: O(1), makeStackTopAnInteger: O(1)
@@ -66,11 +88,12 @@ class NestedIterator2:
             # the stack in reverse order.
             self.stack.extend(reversed(self.stack.pop().getList()))
 
+
 # Two Stacks Approach
 # Time: constructor: O(1), next: O(1), hasnext: O(1), makeStackTopAnInteger: O(1)
 # Space: O(d)
 # 2023.07.02: no
-# notes: 一个放结果，一个放堆的过程
+# notes: one stack holds the position, lazily unpack lists on demand
 class NestedIterator3:
 
     def __init__(self, nestedList: [NestedInteger]):
@@ -154,3 +177,8 @@ class NestedIterator4:
             return False
 
 
+# Tests:
+for It in (NestedIterator, NestedIterator2, NestedIterator3, NestedIterator4):
+    assert flatten(It(build([[1, 1], 2, [1, 1]]))) == [1, 1, 2, 1, 1]
+    assert flatten(It(build([1, [4, [6]]]))) == [1, 4, 6]
+    assert flatten(It(build([]))) == []

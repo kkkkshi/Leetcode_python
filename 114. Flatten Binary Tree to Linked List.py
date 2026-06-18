@@ -1,8 +1,5 @@
-# Recursion Approach
-# Time: O(n)
-# Space: O(n)
-# 2023.06.26: no
-# notes: 重点是在后序位置，作为总结把左右两边拉平之后的结果进行处理
+# 114. Flatten Binary Tree to Linked List
+
 # Definition for a binary tree node.
 class TreeNode:
     def __init__(self, x):
@@ -11,22 +8,50 @@ class TreeNode:
         self.right = None
 
 
-class Solution(object):
+def to_list(root):
+    # walk the right spine after flattening
+    res = []
+    while root:
+        res.append(root.val)
+        assert root.left is None
+        root = root.right
+    return res
+
+
+def build_sample():
+    r = TreeNode(5)
+    r.left = TreeNode(2)
+    r.left.right = TreeNode(6)
+    r.left.right.left = TreeNode(44)
+    r.left.right.left.right = TreeNode(23)
+    r.right = TreeNode(1)
+    r.right.left = TreeNode(10)
+    r.right.right = TreeNode(11)
+    return r
+
+
+# Recursion Approach
+# Time: O(n)
+# Space: O(n)
+# 2023.06.26: no
+# notes: the work is in the post-order spot: after flattening both
+#        sides, splice the left chain in, then attach the old right
+class Solution:
     def flatten(self, root: TreeNode) -> None:
         # base case
         if not root:
             return
-        # 利用定义，把左右子树拉平
+        # flatten left and right subtrees per the definition
         self.flatten(root.left)
         self.flatten(root.right)
-        # 后序遍历位置
-        # 1、左右子树已经被拉平成一条链表
+        # post-order position
+        # 1. left and right subtrees are now single chains
         left = root.left
         right = root.right
-        # 2、将左子树作为右子树
+        # 2. move the left subtree to the right
         root.left = None
         root.right = left
-        # 3、将原先的右子树接到当前右子树的末端
+        # 3. append the old right subtree to the new tail
         p = root
         while p.right:
             p = p.right
@@ -37,10 +62,16 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.06.26: no
-# notes: 有两个状态，start,end，end表示至少左树已经排序好，start说明需要排序，如果start有左树，就把头结点改为end，再把左树头压进栈
-# 因为左树先pop出来，排序好后，头结点就没有左树，自然是end，如果start没有左树，直接压进右树
-# 如果没进尾节点之前，就没有tailnode，这时候只能不断压没有排序好的栈，直到有了尾节点之后，倒着连上去
-# 剩下的就是连接头尾，靠stack的方式从尾到头排序，同时还要确定tail是什么，tail的右树要接头结点的右树
+# notes: two states start/end; end means the left side is ordered,
+#        start means it still needs work. On start with a left child,
+#        re-push the node as end and push the left child first.
+#        The left pops first, ends up with no left child, so it is
+#        end. On start without a left child, push the right child.
+#        Before reaching a tail node there is no tailNode, so keep
+#        pushing unordered nodes until a tail appears, then wire
+#        them back from tail to head. The rest is joining head and
+#        tail via the stack, picking the tail whose right links to
+#        the head's right subtree
 import collections
 
 class Solution2:
@@ -102,13 +133,16 @@ class Solution2:
                 if rightNode:
                     stack.append((rightNode, START))
 
+
 # O(1) Iterative Solution Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.26: no
-# notes: 非常像morris遍历，如果有左树，找出左树的最右节点（他没有右树，但是可以有左树），把头结点的右树，接到这个的右树上面
-# 因此头结点没有右树，只有左树；把左树变成右树，遍历下一个节点，重复，如果有左树，同样的过程，没有左树，直接进右节点
-
+# notes: very like Morris traversal; if there is a left subtree, find
+#        its rightmost node (no right child, maybe a left), attach the
+#        node's right subtree there, so the node keeps only a left
+#        subtree; make the left the right, move on and repeat; with no
+#        left subtree, just step into the right child
 class Solution3:
     def flatten(self, root: TreeNode) -> None:
         """
@@ -132,15 +166,10 @@ class Solution3:
             # move on to the right side of the tree
             node = node.right
 
-# Tests:
-r = TreeNode(5)
-r.left = TreeNode(2)
-r.left.right = TreeNode(6)
-r.left.right.left = TreeNode(44)
-r.left.right.left.right = TreeNode(23)
-r.right = TreeNode(1)
-r.right.left = TreeNode(10)
-r.right.right = TreeNode(11)
 
-test = Solution2()
-test.flatten(r)
+# Tests:
+expected = [5, 2, 6, 44, 23, 1, 10, 11]
+for sol in (Solution(), Solution2(), Solution3()):
+    r = build_sample()
+    sol.flatten(r)
+    assert to_list(r) == expected

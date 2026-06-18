@@ -1,10 +1,15 @@
+# 855. Exam Room
+
 # Heapq
 # Time: O(n)
 # Space: O(1)
 # 2023.08.05: no
-# notes: 核心思想是把线段放到heap中，每次pop最大的半个线段，如果加人，就把当前线段pop出来，再加两个子线段
-# 如果是leave，就把这两个边界的线段合并
+# notes: keep intervals in a max-heap keyed by the seat they would give.
+#        seat() pops the widest interval, sits in its middle, pushes the
+#        two halves; leave() merges the two intervals around that seat.
 import heapq
+
+
 class ExamRoom():
 
     def dist(self, x, y):  # length of the interval (x, y)
@@ -45,10 +50,12 @@ class ExamRoom():
         heapq.heapify(self.pq)
         heapq.heappush(self.pq, (self.dist(head[1], tail[2]), head[1], tail[2]))
 
-test = ExamRoom(10)
-test.seat()
-test.seat()
-test.seat()
-test.seat()
-test.leave(4)
-test.seat()
+
+# Tests:
+room = ExamRoom(10)
+assert room.seat() == 0
+assert room.seat() == 9
+assert room.seat() == 4
+assert room.seat() == 2
+room.leave(4)
+assert room.seat() == 5

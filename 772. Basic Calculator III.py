@@ -1,11 +1,17 @@
+# 772. Basic Calculator III
+
 # Solve Isolated Expressions With Recursion
 # Time: O(n)
 # Space: O(1)
 # 2023.09.29: yes
-# notes: 这道题与之前的不同就是需要有一个global variable去记录现在的位数，并且需要用stack记录目前的值，需要用recursion去调用括号内的内容
-
+# notes: keep an index pointer to track the current position and a
+#        stack for running values; recurse into each parenthesis
 class Solution:
     def calculate(self, s: str) -> int:
+        """
+        :type s: str
+        :rtype: int
+        """
         def evaluate(x, y, operator):
             if operator == "+":
                 return x
@@ -47,6 +53,9 @@ class Solution:
         return solve([0])
 
 
-
-test = Solution()
-test.calculate("2*(5+5*2)/3+(6/2+8)")
+# Tests:
+for sol in (Solution(),):
+    assert sol.calculate("2*(5+5*2)/3+(6/2+8)") == 21
+    assert sol.calculate("1+1") == 2
+    assert sol.calculate("6-4/2") == 4
+    assert sol.calculate("2*3+(4-2)") == 8

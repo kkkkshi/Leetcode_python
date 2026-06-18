@@ -1,9 +1,12 @@
+# 403. Frog Jump
+
 # Hash map
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.08.20: no
-# notes: 自我感觉比标答好啊哈哈哈哈哈哈哈，大家的答案里也有这种解法
-class Solution(object):
+# notes: for each stone keep the set of jump sizes that can reach it;
+#        from each reachable jump j, try j-1, j and j+1 to the next stone.
+class Solution:
     def canCross(self, stones):
         """
         :type stones: List[int]
@@ -23,11 +26,13 @@ class Solution(object):
                     possibles[stones[i] + j + 1].add(j + 1)
         return len(possibles[stones[-1]]) != 0
 
+
 # Dynamic Programming
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.08.20: no
-# notes: 用一个table记录T/F，无特别
+# notes: dp[i][k] marks that stone i is reachable with a jump of size k;
+#        nothing special, just a True/False table.
 class Solution2:
     def canCross(self, stones):
         mark = {}  # Dictionary to store stone positions and indices
@@ -56,6 +61,7 @@ class Solution2:
 
 
 # Tests:
-test = Solution2()
-test.canCross([0, 1, 2, 3, 4, 8, 9, 11])
-test.canCross([0, 1, 3, 5, 6, 8, 12, 17])
+for sol in (Solution(), Solution2()):
+    assert sol.canCross([0, 1, 2, 3, 4, 8, 9, 11]) is False
+    assert sol.canCross([0, 1, 3, 5, 6, 8, 12, 17]) is True
+    assert sol.canCross([0, 2]) is False

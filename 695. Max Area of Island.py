@@ -1,9 +1,13 @@
+# 695. Max Area of Island
+
 # BFS Approach
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.08.03: yes
+# notes: bfs from every land cell, sinking visited cells, and track the
+#        largest area seen
 from collections import deque
-class Solution(object):
+class Solution:
     def maxAreaOfIsland(self, grid):
         """
         :type grid: List[List[int]]
@@ -34,27 +38,19 @@ class Solution(object):
                     count = max(count, bfs(grid, i,j))
         return count
 
-# Tests:
-test = Solution()
-test.maxAreaOfIsland([[1,1,0,0,0],
-                      [1,1,0,0,0],
-                      [0,0,0,1,1],
-                      [0,0,0,1,1]])
-test.maxAreaOfIsland([[0,0,1,0,0,0,0,1,0,0,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,0,0,0],
-                      [0,1,1,0,1,0,0,0,0,0,0,0,0],
-                      [0,1,0,0,1,1,0,0,1,0,1,0,0],
-                      [0,1,0,0,1,1,0,0,1,1,1,0,0],
-                      [0,0,0,0,0,0,0,0,0,0,1,0,0],
-                      [0,0,0,0,0,0,0,1,1,1,0,0,0],
-                      [0,0,0,0,0,0,0,1,1,0,0,0,0]])
 
 # DFS Approach
 # Time: O(mn)
 # Space: O(mn)
 # 2023.08.03: yes
-class Solution(object):
+# notes: dfs from every cell, counting connected land and marking it
+#        seen, returning the max area
+class Solution2:
     def maxAreaOfIsland(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         seen = set()
         def area(r, c):
             if not (0 <= r < len(grid) and 0 <= c < len(grid[0])
@@ -67,3 +63,21 @@ class Solution(object):
         return max(area(r, c)
                    for r in range(len(grid))
                    for c in range(len(grid[0])))
+
+
+# Tests:
+for Sol in (Solution, Solution2):
+    sol = Sol()
+    assert sol.maxAreaOfIsland(
+        [[1, 1, 0, 0, 0], [1, 1, 0, 0, 0],
+         [0, 0, 0, 1, 1], [0, 0, 0, 1, 1]]) == 4
+    assert sol.maxAreaOfIsland(
+        [[0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+         [0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+         [0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 1, 0, 0],
+         [0, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+         [0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0]]) == 6
+    assert sol.maxAreaOfIsland([[0, 0, 0], [0, 0, 0]]) == 0

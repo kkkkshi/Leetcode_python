@@ -1,4 +1,10 @@
-class Solution(object):
+# 189. Rotate Array
+
+# Brute Force
+# Time: O(nk)
+# Space: O(1)
+# notes: pop the last element and insert it at the front, k times
+class Solution:
     # time exceed
     def rotate(self, nums, k):
         """
@@ -11,6 +17,10 @@ class Solution(object):
         return nums
 
 
+# Extra Array
+# Time: O(n)
+# Space: O(n)
+# notes: place each element at (i + k) % n in a copy, then write back
 class Solution2:
     # space exceed
     def rotate(self, nums, k):
@@ -22,6 +32,10 @@ class Solution2:
         nums[:] = a
 
 
+# Cyclic Replacement
+# Time: O(n)
+# Space: O(1)
+# notes: move elements along their cycles, shifting each by k in place
 class Solution3:
     # excellent solution
     def rotate(self, nums, k):
@@ -42,6 +56,11 @@ class Solution3:
             start += 1
 
 
+# Reverse
+# Time: O(n)
+# Space: O(1)
+# notes: reverse the whole array, then reverse the first k and the
+#        rest separately
 class Solution4:
     # best solution, but hard to think
     def reverse(self, nums, start, end):
@@ -57,10 +76,15 @@ class Solution4:
         self.reverse(nums, 0, k - 1)
         self.reverse(nums, k, n - 1)
 
-nums = [1,2,3,4,5,6,7,8]
-# rotate 1 steps to the right: [7,1,2,3,4,5,6]
-# rotate 2 steps to the right: [6,7,1,2,3,4,5]
-# rotate 3 steps to the right: [5,6,7,1,2,3,4]
-k = 2
-test4 = Solution4()
-test4.rotate(nums, k)
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    a = [1, 2, 3, 4, 5, 6, 7]
+    sol.rotate(a, 3)
+    assert a == [5, 6, 7, 1, 2, 3, 4]
+    b = [-1, -100, 3, 99]
+    sol.rotate(b, 2)
+    assert b == [3, 99, -1, -100]
+    c = [1, 2]
+    sol.rotate(c, 3)
+    assert c == [2, 1]

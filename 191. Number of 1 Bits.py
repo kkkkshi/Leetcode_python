@@ -1,9 +1,11 @@
+# 191. Number of 1 Bits
+
 # Bit Manipulation
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 用到的技巧是n & n-1可以提取最后一位1
-class Solution(object):
+# notes: n & (n - 1) clears the lowest set bit; count the iterations
+class Solution:
     def hammingWeight(self, n):
         """
         :type n: int
@@ -15,13 +17,18 @@ class Solution(object):
             count += 1
         return count
 
+
 # Bit Manipulation
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.02: no
-# notes: 用一个bit mask来确认
-class Solution2(object):
-    def hammingWeight(n):
+# notes: slide a mask over all 32 bits and count the ones that are set
+class Solution2:
+    def hammingWeight(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
         bits = 0
         mask = 1
         for i in range(32):
@@ -32,5 +39,8 @@ class Solution2(object):
 
 
 # Tests:
-test = Solution()
-test.hammingWeight(n = 0b00000000000000000000000000001011)
+for sol in (Solution(), Solution2()):
+    assert sol.hammingWeight(0b00000000000000000000000000001011) == 3
+    assert sol.hammingWeight(0b00000000000000000000000010000000) == 1
+    assert sol.hammingWeight(0b11111111111111111111111111111101) == 31
+    assert sol.hammingWeight(0) == 0

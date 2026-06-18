@@ -1,16 +1,37 @@
-# Recursion Approach
-# Time: O(n)
-# Space: O(n)
-# 2023.06.27: yes
-# notes: 根据105改的，postorder是从右往左，因为是从右往左Process
+# 106. Construct Binary Tree from Inorder and Postorder Traversal
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
-class Solution(object):
+
+def to_list(root):
+    # level-order serialization with trailing None trimmed
+    res = []
+    q = [root]
+    while q:
+        node = q.pop(0)
+        if node:
+            res.append(node.val)
+            q.append(node.left)
+            q.append(node.right)
+        else:
+            res.append(None)
+    while res and res[-1] is None:
+        res.pop()
+    return res
+
+
+# Recursion Approach
+# Time: O(n)
+# Space: O(n)
+# 2023.06.27: yes
+# notes: adapted from 105; read postorder right to left, so build
+#        the right subtree before the left one
+class Solution:
     def buildTree(self, inorder, postorder):
         """
         :type inorder: List[int]
@@ -32,6 +53,10 @@ class Solution(object):
             return root
         return array_to_tree(0, len(postorder) - 1)
 
+
 # Tests:
-test = Solution()
-a = test.buildTree(inorder = [9,3,15,20,7], postorder = [9,15,7,20,3])
+for sol in (Solution(),):
+    assert to_list(sol.buildTree([9, 3, 15, 20, 7],
+                                 [9, 15, 7, 20, 3])) == [3, 9, 20, None, None, 15, 7]
+    assert to_list(sol.buildTree([-1], [-1])) == [-1]
+    assert to_list(sol.buildTree([2, 1], [2, 1])) == [1, 2]

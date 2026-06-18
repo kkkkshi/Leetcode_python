@@ -1,9 +1,15 @@
+# 169. Majority Element
+
+import random
+
+
 # Sorting Approach
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.06.24: yes
-# 纯傻逼。。。大于一半sort直接取中点。。。
-class Solution(object):
+# notes: dumb but works; the majority is over half, so sort and the
+#        middle element is it (here counted while scanning)
+class Solution:
     def majorityElement(self, nums):
         """
         :type nums: List[int]
@@ -22,12 +28,18 @@ class Solution(object):
             else:
                 count = 1
 
+
 # Sorting Approach
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.06.24: yes
+# notes: sort and return the middle element directly
 class Solution2:
     def majorityElement(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         nums.sort()
         return nums[len(nums)//2]
 
@@ -36,6 +48,8 @@ class Solution2:
 # Time: O(nlogc)
 # Space: O(1)
 # 2023.06.24: no
+# notes: for each bit count how many numbers set it; if over half do,
+#        that bit is set in the majority element
 class Solution3:
     def majorityElement(self, nums) -> int:
         n = len(nums)
@@ -68,12 +82,13 @@ class Solution3:
 
         return majority_element
 
+
 # Randomization Approach
 # Time: O(infinite), but average is 2
 # Space: O(1)
 # 2023.06.24: no
-import random
-
+# notes: pick a random element and verify it appears more than n/2
+#        times; the majority is found in a couple of tries on average
 class Solution4:
     def majorityElement(self, nums):
         majority_count = len(nums)//2
@@ -82,10 +97,13 @@ class Solution4:
             if sum(1 for elem in nums if elem == candidate) > majority_count:
                 return candidate
 
+
 # Divide and Conquer
 # Time: O(logn)
 # Space: O(logn)
 # 2023.06.24: no
+# notes: split in halves, find each half's majority; if they agree
+#        return it, else count both over the slice and take the winner
 class Solution5:
     def majorityElement(self, nums, lo=0, hi=None):
         def majority_element_rec(lo, hi):
@@ -116,7 +134,8 @@ class Solution5:
 # Time: O(n)
 # Space: O(1)
 # 2023.06.24: no
-# notes: 最强方法真的
+# notes: keep a candidate and a count; same value bumps the count,
+#        a different one drops it, the survivor is the majority
 class Solution6:
     def majorityElement(self, nums):
         count = 0
@@ -129,12 +148,11 @@ class Solution6:
 
         return candidate
 
-nums = [3,2,3]
-nums2 = [2,2,1,1,1,2,2]
-nums3 = [1]
-nums4 = [3,3,4]
-test = Solution3()
-test.majorityElement(nums4)
-test.majorityElement(nums2)
-test.majorityElement(nums)
-test.majorityElement(nums3)
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(),
+            Solution5(), Solution6()):
+    assert sol.majorityElement([3, 2, 3]) == 3
+    assert sol.majorityElement([2, 2, 1, 1, 1, 2, 2]) == 2
+    assert sol.majorityElement([1]) == 1
+    assert sol.majorityElement([3, 3, 4]) == 3

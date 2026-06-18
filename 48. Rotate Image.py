@@ -1,9 +1,12 @@
+# 48. Rotate Image
+
 # Reverse on Diagonal and then Reverse Left to Right
 # Time: O(m)
 # Space: O(1)
 # 2023.06.19: no
-# notes: 很难想到，但是想到了又很好写，旋转90度，最影响想到的就是对角线翻转，这是把行变列的方法
-class Solution(object):
+# notes: transpose to swap rows and columns, then reverse each
+#        row; hard to see but easy to write once you do
+class Solution:
     def rotate(self, matrix):
         """
         :type matrix: List[List[int]]
@@ -19,12 +22,18 @@ class Solution(object):
                 x += 1
                 y -= 1
 
+
 # Rotate Groups of Four Cells
 # Time: O(m)
 # Space: O(1)
-# notes: 这个细节真的很容易错，重点是旋转的话，是4个元素一起旋转，而不是2个了，比较难想
+# notes: rotate four cells at once, not two; easy to get the
+#        index math wrong here
 class Solution2:
     def rotate(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: None Do not return anything, modify matrix in-place instead.
+        """
         n = len(matrix[0])
         for i in range(n // 2 + n % 2):
             for j in range(n // 2):
@@ -34,8 +43,15 @@ class Solution2:
                 matrix[j][n - 1 - i] = matrix[i][j]
                 matrix[i][j] = tmp
 
-# Tests:
-a = [[1,2,3],[4,5,6],[7,8,9]]
-test = Solution()
-test.rotate(a)
 
+# Tests:
+for sol in (Solution(), Solution2()):
+    a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+    sol.rotate(a)
+    assert a == [[7, 4, 1], [8, 5, 2], [9, 6, 3]]
+    b = [[1, 2], [3, 4]]
+    sol.rotate(b)
+    assert b == [[3, 1], [4, 2]]
+    c = [[1]]
+    sol.rotate(c)
+    assert c == [[1]]

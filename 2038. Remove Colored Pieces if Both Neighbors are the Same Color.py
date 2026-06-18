@@ -1,9 +1,13 @@
+# 2038. Remove Colored Pieces if Both Neighbors are the Same Color
+
 # Loop Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.18: yes
 # No specific
-class Solution(object):
+# notes: count each run of equal colors; a run of length k gives k-2
+#        moves to that player; Alice wins with more moves than Bob
+class Solution:
     def winnerOfGame(self, colors):
         a, b = 0, 0
         a_chances, b_chances = 0, 0
@@ -36,7 +40,10 @@ class Solution(object):
         else:
             return True
 
+
 # Tests:
-test = Solution()
-test.winnerOfGame("AAAABBBB")
-test.winnerOfGame("BBAAABBABBABB")
+for sol in (Solution(),):
+    assert sol.winnerOfGame("AAAABBBB") is False
+    assert sol.winnerOfGame("AAAAABBB") is True
+    assert sol.winnerOfGame("ABBBBBB") is False
+    assert sol.winnerOfGame("AAABBBA") is False

@@ -1,9 +1,12 @@
+# 153. Find Minimum in Rotated Sorted Array
+
 # Binary Search Approach (best approach)
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.25: yes
-# notes: 因为解一定存在，然后注意的点事left = mid和right = mid
-class Solution(object):
+# notes: the answer always exists; mind the boundary updates
+#        left = mid and right = mid
+class Solution:
     def findMin(self, nums):
         """
         :type nums: List[int]
@@ -24,11 +27,10 @@ class Solution(object):
                 return nums[0]
 
 
-
 # Tests:
-test = Solution()
-test.findMin([3,1,2])
-test.findMin([1])
-test.findMin([11,13,15,17])
-test.findMin(nums = [3,4,5,1,2])
-test.findMin([4,5,6,7,0,1,2])
+for sol in (Solution(),):
+    assert sol.findMin([3, 1, 2]) == 1
+    assert sol.findMin([1]) == 1
+    assert sol.findMin([11, 13, 15, 17]) == 11
+    assert sol.findMin([3, 4, 5, 1, 2]) == 1
+    assert sol.findMin([4, 5, 6, 7, 0, 1, 2]) == 0

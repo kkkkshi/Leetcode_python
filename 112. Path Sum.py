@@ -1,15 +1,20 @@
+# 112. Path Sum
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
 # depth-first Search Approach bottom up
 # Time: O(n)
 # Space: O(n), when unbalanced
 # 2023.07.03: yes
-class Solution(object):
+# notes: recurse subtracting node values; at a leaf check the
+#        remaining target hit zero
+class Solution:
     def hasPathSum(self, root, targetSum):
         """
         :type root: TreeNode
@@ -26,10 +31,13 @@ class Solution(object):
             return left or right
         return recursion(root, targetSum)
 
+
 # breadth-first Search Approach bottom up
 # Time: O(n)
 # Space: O(n), when unbalance
 # 2023.07.03: yes
+# notes: iterative stack carrying the remaining sum per node; a leaf
+#        with zero remaining means a valid path
 class Solution2:
     def hasPathSum(self, root, sum):
         """
@@ -51,8 +59,12 @@ class Solution2:
                 de.append((node.left, curr_sum - node.left.val))
         return False
 
+
 # Tests:
 tree = TreeNode(5, TreeNode(4, TreeNode(11, TreeNode(7), TreeNode(2)), None),
                 TreeNode(8, TreeNode(13), TreeNode(4, None, TreeNode(1))))
-test = Solution()
-test.hasPathSum(tree, 22)
+for sol in (Solution(), Solution2()):
+    assert sol.hasPathSum(tree, 22) is True
+    assert sol.hasPathSum(tree, 100) is False
+    assert sol.hasPathSum(None, 0) is False
+    assert sol.hasPathSum(TreeNode(1), 1) is True

@@ -1,12 +1,17 @@
-# Backtracking + Greedy (超时，但是是标答，的一种解法，扩展思路吧)
-# Time: O(e^d)
-# Space: O(v+e)
-# 2023.10.31: no
-# notes: 常规backtrack，因为要求按最小的字典序排序，所以，找路线的时候先在dictionary里面排序，排序完再backtrack
+# 332. Reconstruct Itinerary
+
 from typing import List
 from collections import defaultdict
 
-class Solution(object):
+
+# Backtracking + Greedy (times out, but is one accepted-style
+# solution, keep it for the idea)
+# Time: O(e^d)
+# Space: O(v+e)
+# 2023.10.31: no
+# notes: plain backtrack; since the result must be the smallest
+#        lexical order, sort each destination list before backtracking
+class Solution:
     def findItinerary(self, tickets):
         """
         :type tickets: List[List[str]]
@@ -33,7 +38,6 @@ class Solution(object):
 
         return self.result
 
-
     def backtracking(self, origin, route):
         if len(route) == self.flights + 1:
             self.result = route
@@ -50,14 +54,17 @@ class Solution(object):
 
         return False
 
+
 # Hierholzer's Algorithm
 # Time: O(elog(e/v))
 # Space: O(v+e)
 # 2023.10.31: no
-# notes: 方法太过巧妙，建议参考答案： https://leetcode.com/problems/reconstruct-itinerary/editorial/
-# 首先加到map中，解决对应关系，sort_reverse，然后根据DFS，如果到了尽头，说明，这个点即使结尾，后序append到result上，然后继续正向遍历
-# 即可找到正确答案，因为dfs是逆序，最后[::-1]即可
-class Solution2(object):
+# notes: clever, see the editorial:
+# https://leetcode.com/problems/reconstruct-itinerary/editorial/
+# build the map, sort each list in reverse, then DFS; when a node
+# is a dead end append it to the result, the DFS runs in reverse
+# so reverse the result at the end with [::-1]
+class Solution2:
     def findItinerary(self, tickets):
         """
         :type tickets: List[List[str]]
@@ -89,8 +96,12 @@ class Solution2(object):
         self.result.append(origin)
 
 
-
-# test
-test = Solution2()
-test.findItinerary([["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]])
-test.findItinerary(tickets = [["MUC","LHR"],["JFK","MUC"],["SFO","SJC"],["LHR","SFO"]])
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.findItinerary(
+        [["JFK", "SFO"], ["JFK", "ATL"], ["SFO", "ATL"],
+         ["ATL", "JFK"], ["ATL", "SFO"]]
+    ) == ["JFK", "ATL", "JFK", "SFO", "ATL", "SFO"]
+    assert sol.findItinerary(
+        [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+    ) == ["JFK", "MUC", "LHR", "SFO", "SJC"]

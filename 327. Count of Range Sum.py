@@ -1,10 +1,20 @@
+# 327. Count of Range Sum
+
 # Merge sort Approach
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.28: no
-# notes: double loop + recursion在prefix sum上
+# notes: build prefix sums, then during merge sort use a sliding window
+#        over the right half to count pairs whose difference lands in
+#        [lower, upper]
 class Solution:
     def countRangeSum(self, nums, lower, upper):
+        """
+        :type nums: List[int]
+        :type lower: int
+        :type upper: int
+        :rtype: int
+        """
         self.lower = lower
         self.upper = upper
         preSum = [0] * (len(nums) + 1)
@@ -55,6 +65,10 @@ class Solution:
                 nums[p] = self.temp[i]
                 i += 1
 
+
 # Tests:
-test = Solution()
-test.countRangeSum(nums = [-2,5,-1], lower = -2, upper = 2)
+for sol in (Solution(),):
+    assert sol.countRangeSum([-2, 5, -1], -2, 2) == 3
+    assert sol.countRangeSum([0], 0, 0) == 1
+    assert sol.countRangeSum([0, 0], 0, 0) == 3
+    assert sol.countRangeSum([1, 2, 3], 10, 20) == 0

@@ -1,7 +1,11 @@
+# 393. UTF-8 Validation
+
 # String Manipulation
 # Time: O(nmk)
 # Space: O(n)
 # 2023.07.22: no
+# notes: read the leading 1s of each start byte to get the char length,
+#        then verify the following bytes all start with 10.
 class Solution:
     def validUtf8(self, data):
         """
@@ -49,7 +53,11 @@ class Solution:
 
 
 # Bit Manipulation
-class Solution:
+# Time: O(n)
+# Space: O(1)
+# 2023.07.22: no
+# notes: same idea but use bit masks instead of string formatting.
+class Solution2:
     def validUtf8(self, data):
         """
         :type data: List[int]
@@ -90,3 +98,12 @@ class Solution:
                     return False
             n_bytes -= 1
         return n_bytes == 0
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.validUtf8([197, 130, 1]) is True
+    assert sol.validUtf8([235, 140, 4]) is False
+    assert sol.validUtf8([255]) is False
+    assert sol.validUtf8([0]) is True
+    assert sol.validUtf8([240, 162, 138, 147]) is True

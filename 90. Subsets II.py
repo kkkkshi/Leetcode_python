@@ -1,10 +1,17 @@
+# 90. Subsets II
+
 # Backtracking
 # Time: O(n2^n)
 # Space: O(n)
 # 2023.08.02: no
-# notes: 子集情况都差不多，遇到这个情况入循环的时候直接加进去即可，但是加进去的时候，这里需要判断和前面一个元素重不重复
+# notes: like normal subsets, but sort first and skip a value
+#        equal to the previous one at the same level to avoid dups
 class Solution:
     def subsetsWithDup(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         def backtrack(first, curr):
             output.append(curr[:])
             for i in range(first, n):
@@ -24,9 +31,13 @@ class Solution:
 # Time: O(n2^n)
 # Space: O(n)
 # 2023.08.02: no
-# notes: 和78的bitmask没什么区别，只是加了个seen，去保证不一样
+# notes: same as 78's bitmask, plus a seen set to drop duplicates
 class Solution2:
     def subsetsWithDup(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         subsets = []
         n = len(nums)
         nums.sort()
@@ -54,14 +65,18 @@ class Solution2:
         return subsets
 
 
-
 # Bitmasking
 # Time: O(n2^n)
 # Space: O(logn)
 # 2023.08.02: no
-# notes: 标答写的很不错，如果该元素和前面一样，那就从上次开始的地方继续粘贴新元素，如果和前面元素不一样，就从头开始粘粘新元素
+# notes: if a value repeats the previous one, only extend the
+#        subsets made in the last step; otherwise extend all
 class Solution3:
     def subsetsWithDup(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         nums.sort()
         subsets = [[]]
         subset_size = 0
@@ -79,6 +94,14 @@ class Solution3:
 
 
 # Tests:
-test = Solution2()
-test.subsetsWithDup([1,2,2,3])
-test.subsetsWithDup([4,4,4,1,4])
+def norm(res):
+    return sorted(sorted(s) for s in res)
+
+
+for sol in (Solution(), Solution2(), Solution3()):
+    assert norm(sol.subsetsWithDup([1,2,2])) == \
+        [[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]
+    assert norm(sol.subsetsWithDup([0])) == [[], [0]]
+    assert norm(sol.subsetsWithDup([4,4,4,1,4])) == \
+        norm([[], [1], [4], [4,4], [4,4,4], [4,4,4,4],
+              [1,4], [1,4,4], [1,4,4,4], [1,4,4,4,4]])

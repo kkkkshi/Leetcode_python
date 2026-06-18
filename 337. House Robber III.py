@@ -1,15 +1,38 @@
-# Recursion
-# Time: O(n)
-# Space: O(n)
-# 2023.07.28: yes
-# notes: 用tuple存储rob和not rob即可
+# 337. House Robber III
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    """Build a binary tree from a level-order list (None = missing)."""
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
+# Recursion
+# Time: O(n)
+# Space: O(n)
+# 2023.07.28: yes
+# notes: each node returns a tuple of (rob, not rob)
 class Solution:
     def rob(self, root: TreeNode) -> int:
         def helper(node):
@@ -30,10 +53,9 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# notes: 分类存储rob和not rob，如果parent rob了，他的子孩子必须not rob，
-# 或者他可以rob或者not rob，他的孩子可以not rob 或者rob/not rob
-# rob对应的是not rob; not rob对应的是rob/not rob-> not rob/   rob/not rob
-# 还是挺confused，第二个状态其实是随意，取max，第一个状态是子孩子必须不能rob
+# notes: memoize by whether the parent was robbed; if parent was
+#        robbed the children must not be robbed, otherwise each
+#        child is free to take its own max
 class Solution2:
     def rob(self, root):
         rob_saved = {}
@@ -57,17 +79,13 @@ class Solution2:
                 return result
         return helper(root, False)
 
-# Tests:
-a = TreeNode(3, TreeNode(2, None, TreeNode(3)), TreeNode(3, None, TreeNode(1)))
-test = Solution2()
-test.rob(a)
-
 
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# notes: 挺清晰的，应该没啥问题，对应上面recursion
+# notes: flatten the tree into arrays then run the same dp as the
+#        recursion above, bottom up
 class Solution3:
     def rob(self, root):
         if not root:
@@ -102,12 +120,9 @@ class Solution3:
         return max(dp_rob[0], dp_not_rob[0])
 
 
-
-
-
-
-
-
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.rob(build([3, 2, 3, None, 3, None, 1])) == 7
+    assert sol.rob(build([3, 4, 5, 1, 3, None, 1])) == 9
+    assert sol.rob(build([])) == 0
+    assert sol.rob(build([5])) == 5

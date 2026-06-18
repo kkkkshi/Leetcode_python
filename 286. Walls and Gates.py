@@ -1,7 +1,11 @@
+# 286. Walls and Gates
+
 # Breadth First Search
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.10.31: yes
+# notes: push every gate into a heap, then relax neighbours by one
+#        whenever a shorter distance is found
 import heapq
 from typing import List
 
@@ -9,7 +13,8 @@ from typing import List
 class Solution:
     def wallsAndGates(self, rooms: List[List[int]]) -> None:
         """
-        Do not return anything, modify rooms in-place instead.
+        :type rooms: List[List[int]]
+        :rtype: None Do not return anything, modify rooms in-place instead.
         """
         h = []
         directions = [[-1, 0], [1, 0], [0, 1], [0, -1]]
@@ -36,14 +41,22 @@ class Solution:
 
 
 # Tests:
-test = Solution()
-test.wallsAndGates(
-    [
-        [2147483647, -1, 0, 2147483647],
-        [2147483647, 2147483647, 2147483647, -1],
-        [2147483647, -1, 2147483647, -1],
-        [0, -1, 2147483647, 2147483647],
+INF = 2147483647
+for sol in (Solution(),):
+    grid = [
+        [INF, -1, 0, INF],
+        [INF, INF, INF, -1],
+        [INF, -1, INF, -1],
+        [0, -1, INF, INF],
     ]
-)
+    sol.wallsAndGates(grid)
+    assert grid == [
+        [3, -1, 0, 1],
+        [2, 2, 1, -1],
+        [1, -1, 2, -1],
+        [0, -1, 3, 4],
+    ]
 
-test.wallsAndGates([[-1]])
+    single = [[-1]]
+    sol.wallsAndGates(single)
+    assert single == [[-1]]

@@ -1,8 +1,12 @@
+# 931. Minimum Falling Path Sum
+
 # Bottom-Up Dynamic Programming
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.21: yes
-class Solution(object):
+# notes: pad the dp grid so edges have no special case; each cell takes
+#        the min of the three cells above it plus its own value
+class Solution:
     def minFallingPathSum(self, matrix):
         """
         :type matrix: List[List[int]]
@@ -15,7 +19,6 @@ class Solution(object):
 
         for i in range(1,row):
             for j in range(1, col+1):
-                print(j, i)
                 dp[i][j] = min(dp[i-1][j-1], dp[i-1][j], dp[i-1][j+1]) + matrix[i][j-1]
         return min(dp[row-1])
 
@@ -24,8 +27,14 @@ class Solution(object):
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.06.21: no
+# notes: DFS with memo from each cell in the top row, each call takes
+#        the min of the three reachable cells in the next row
 class Solution2:
     def minFallingPathSum(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: int
+        """
         minFallingSum = float('inf')
         memo = [[None for _ in range(len(matrix[0]))] for _ in range(len(matrix))]
 
@@ -58,13 +67,18 @@ class Solution2:
         return memo[row][col]
 
 
-
 # Bottom-Up Dynamic Programming
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.06.21: no
+# notes: fill the dp grid from the bottom row up, each cell adding the
+#        min of the reachable cells below it
 class Solution3:
     def minFallingPathSum(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: int
+        """
         n = len(matrix)
         dp = [[0 for _ in range(n + 1)] for _ in range(n + 1)]
 
@@ -88,9 +102,13 @@ class Solution3:
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.21: no
-# notes: 只需要记录下一行，和当前行即可
+# notes: only the next row and the current row are needed
 class Solution4:
     def minFallingPathSum(self, matrix):
+        """
+        :type matrix: List[List[int]]
+        :rtype: int
+        """
         dp = [0] * (len(matrix[0]) + 1)
         for row in range(len(matrix) - 1, -1, -1):
             currentRow = [0] * (len(matrix[0]) + 1)
@@ -108,9 +126,7 @@ class Solution4:
         return minFallingSum
 
 
-
-
 # Tests:
-test = Solution4()
-test.minFallingPathSum([[2,1,3],[6,5,4],[7,8,9]])
-test.minFallingPathSum([[-19,57],[-40,-5]])
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minFallingPathSum([[2, 1, 3], [6, 5, 4], [7, 8, 9]]) == 13
+    assert sol.minFallingPathSum([[-19, 57], [-40, -5]]) == -59

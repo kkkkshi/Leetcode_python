@@ -1,9 +1,12 @@
+# 1109. Corporate Flight Bookings
+
 # Range Caching Approach (best approach):
 # Time: O(1)
 # Space: O(mn)
 # 2023.06.19: yes
-
-class Solution(object):
+# notes: diff array - add inc at start, subtract after end, then the
+#        prefix sum gives each flight's total seats
+class Solution:
     def corpFlightBookings(self, bookings, n):
         """
         :type bookings: List[List[int]]
@@ -21,9 +24,9 @@ class Solution(object):
             return_arr[i] = return_arr[i-1] + arr[i]
         return return_arr
 
+
 # Tests:
-a = [[1,2,10],[2,3,20],[2,5,25]]
-b = [[1,2,10],[2,2,15]]
-test = Solution()
-test.corpFlightBookings(a,5)
-test.corpFlightBookings(b, 2)
+for sol in (Solution(),):
+    assert sol.corpFlightBookings([[1,2,10],[2,3,20],[2,5,25]], 5) == [10, 55, 45, 25, 25]
+    assert sol.corpFlightBookings([[1,2,10],[2,2,15]], 2) == [10, 25]
+    assert sol.corpFlightBookings([[1,1,5]], 1) == [5]

@@ -1,8 +1,12 @@
+# 1492. The kth Factor of n
+
 # Math
 # Time: O(logn)
 # Space: O(1)
 # 2023.08.17: yes
-class Solution(object):
+# notes: collect factors up to sqrt(n); the larger half mirrors
+#        the smaller half via n // factor
+class Solution:
     def kthFactor(self, n, k):
         """
         :type n: int
@@ -31,9 +35,19 @@ class Solution(object):
                 return -1
             return int(n/res[len(res)*2-k])
 
-# notes: 写的更简单
+
+# Math
+# Time: O(logn)
+# Space: O(1)
+# 2023.08.17: yes
+# notes: simpler version, same sqrt idea
 class Solution2:
     def kthFactor(self, n: int, k: int) -> int:
+        """
+        :type n: int
+        :type k: int
+        :rtype: int
+        """
         divisors, sqrt_n = [], int(n ** 0.5)
         for x in range(1, sqrt_n + 1):
             if n % x == 0:
@@ -51,8 +65,10 @@ class Solution2:
         n_div = len(divisors)
         return n // divisors[n_div - k] if k <= n_div else -1
 
+
 # Tests:
-test = Solution2()
-test.kthFactor(4,4)
-test.kthFactor(7,2)
-test.kthFactor(12,3)
+for sol in (Solution(), Solution2()):
+    assert sol.kthFactor(12, 3) == 3
+    assert sol.kthFactor(7, 2) == 7
+    assert sol.kthFactor(4, 4) == -1
+    assert sol.kthFactor(1, 1) == 1

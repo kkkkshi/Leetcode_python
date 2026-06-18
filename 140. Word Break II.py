@@ -1,11 +1,14 @@
+# 140. Word Break II
+
+from collections import defaultdict, Counter
+
+
 # Top-Down Dynamic Programming
 # Time: O(n^2+2^n+w)
 # Space: O(2^n*n+w)
 # 2023.07.24: no
-# notes: 本质还是回溯，只是用一个表记下来了每一个节点他们后面的词有什么，到时候拼起来
-from collections import defaultdict, Counter
-
-
+# notes: still backtracking, but memo maps each suffix to all word
+#        lists that build it, then we join them into sentences
 class Solution:
     def wordBreak(self, s, wordDict):
         wordSet = set(wordDict)
@@ -40,9 +43,8 @@ class Solution:
 # Time: O(n^2+2^n+w)
 # Space: O(2^n*n+w)
 # 2023.07.24: no
-# notes: 好理解的多的方法dp[i]记录打这个节点为止的目前形成的可能性，到0为止""， base case, 到n为止的时候
-# 也是从0开始，subsentence就要加上0的""，如果是从4开始，就加上4现有的句子，比如"cats"，7的时候开始，就加"cat sand"
-# 在更新dp的时候，已经是形成句子的状态，非常好理解
+# notes: dp[i] holds every sentence formed up to index i; base dp[0]
+#        is "", and each matched word appends to earlier sentences
 class Solution2:
     def wordBreak(self, s, wordDict):
         # quick check on the characters,
@@ -63,55 +65,61 @@ class Solution2:
             dp[endIndex] = sublist
         return dp[len(s)]
 
-# Tests:
-test = Solution2()
-test.wordBreak(s="catsanddogo", wordDict=["cat", "cats", "and", "sand", "dog", "do", "go"])
-
 
 # Backtracking
 # Time: O(n^2+2^n+w)
 # Space: O(2^n*n+w)
 # 2023.07.24: no
-# notes: 不是，为什么这道题的标答没有backtracking,顶中顶好吗，这道题就应该用backtrack解（不是），但是真的是最简单的暴力递归
+# notes: plain brute-force recursion: at index i try each word that
+#        matches the prefix, recurse, and record the path when i hits end
 class Solution3:
     def __init__(self):
-        # 记录结果
+        # results
         self.res = []
-        # 记录回溯算法的路径
+        # the backtracking path
         self.track = []
         self.wordDict = []
 
-    # 主函数
+    # main entry
     def wordBreak(self, s, wordDict):
+        self.res = []
+        self.track = []
         self.wordDict = wordDict
-        # 执行回溯算法穷举所有可能的组合
+        # run backtracking over all possible combinations
         self.backtrack(s, 0)
         return self.res
 
-    # 回溯算法框架
+    # backtracking template
     def backtrack(self, s: str, i: int) -> None:
         # base case
         if i == len(s):
-            # 找到一个合法组合拼出整个 s，转化成字符串
+            # one valid combination spells out the whole s, to string
             self.res.append(' '.join(self.track))
             return
 
-        # 回溯算法框架
+        # backtracking template
         for word in self.wordDict:
-            # 看看哪个单词能够匹配 s[i..] 的前缀
+            # see which word matches the prefix of s[i..]
             length = len(word)
             if i + length <= len(s) and s[i:i + length] == word:
-                # 找到一个单词匹配 s[i..i+len)
-                # 做选择
+                # found a word matching s[i..i+len)
+                # make the choice
                 self.track.append(word)
-                # 进入回溯树的下一层，继续匹配 s[i+len..]
+                # go to the next level, keep matching s[i+len..]
                 self.backtrack(s, i + length)
-                # 撤销选择
+                # undo the choice
                 self.track.pop()
 
 
-class Solution4:
-    def wordBreak(self, s: str, wordDict: List[str]) -> List[str]:
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sorted(sol.wordBreak(
+        "catsanddog", ["cat", "cats", "and", "sand", "dog"])) == \
+        ["cat sand dog", "cats and dog"]
+    assert sorted(sol.wordBreak(
+        "pineapplepenapple",
+        ["apple", "pen", "applepen", "pine", "pineapple"])) == \
+        ["pine apple pen apple", "pine applepen apple",
+         "pineapple pen apple"]
+    assert sol.wordBreak("catsandog",
+                         ["cats", "dog", "sand", "and", "cat"]) == []

@@ -1,10 +1,13 @@
-# Monotonic Stack Approach (best approach)
+# 295. Find Median from Data Stream
+
+# Two Heaps Approach (best approach)
 # Time: O(logn)
 # Space: O(n)
 # 2023.07.17: yes
-# notes: 有两个要点，第一，大小根堆，第二，大根堆的栈顶元素要小于小根堆的栈顶
+# notes: keep a max-heap of the smaller half and a min-heap of the
+#        larger half so the median sits at the two tops
 from heapq import *
-class MedianFinder(object):
+class MedianFinder:
     def __init__(self):
         self.small = []
         self.large = []
@@ -28,11 +31,12 @@ class MedianFinder(object):
         else:
             return float(self.large[0])
 
+
 # Sorting Approach (not good)
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.17: yes
-# notes: 相当于brute force，尽量不要
+# notes: brute force, keep a sorted list, slow but simple
 import bisect
 
 class MedianFinder2:
@@ -40,9 +44,16 @@ class MedianFinder2:
         self.store = []
 
     def addNum(self, num):
+        """
+        :type num: int
+        :rtype: None
+        """
         bisect.insort(self.store, num)
 
     def findMedian(self):
+        """
+        :rtype: float
+        """
         n = len(self.store)
         if n % 2 == 1:
             return self.store[n // 2]
@@ -50,22 +61,31 @@ class MedianFinder2:
             mid = n // 2
             return (self.store[mid - 1] + self.store[mid]) / 2.0
 
+
 # Insertion Sort Approach (not good)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.17: no
+# notes: same sorted-list idea, inserting with bisect_left
 import bisect
 class MedianFinder3:
     def __init__(self):
         self.store = []
 
     def addNum(self, num):
+        """
+        :type num: int
+        :rtype: None
+        """
         if not self.store:
             self.store.append(num)
         else:
             bisect.insort_left(self.store, num)
 
     def findMedian(self):
+        """
+        :rtype: float
+        """
         n = len(self.store)
         if n % 2 == 1:
             return self.store[n // 2]
@@ -73,10 +93,14 @@ class MedianFinder3:
             mid = n // 2
             return (self.store[mid - 1] + self.store[mid]) / 2.0
 
+
 # Tests:
-obj = MedianFinder()
-obj.addNum(1)
-obj.addNum(2)
-obj.findMedian()
-obj.addNum(3)
-obj.findMedian()
+for cls in (MedianFinder, MedianFinder2, MedianFinder3):
+    obj = cls()
+    obj.addNum(1)
+    obj.addNum(2)
+    assert obj.findMedian() == 1.5
+    obj.addNum(3)
+    assert obj.findMedian() == 2.0
+    obj.addNum(4)
+    assert obj.findMedian() == 2.5

@@ -1,17 +1,21 @@
+# 1905. Count Sub Islands
+
 # BFS Approach
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.08.03: yes
+# notes: sink every grid2 island that touches water in grid1, then
+#        the remaining grid2 islands are all sub-islands; count them
 class Solution:
     def countSubIslands(self, grid1, grid2):
         m, n = len(grid1), len(grid1[0])
-        # 这个岛屿肯定不是子岛，淹掉
+        # this island can't be a sub-island, so sink it
         for i in range(m):
             for j in range(n):
                 if grid1[i][j] == 0 and grid2[i][j] == 1:
                     self.dfs(grid2, i, j)
 
-        # 现在 grid2 中剩下的岛屿都是子岛，计算岛屿数量
+        # every island left in grid2 is a sub-island, count them
         res = 0
         for i in range(m):
             for j in range(n):
@@ -20,7 +24,7 @@ class Solution:
                     self.dfs(grid2, i, j)
         return res
 
-    # 从 (i, j) 开始，将与之相邻的陆地都变成海水
+    # from (i, j), turn all connected land into water
     def dfs(self, grid, i, j):
         m, n = len(grid), len(grid[0])
         if i < 0 or j < 0 or i >= m or j >= n:
@@ -33,3 +37,18 @@ class Solution:
         self.dfs(grid, i, j + 1)
         self.dfs(grid, i - 1, j)
         self.dfs(grid, i, j - 1)
+
+
+# Tests:
+for sol in (Solution(),):
+    grid1 = [[1, 1, 1, 0, 0], [0, 1, 1, 1, 1], [0, 0, 0, 0, 0],
+             [1, 0, 0, 0, 0], [1, 1, 0, 1, 1]]
+    grid2 = [[1, 1, 1, 0, 0], [0, 0, 1, 1, 1], [0, 1, 0, 0, 0],
+             [1, 0, 1, 1, 0], [0, 1, 0, 1, 0]]
+    assert sol.countSubIslands(grid1, grid2) == 3
+    g1 = [[1, 0, 1, 0, 1], [1, 1, 1, 1, 1], [0, 0, 0, 0, 0],
+          [1, 1, 1, 1, 1], [1, 0, 1, 0, 1]]
+    g2 = [[0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [0, 1, 0, 1, 0],
+          [0, 1, 0, 1, 0], [1, 0, 0, 0, 1]]
+    assert sol.countSubIslands(g1, g2) == 2
+    assert sol.countSubIslands([[1]], [[0]]) == 0

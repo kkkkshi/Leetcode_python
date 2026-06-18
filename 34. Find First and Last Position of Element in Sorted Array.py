@@ -1,8 +1,12 @@
+# 34. Find First and Last Position of Element in Sorted Array
+
 # Find Lower bound Approach
 # Time: O(logn)
 # Space: O(1)
 # 2024.06.5: yes
-class Solution(object):
+# notes: binary search twice, once for the leftmost target index
+#        and once for the rightmost
+class Solution:
     def searchRange(self, nums, target):
         """
         :type nums: List[int]
@@ -50,5 +54,8 @@ class Solution(object):
 
 
 # Tests:
-test = Solution()
-test.searchRange([5, 7, 7, 8, 8, 10], 8)  # [3,4]
+for sol in (Solution(),):
+    assert sol.searchRange([5, 7, 7, 8, 8, 10], 8) == [3, 4]
+    assert sol.searchRange([5, 7, 7, 8, 8, 10], 6) == [-1, -1]
+    assert sol.searchRange([], 0) == [-1, -1]
+    assert sol.searchRange([1], 1) == [0, 0]

@@ -1,9 +1,12 @@
-# Dynamic Programming (其实是brute force fck)
+# 73. Set Matrix Zeroes
+
+# Constant Space In-Place Marking
 # Time: O(mn)
 # Space: O(1)
 # 2023.07.31: no
-# notes: 如果遇到0的话，就把第一行的和第一列的对应的改成0，当遍历完一遍之后，再把对应遇到的第一行，第一列的0，都map到一整行上去
-class Solution(object):
+# notes: when a cell is 0, mark its row head and column head to 0,
+#        then sweep again and zero out cells whose head is marked
+class Solution:
     def setZeroes(self, matrix):
         """
         :type matrix: List[List[int]]
@@ -41,12 +44,14 @@ class Solution(object):
             for i in range(R):
                 matrix[i][0] = 0
 
-# Dynamic Programming (其实是brute force fck)
+
+# Extra Space With Row/Column Sets
 # Time: O(mn)
 # Space: O(m+n)
 # 2023.07.31: no
-# notes: 我都不明白为什么要用额外空间，思路和上面是一摸一样的，是上一个解法的简单版本，但是根本没有意义
-class Solution2(object):
+# notes: simpler version of the above, just records which rows and
+#        columns hold a 0 in two sets, then zeroes them out
+class Solution2:
     def setZeroes(self, matrix):
         """
         :type matrix: List[List[int]]
@@ -68,6 +73,16 @@ class Solution2(object):
             for j in range(C):
                 if i in rows or j in cols:
                     matrix[i][j] = 0
+
+
 # Tests:
-test = Solution()
-test.setZeroes([[1,1,1,1],[1,0,1,1],[1,1,0,0],[0,0,0,1]])
+for sol in (Solution(), Solution2()):
+    m = [[1, 1, 1], [1, 0, 1], [1, 1, 1]]
+    sol.setZeroes(m)
+    assert m == [[1, 0, 1], [0, 0, 0], [1, 0, 1]]
+    m = [[0, 1, 2, 0], [3, 4, 5, 2], [1, 3, 1, 5]]
+    sol.setZeroes(m)
+    assert m == [[0, 0, 0, 0], [0, 4, 5, 0], [0, 3, 1, 0]]
+    m = [[1, 1], [1, 1]]
+    sol.setZeroes(m)
+    assert m == [[1, 1], [1, 1]]

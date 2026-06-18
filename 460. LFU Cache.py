@@ -1,15 +1,21 @@
+# 460. LFU Cache
+
 # Double Linked List
 # Time: O(1) for get and put
 # Space: O(capactiy)
 # 2023.06.17: no
-# notes: Linked list真的非常的折磨，以后再看，建议看下面那个方法
+# notes: linked list is really painful, revisit later; the method
+#        below is the recommended one
 import collections
+
+
 class Node:
     def __init__(self, key, val):
         self.key = key
         self.val = val
         self.freq = 1
         self.prev = self.next = None
+
 
 class DLinkedList:
     """ An implementation of doubly linked list.
@@ -158,17 +164,20 @@ class LFUCache:
 # Time: O(1) for get and put
 # Space: O(capactiy)
 # 2023.06.17: no
-# Notes: 好方法，常温常新，但是写不出来，记录key-node，用dict的ordered dict记录node的freq
+# notes: nice method, classic, but hard to write from scratch;
+#        map key to node and use an OrderedDict per frequency
 from collections import defaultdict
 from collections import OrderedDict
 
-class Node:
+
+class Node2:
     def __init__(self, key, val, count):
         self.key = key
         self.val = val
         self.count = count
 
-class LFUCache(object):
+
+class LFUCache2:
     def __init__(self, capacity):
         """
         :type capacity: int
@@ -222,18 +231,21 @@ class LFUCache(object):
             k, n = self.count2node[self.minCount].popitem(last=False)
             del self.key2node[k]
 
-        self.count2node[1][key] = self.key2node[key] = Node(key, value, 1)
+        self.count2node[1][key] = self.key2node[key] = Node2(key, value, 1)
         self.minCount = 1
         return
 
-obj = LFUCache(2)
-obj.put(1,2)
-obj.put(2,2)
-obj.get(3)
-obj.put(3,3)
-obj.get(2)
-obj.get(3)
-obj.put(4,4)
-obj.get(1)
-obj.get(3)
-obj.get(4)
+
+# Tests:
+for LFU in (LFUCache, LFUCache2):
+    obj = LFU(2)
+    obj.put(1, 1)
+    obj.put(2, 2)
+    assert obj.get(1) == 1
+    obj.put(3, 3)         # evicts key 2
+    assert obj.get(2) == -1
+    assert obj.get(3) == 3
+    obj.put(4, 4)         # evicts key 1
+    assert obj.get(1) == -1
+    assert obj.get(3) == 3
+    assert obj.get(4) == 4

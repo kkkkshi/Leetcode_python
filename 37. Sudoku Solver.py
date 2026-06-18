@@ -1,12 +1,18 @@
+# 37. Sudoku Solver
+
 # Backtrack
 # Time: O((9!)^9)
 # Space: O(81)
 # 2023.08.03: yes
-# notes: 这道题一开始不知道怎么判断是不是在一个小Block里面，
-# board[(r // 3) * 3 + i // 3][(c // 3) * 3 + i % 3] == n，用这句非常聪明
-# 剩下的倒是backtracking倒是很常规
+# notes: at first not sure how to check whether a cell is in one small
+#        block; board[(r // 3) * 3 + i // 3][(c // 3) * 3 + i % 3] == n
+#        is a clever way. the rest is plain backtracking.
 class Solution:
     def solveSudoku(self, board):
+        """
+        :type board: List[List[str]]
+        :rtype: None
+        """
         def backtrack(board, i, j):
             def isValid(board, r, c, n):
                 for i in range(9):
@@ -19,39 +25,51 @@ class Solution:
                 return True
             m, n = 9, 9
             if j == n:
-                # 穷举到最后一列的话就换到下一行重新开始。
+                # reached last column, move to next row from start
                 return backtrack(board, i + 1, 0)
             if i == m:
-                # 找到一个可行解，触发 base case
+                # found a valid solution, trigger base case
                 return True
 
             if board[i][j] != '.':
-                # 如果有预设数字，不用我们穷举
+                # preset number, no need to enumerate
                 return backtrack(board, i, j + 1)
 
             for ch in range(ord('1'), ord('9') + 1):
                 ch = chr(ch)
-                # 如果遇到不合法的数字，就跳过
+                # skip an invalid number
                 if not isValid(board, i, j, ch):
                     continue
 
                 board[i][j] = ch
-                # 如果找到一个可行解，立即结束
+                # found a valid solution, return immediately
                 if backtrack(board, i, j + 1):
                     return True
                 board[i][j] = '.'
-                # 穷举完 1~9，依然没有找到可行解，此路不通
+                # tried 1~9 with no solution, dead end
             return False
         return backtrack(board, 0, 0)
-# Tests:
-test = Solution()
-test.solveSudoku([["5","3",".",".","7",".",".",".","."],
-                  ["6",".",".","1","9","5",".",".","."],
-                  [".","9","8",".",".",".",".","6","."],
-                  ["8",".",".",".","6",".",".",".","3"],
-                  ["4",".",".","8",".","3",".",".","1"],
-                  ["7",".",".",".","2",".",".",".","6"],
-                  [".","6",".",".",".",".","2","8","."],
-                  [".",".",".","4","1","9",".",".","5"],
-                  [".",".",".",".","8",".",".","7","9"]])
 
+
+# Tests:
+for sol in (Solution(),):
+    board = [["5", "3", ".", ".", "7", ".", ".", ".", "."],
+             ["6", ".", ".", "1", "9", "5", ".", ".", "."],
+             [".", "9", "8", ".", ".", ".", ".", "6", "."],
+             ["8", ".", ".", ".", "6", ".", ".", ".", "3"],
+             ["4", ".", ".", "8", ".", "3", ".", ".", "1"],
+             ["7", ".", ".", ".", "2", ".", ".", ".", "6"],
+             [".", "6", ".", ".", ".", ".", "2", "8", "."],
+             [".", ".", ".", "4", "1", "9", ".", ".", "5"],
+             [".", ".", ".", ".", "8", ".", ".", "7", "9"]]
+    sol.solveSudoku(board)
+    expected = [["5", "3", "4", "6", "7", "8", "9", "1", "2"],
+                ["6", "7", "2", "1", "9", "5", "3", "4", "8"],
+                ["1", "9", "8", "3", "4", "2", "5", "6", "7"],
+                ["8", "5", "9", "7", "6", "1", "4", "2", "3"],
+                ["4", "2", "6", "8", "5", "3", "7", "9", "1"],
+                ["7", "1", "3", "9", "2", "4", "8", "5", "6"],
+                ["9", "6", "1", "5", "3", "7", "2", "8", "4"],
+                ["2", "8", "7", "4", "1", "9", "6", "3", "5"],
+                ["3", "4", "5", "2", "8", "6", "1", "7", "9"]]
+    assert board == expected

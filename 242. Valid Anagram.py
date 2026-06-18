@@ -1,8 +1,12 @@
+# 242. Valid Anagram
+
 # Frequency Counter Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.23: yes
-class Solution(object):
+# notes: count chars of s, subtract using t; all counts zero means
+#        they are anagrams
+class Solution:
     def isAnagram(self, s, t):
         """
         :type s: str
@@ -19,12 +23,19 @@ class Solution(object):
                 return False
         return all(value == 0 for value in s_dic.values())
 
+
 # Sorting Approach
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.06.23: yes
-class Solution2(object):
+# notes: equal length and equal sorted chars means anagram
+class Solution2:
     def isAnagram(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: bool
+        """
         if len(s) != len(t):
             return False
         str1 = sorted(s)
@@ -33,7 +44,8 @@ class Solution2(object):
 
 
 # Tests:
-test = Solution()
-test.isAnagram("cbba", "bacb")
-test.isAnagram(s = "anagram", t = "nagaram")
-test.isAnagram(s = "rat", t = "car")
+for sol in (Solution(), Solution2()):
+    assert sol.isAnagram("anagram", "nagaram") is True
+    assert sol.isAnagram("rat", "car") is False
+    assert sol.isAnagram("a", "a") is True
+    assert sol.isAnagram("ab", "a") is False

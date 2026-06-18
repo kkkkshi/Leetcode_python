@@ -1,10 +1,18 @@
+# 128. Longest Consecutive Sequence
+
 # HashSet and Intelligent Sequence Building Approach (best solution)
 # Time: O(n)
 # Space: O(n)
 # 2023.06.23: no
-# notes: 题目要求O(n)，所以sort方法是不行的，但是也能通过，无语
+# notes: the problem wants O(n), so sorting is off the table (though
+#        it would still pass); only start counting from a number
+#        that has no left neighbor in the set
 class Solution:
     def longestConsecutive(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         longest_streak = 0
         num_set = set(nums)
 
@@ -22,12 +30,9 @@ class Solution:
         return longest_streak
 
 
-
-
-
-
-
 # Tests:
-nums = [100,4,200,1,3,2]
-test = Solution()
-test.longestConsecutive(nums)
+for sol in (Solution(),):
+    assert sol.longestConsecutive([100, 4, 200, 1, 3, 2]) == 4
+    assert sol.longestConsecutive([0, 3, 7, 2, 5, 8, 4, 6, 0, 1]) == 9
+    assert sol.longestConsecutive([]) == 0
+    assert sol.longestConsecutive([1, 2, 0, 1]) == 3

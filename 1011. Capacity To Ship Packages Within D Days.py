@@ -1,17 +1,20 @@
+# 1011. Capacity To Ship Packages Within D Days
+
 # Binary Search Approach
 # Time: O(nlogm), n is len(pile), m is maximum banana in a single pile
 # Space: O(1)
 # 2023.06.22: no
-# notes: 几个点，left, right的值，判断的的时候的大小于号，f function怎么写
-class Solution(object):
+# notes: binary search on the capacity; watch the left/right bounds, the
+#        comparison signs, and how the feasibility function f is written.
+class Solution:
     def shipWithinDays(self, weights, days):
         """
         :type weights: List[int]
         :type days: int
         :rtype: int
         """
-        # left就是至少每次要送一箱
-        # right的情况就是一次送完，所以就是所有的和
+        # left is at least one box per trip
+        # right is shipping everything at once, i.e. the total sum
         left, right = 0, 0
         for w in weights:
             left = max(left, w)
@@ -41,5 +44,7 @@ class Solution(object):
 
 
 # Tests:
-test = Solution()
-test.shipWithinDays(weights = [1,2,3,4,5,6,7,8,9,10], days = 5)
+for sol in (Solution(),):
+    assert sol.shipWithinDays([1,2,3,4,5,6,7,8,9,10], 5) == 15
+    assert sol.shipWithinDays([3,2,2,4,1,4], 3) == 6
+    assert sol.shipWithinDays([1,2,3,1,1], 4) == 3

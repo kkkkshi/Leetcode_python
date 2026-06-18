@@ -1,13 +1,17 @@
-class Node(object):
+# 559. Maximum Depth of N-ary Tree
+
+class Node:
     def __init__(self, val=None, children=None):
         self.val = val
         self.children = children
+
 
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.01: yes
-class Solution(object):
+# notes: BFS carrying each node's level, keep the largest level seen
+class Solution:
     def maxDepth(self, root):
         """
         :type root: Node
@@ -24,7 +28,11 @@ class Solution(object):
                 for child in node.children:
                     stack.append((current_level+1, child))
         return max_depth
+
+
 # Tests:
 tree = Node(1, [Node(3, [Node(5), Node(6)]), Node(2), Node(4)])
-test = Solution()
-test.maxDepth(tree)
+for sol in (Solution(),):
+    assert sol.maxDepth(tree) == 3
+    assert sol.maxDepth(Node(1)) == 1
+    assert sol.maxDepth(None) == 0

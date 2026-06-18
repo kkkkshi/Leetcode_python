@@ -1,9 +1,13 @@
+# 1429. First Unique Number
+
+from collections import deque
+
+
 # Brute Force
 # Time: constructor: O(k), add: O(1), showFirstUnique: O(n^2)
 # Space: O(n)
 # 2023.07.07: yes
-from collections import deque
-
+# notes: scan the queue and return the first value whose count is 1
 class FirstUnique:
     def __init__(self, nums):
         self._queue = deque(nums)
@@ -22,6 +26,8 @@ class FirstUnique:
 # Time: constructor: O(k), add: O(1), showFirstUnique: O(1)
 # Space: O(n)
 # 2023.07.07: no
+# notes: keep a queue plus a map of value -> still-unique; pop stale
+#        non-uniques off the front lazily on each query
 class FirstUnique2:
 
     def __init__(self, nums):
@@ -51,10 +57,14 @@ class FirstUnique2:
         else:
             self._is_unique[value] = False
 
-# LinkedHashSet for Queue, and HashMap of Unique-Statuses
-# Time: constructor: O(k), add: O(1), showFirstUnique: O(1)
-# Space: O(n)
-# 2023.07.07: yes
 
-
-
+# Tests:
+for cls in (FirstUnique, FirstUnique2):
+    obj = cls([2, 3, 5])
+    assert obj.showFirstUnique() == 2
+    obj.add(5)
+    assert obj.showFirstUnique() == 2
+    obj.add(2)
+    assert obj.showFirstUnique() == 3
+    obj.add(3)
+    assert obj.showFirstUnique() == -1

@@ -1,14 +1,41 @@
-class TreeNode(object):
+# 515. Find Largest Value in Each Tree Row
+
+from collections import deque
+
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # build a tree from a level-order list (None marks a missing node)
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = deque([root])
+    i = 1
+    while queue and i < len(values):
+        node = queue.popleft()
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-class Solution(object):
+# notes: level-order walk; keep the max value seen at each level
+class Solution:
     def largestValues(self, root):
         """
         :type root: TreeNode
@@ -32,8 +59,10 @@ class Solution(object):
             results.append(max_current)
         return results
 
+
 # Tests:
-tree = TreeNode(2, TreeNode(5), TreeNode(2, TreeNode(3), TreeNode(2)))
-tree2 = TreeNode(2, TreeNode(2), TreeNode(2))
-test = Solution()
-test.largestValues(tree)
+for sol in (Solution(),):
+    assert sol.largestValues(build([1, 3, 2, 5, 3, None, 9])) == [1, 3, 9]
+    assert sol.largestValues(build([1, 2, 3])) == [1, 3]
+    assert sol.largestValues(build([])) == []
+    assert sol.largestValues(build([-1, -2, -3])) == [-1, -2]

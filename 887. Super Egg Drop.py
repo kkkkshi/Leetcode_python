@@ -1,12 +1,19 @@
-# Top Down Dynamic Programming (超时)
+# 887. Super Egg Drop
+
+# Top Down Dynamic Programming (times out)
 # Time: O(kn^2)
 # Space: O(kn)
 # 2023.07.27: no
-# notes: 这个方法的dp是对于N层楼，有k个鸡蛋，最少人扔几次
-# 这道题的两个方法，线性查找+二分查找
-# base case如果n = 0, 不用扔了， return 0，如果k = 1，只能线性扔， return n
+# notes: dp(K, N) is the fewest drops needed for N floors with K eggs.
+#        base cases: N == 0 needs 0 drops, K == 1 must scan linearly (N).
+#        try every floor and take the worst of break / no-break.
 class Solution:
     def superEggDrop(self, K, N):
+        """
+        :type K: int
+        :type N: int
+        :rtype: int
+        """
         # Memoization table
         memo = [[-666 for _ in range(N + 1)] for _ in range(K + 1)]
         return self.dp(K, N, memo)
@@ -36,13 +43,20 @@ class Solution:
         memo[K][N] = res
         return res
 
+
 # Top down Dynamic Programming with Binary Search
 # Time: O(knlogn)
 # Space: O(kn)
 # 2023.07.27: no
-# notes: 动态转移方程：res = Math.min(res,Math.max(dp(K, N - i), dp(K - 1, i - 1)) + 1)
+# notes: res = min(res, max(dp(K, N-i), dp(K-1, i-1)) + 1); the break and
+#        no-break curves cross, so binary search the floor instead of scan.
 class Solution2:
     def superEggDrop(self, K, N):
+        """
+        :type K: int
+        :type N: int
+        :rtype: int
+        """
         # Memoization table
         memo = [[-666 for _ in range(N + 1)] for _ in range(K + 1)]
         return self.dp(K, N, memo)
@@ -66,7 +80,7 @@ class Solution2:
             # Check both cases when the egg breaks and when it doesn't break
             broken = self.dp(K - 1, mid - 1, memo)
             not_broken = self.dp(K, N - mid, memo)
-            # res = min(max(碎，没碎) + 1)
+            # res = min(max(break, no break) + 1)
             if broken > not_broken:
                 hi = mid - 1
                 res = min(res, broken + 1)
@@ -78,16 +92,21 @@ class Solution2:
         memo[K][N] = res
         return res
 
+
 # Bottom Up Dynamic Programming
 # Time: O(knlogn)
 # Space: O(kn)
 # 2023.07.27: no
-# notes: DP定义为有k个鸡蛋，尝试扔m次，最多可以到达n层楼
-# dp[k][m] = dp[k][m - 1] + dp[k - 1][m - 1] + 1
-# 解释： 无论你上楼还是下楼，总的楼层数 = 楼上的楼层数 + 楼下的楼层数 + 1（当前这层楼）
-# 过于聪明，感觉真的想不到，比起上一个动态转移方程，简单太多
+# notes: flip the state: dp[k][m] is the most floors coverable with k eggs
+#        in m drops, dp[k][m] = dp[k][m-1] + dp[k-1][m-1] + 1 (above floors
+#        + below floors + the current one); grow m until it covers N.
 class Solution3:
     def superEggDrop(self, K, N):
+        """
+        :type K: int
+        :type N: int
+        :rtype: int
+        """
         # Create the dp array (2D table)
         dp = [[0 for _ in range(N + 1)] for _ in range(K + 1)]
 
@@ -96,7 +115,7 @@ class Solution3:
         # dp[..][0] = 0
 
         m = 0
-        # 寻找m的过程，如果看不懂的话就看labuladong的转移方程
+        # grow m until dp covers N floors
         while dp[K][m] < N:
             m += 1
             for k in range(1, K + 1):
@@ -109,10 +128,15 @@ class Solution3:
 # Time: O(kn)
 # Space: O(kn)
 # 2023.07.27: no
-# notes: 真的看不懂，update一下以后来看，前面已经耗了两小时了，真的看不下去了，猜一下和solution3很像
+# notes: same recurrence as solution3 but reuse the monotonic optimal
+#        floor x across n so it never moves backward, dropping a log factor.
 class Solution4:
     def superEggDrop(self, K: int, N: int) -> int:
-
+        """
+        :type K: int
+        :type N: int
+        :rtype: int
+        """
         # Right now, dp[i] represents dp(1, i)
         dp = range(N+1)
 
@@ -140,9 +164,15 @@ class Solution4:
 # Time: O(klogn)
 # Space: O(1)
 # 2023.07.27: no
-# notes: mathematics，纯数证明，跳过
+# notes: pure math proof, skipped; binary search the drop count whose
+#        reachable-floor sum first covers N.
 class Solution5:
     def superEggDrop(self, K: int, N: int) -> int:
+        """
+        :type K: int
+        :type N: int
+        :rtype: int
+        """
         def f(x):
             ans = 0
             r = 1
@@ -163,18 +193,8 @@ class Solution5:
         return lo
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.superEggDrop(1, 2) == 2
+    assert sol.superEggDrop(2, 6) == 3
+    assert sol.superEggDrop(3, 14) == 4

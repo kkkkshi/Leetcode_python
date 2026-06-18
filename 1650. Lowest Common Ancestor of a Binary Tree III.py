@@ -1,14 +1,19 @@
-class TreeNode(object):
+# 1650. Lowest Common Ancestor of a Binary Tree III
+
+class TreeNode:
     def __init__(self, x, left = None, right = None, parent = None):
         self.val = x
         self.left = left
         self.right = right
         self.parent = parent
 
+
 # Iterative Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
+# notes: walk p up to the root storing every ancestor, then walk q up
+#        until it hits a node already on p's path
 class Solution:
     def lowestCommonAncestor(self, p, q):
         path = set()
@@ -19,7 +24,12 @@ class Solution:
             q = q.parent
         return q
 
-# notes: 就是单链表结构，看pq的共同节点是谁， p接q,q接p，如果有一样的公共节点一定会遇到，不然就是头结点
+
+# Two Pointers Approach
+# Time: O(n)
+# Space: O(1)
+# notes: it is just a linked-list problem; chain p then q, q then p,
+#        and a shared node is always met, otherwise it is the root
 class Solution2:
     def lowestCommonAncestor(self, p, q):
         p1, p2 = p, q
@@ -30,30 +40,24 @@ class Solution2:
 
 
 # Tests:
-tree = TreeNode(3)
-tree.left = TreeNode(5)
-tree.right = p = TreeNode(1)
+for sol in (Solution(), Solution2()):
+    tree = TreeNode(3)
+    tree.left = n5 = TreeNode(5)
+    tree.right = n1 = TreeNode(1)
 
-tree.left.left  = TreeNode(6)
-tree.left.left.parent = tree.left
-tree.left.right = TreeNode(2)
-tree.left.right.parent = tree.left
-tree.left.parent = tree
+    tree.left.left = n6 = TreeNode(6)
+    tree.left.left.parent = tree.left
+    tree.left.right = n2 = TreeNode(2)
+    tree.left.right.parent = tree.left
+    tree.left.parent = tree
 
-tree.right.left = TreeNode(0)
-tree.right.left.parent = tree.right
-tree.right.right = q= TreeNode(8)
-tree.right.right.parent = tree.right
-tree.right.parent = tree
+    tree.right.left = n0 = TreeNode(0)
+    tree.right.left.parent = tree.right
+    tree.right.right = n8 = TreeNode(8)
+    tree.right.right.parent = tree.right
+    tree.right.parent = tree
 
-test = Solution2()
-result = test.lowestCommonAncestor(p, q)
-
-
-
-
-
-
-
-
-
+    assert sol.lowestCommonAncestor(n1, n8) is n1
+    assert sol.lowestCommonAncestor(n6, n2) is n5
+    assert sol.lowestCommonAncestor(n6, n8) is tree
+    assert sol.lowestCommonAncestor(n5, n5) is n5

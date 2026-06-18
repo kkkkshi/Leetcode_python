@@ -1,8 +1,11 @@
+# 155. Min Stack
+
 # stack Approach
 # Time: O(1)
 # Space: O(n)
 # 2023.07.18: yes
-
+# notes: store (value, running_min) pairs so getMin is the top's
+#        second field
 class MinStack:
 
     def __init__(self):
@@ -27,11 +30,12 @@ class MinStack:
     def getMin(self) -> int:
         return self.stack[-1][1]
 
+
 # Two stack Approach
-# # Time: O(1)
-# # Space: O(n)
-# # 2023.07.18: no
-# notes: 不需要存最小值，用另一个stack单独放越来越小的值
+# Time: O(1)
+# Space: O(n)
+# 2023.07.18: no
+# notes: keep a separate stack that only holds non-increasing mins
 class MinStack2:
 
     def __init__(self):
@@ -54,11 +58,13 @@ class MinStack2:
     def getMin(self) -> int:
         return self.min_stack[-1]
 
+
 # Two stack improved Approach
 # Time: O(1)
 # Space: O(n)
 # 2023.07.18: no
-# notes: 为防止多个min的情况，存储min的数量在stack中，用dictionary，数值+次数
+# notes: store [value, count] on the min stack to handle repeated
+#        minimums without duplicating entries
 class MinStack3:
 
     def __init__(self):
@@ -100,3 +106,19 @@ class MinStack3:
 
     def getMin(self) -> int:
         return self.min_stack[-1][0]
+
+
+# Tests:
+for cls in (MinStack, MinStack2, MinStack3):
+    s = cls()
+    s.push(-2)
+    s.push(0)
+    s.push(-3)
+    assert s.getMin() == -3
+    s.pop()
+    assert s.top() == 0
+    assert s.getMin() == -2
+    s.push(-2)
+    assert s.getMin() == -2
+    s.pop()
+    assert s.getMin() == -2

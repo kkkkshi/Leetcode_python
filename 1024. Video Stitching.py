@@ -1,10 +1,18 @@
+# 1024. Video Stitching
+
 # Chronological Ordering
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.29: no
-
-class Solution(object):
+# notes: sort clips, then greedily within the current reach pick the clip
+#        that extends furthest, bumping the count each jump until T.
+class Solution:
     def videoStitching(self, clips, T):
+        """
+        :type clips: List[List[int]]
+        :type T: int
+        :rtype: int
+        """
         if T == 0:
             return 0
 
@@ -32,6 +40,11 @@ class Solution(object):
         # Unable to continuously cover the interval [0, T]
         return -1
 
+
 # Tests:
-test = Solution()
-test.videoStitching([[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]], 10)
+for sol in (Solution(),):
+    assert sol.videoStitching([[0,2],[4,6],[8,10],[1,9],[1,5],[5,9]], 10) == 3
+    assert sol.videoStitching([[0,1],[1,2]], 5) == -1
+    assert sol.videoStitching(
+        [[0,1],[6,8],[0,2],[5,6],[0,4],[0,3],[6,7],[1,3],[4,7],[1,4],[2,5],[2,6],[3,4],[4,5],[5,7],[6,9]],
+        9) == 3

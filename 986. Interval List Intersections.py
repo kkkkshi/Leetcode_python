@@ -1,8 +1,13 @@
+# 986. Interval List Intersections
+
 # Array
 # Time: O(n)
 # Space: O(n)
 # 2023.09.12: yes
+# notes: two pointers; enumerate every overlap case explicitly and
+#        advance the pointer whose interval ends first
 from typing import List
+
 
 class Solution:
     def intervalIntersection(self, firstList: List[List[int]], secondList: List[List[int]]) -> List[List[int]]:
@@ -25,8 +30,6 @@ class Solution:
                 i += 1
             elif secondList[j][0] < firstList[i][1]:
                 j += 1
-            else:
-                print("emmm?")
         return results
 
 
@@ -34,8 +37,8 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.09.12: no
-# notes: 很不错的方法，每次只比较一个，每次取max, min 根据lo <= hi可以判断是不是空的，就可以进行下一步了
-# 虽然时间复杂度差不多，但是很不错
+# notes: nice approach; take max of starts and min of ends, lo <= hi
+#        means a real overlap, then drop the interval ending first
 class Solution2:
     def intervalIntersection(self, A: List[List[int]], B: List[List[int]]) -> List[List[int]]:
         ans = []
@@ -58,7 +61,13 @@ class Solution2:
 
         return ans
 
+
 # Tests:
-test = Solution()
-test.intervalIntersection(firstList = [[0,2],[5,10],[13,23],[24,25]], secondList = [[1,5],[8,12],[15,24],[25,26]])
-test.intervalIntersection(firstList = [[1,3],[5,9]], secondList = [])
+for sol in (Solution(), Solution2()):
+    assert sol.intervalIntersection(
+        [[0, 2], [5, 10], [13, 23], [24, 25]],
+        [[1, 5], [8, 12], [15, 24], [25, 26]],
+    ) == [[1, 2], [5, 5], [8, 10], [15, 23], [24, 24], [25, 25]]
+    assert sol.intervalIntersection([[1, 3], [5, 9]], []) == []
+    assert sol.intervalIntersection([], [[4, 8], [10, 12]]) == []
+    assert sol.intervalIntersection([[1, 7]], [[3, 10]]) == [[3, 7]]

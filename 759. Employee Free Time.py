@@ -1,19 +1,29 @@
-class Interval(object):
+# 759. Employee Free Time
+
+class Interval:
     def __init__(self, start=None, end=None):
         self.start = start
         self.end = end
 
 
-class Solution(object):
+# notes: unimplemented stub, left as-is
+class Solution:
     def employeeFreeTime(self, schedule):
         """
         :type schedule: [[Interval]]
         :rtype: [Interval]
         """
 
+
+# Sort and Merge Intervals
+# notes: flatten and sort all intervals, merge the busy periods, then
+#        the gaps between merged intervals are the free time
 class Solution2:
     def employeeFreeTime(self, schedule):
-
+        """
+        :type schedule: [[Interval]]
+        :rtype: [Interval]
+        """
         # Flatten the given intervals.
         ints = []
         for i in schedule:
@@ -43,5 +53,16 @@ class Solution2:
         return free
 
 
-test = Solution2()
-test.employeeFreeTime([[Interval(1,2),Interval(5,6)],[Interval(1,3)],[Interval(4,10)]])
+# Tests:
+def to_list(intervals):
+    return [(x.start, x.end) for x in intervals]
+
+
+for sol in (Solution2(),):
+    res = sol.employeeFreeTime(
+        [[Interval(1, 2), Interval(5, 6)], [Interval(1, 3)], [Interval(4, 10)]])
+    assert to_list(res) == [(3, 4)]
+    res = sol.employeeFreeTime(
+        [[Interval(1, 3), Interval(6, 7)], [Interval(2, 4)],
+         [Interval(2, 5), Interval(9, 12)]])
+    assert to_list(res) == [(5, 6), (7, 9)]

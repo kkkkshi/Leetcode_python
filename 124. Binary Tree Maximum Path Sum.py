@@ -1,15 +1,20 @@
+# 124. Binary Tree Maximum Path Sum
+
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
 # depth-first Search Approach bottom up
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-class Solution(object):
+# notes: post-order; at each node track the best path through it and
+#        return the best single downward branch to the parent
+class Solution:
     def maxPathSum(self, root):
         """
         :type root: TreeNode
@@ -38,13 +43,19 @@ class Solution(object):
         recursion(root)
         return self.max_value
 
+
 # depth-first Search Approach bottom up(best approach)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-# notes: 方法一样，但是写的更简单，trick就是，永远不加0以下的东西
+# notes: same idea written cleaner; the trick is to never add a
+#        negative subtree gain (clamp it to 0)
 class Solution2:
     def maxPathSum(self, root):
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
         max_path = -float('inf')
         def gain_from_subtree(node):
             nonlocal max_path
@@ -60,11 +71,27 @@ class Solution2:
 
         gain_from_subtree(root)
         return max_path
+
+
+def build(vals):
+    # level-order build; None means no node
+    if not vals:
+        return None
+    nodes = [TreeNode(v) if v is not None else None for v in vals]
+    kids = nodes[::-1]
+    root = kids.pop()
+    for node in nodes:
+        if node:
+            if kids:
+                node.left = kids.pop()
+            if kids:
+                node.right = kids.pop()
+    return root
+
+
 # Tests:
-tree5 = TreeNode(2, TreeNode(-1), TreeNode(-2))
-tree4 = TreeNode(1, TreeNode(-2), TreeNode(3))
-tree3 = TreeNode(2, TreeNode(-1))
-tree2 = TreeNode(-3)
-tree = TreeNode(-2, TreeNode(-3, TreeNode(2), TreeNode(-1)), TreeNode(5, TreeNode(1), TreeNode(2)))
-test = Solution2()
-test.maxPathSum(tree2)
+for sol in (Solution(), Solution2()):
+    assert sol.maxPathSum(build([1, 2, 3])) == 6
+    assert sol.maxPathSum(build([-10, 9, 20, None, None, 15, 7])) == 42
+    assert sol.maxPathSum(build([-3])) == -3
+    assert sol.maxPathSum(build([2, -1, -2])) == 2

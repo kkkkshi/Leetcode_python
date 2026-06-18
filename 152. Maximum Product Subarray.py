@@ -1,9 +1,12 @@
-# Dynamic Programming (其实是brute force fck)
+# 152. Maximum Product Subarray
+
+# Dynamic Programming (actually brute force)
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.31: yes
-# notes: 感觉是dp，实际上brute froce，n^2
-class Solution(object):
+# notes: looks like dp but is really brute force, O(n^2):
+#        product of every subarray [i, j]
+class Solution:
     def maxProduct(self, nums):
         """
         :type nums: List[int]
@@ -21,14 +24,19 @@ class Solution(object):
                 res = max(res, dp[i][j])
         return res
 
-# Dynamic Programming (其实是brute force fck)
+
+# Dynamic Programming (actually brute force)
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.31: yes
-# notes: 人傻了，这个dp的定义应该是，包括自己为止，到自己节点的最大值是多少，而且负数的话，要记录正负
-# 因为一个负号就可以改变大小
+# notes: real dp: track max and min product ending here, since a
+#        negative number can swap them
 class Solution2:
     def maxProduct(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         if len(nums) == 0:
             return 0
         max_so_far = nums[0]
@@ -42,9 +50,9 @@ class Solution2:
             result = max(max_so_far, result)
         return result
 
-# Tests:
-test = Solution()
-test.maxProduct([-2])
-test.maxProduct([2,3,-2,4])
-test.maxProduct([-2,0,-1])
 
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.maxProduct([-2]) == -2
+    assert sol.maxProduct([2, 3, -2, 4]) == 6
+    assert sol.maxProduct([-2, 0, -1]) == 0

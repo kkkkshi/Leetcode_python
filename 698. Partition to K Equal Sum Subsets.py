@@ -1,9 +1,12 @@
+# 698. Partition to K Equal Sum Subsets
+
 # Backtracking
 # Time: O(k2^n)
 # Space: O(n)
 # 2023.08.01: no
-# notes: 以数字的视角，要不要装进某个桶， sort可以剪枝，并且用数组记录这个数字有没有被取过，可以跳过
-class Solution(object):
+# notes: from each number's view, decide which bucket to drop it in;
+#        sort to prune, and mark used numbers so they can be skipped
+class Solution:
     def canPartitionKSubsets(self, nums, k):
         """
         :type nums: List[int]
@@ -35,14 +38,21 @@ class Solution(object):
             return False
         return backtrack(nums, 0, bucket, target)
 
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.01: no
-# notes: 用桶的视角做backtracking，正好填满一个桶之后才考虑装下一个桶
-class Solution2(object):
+# notes: from each bucket's view; only move to the next bucket once
+#        the current one is exactly filled
+class Solution2:
     def canPartitionKSubsets(self, nums, k):
-        # 排除一些基本情况
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: bool
+        """
+        # rule out some basic cases
         if k > len(nums):
             return False
         total_sum = sum(nums)
@@ -50,7 +60,7 @@ class Solution2(object):
             return False
         used = [False] * len(nums)
         target = total_sum // k
-        # k 号桶初始什么都没装，从 nums[0] 开始做选择
+        # bucket k starts empty, begin choosing from nums[0]
         def backtrack(k, bucket, nums, start, used, target):
             if k == 0:
                 return True
@@ -68,33 +78,39 @@ class Solution2(object):
             return False
         return backtrack(k, 0, nums, 0, used, target)
 
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.01: no
-# notes: 用桶的视角做backtracking，正好填满一个桶之后才考虑装下一个桶
-# 为了防止多次重复计算，考虑用used number来计算用过的数字，用位运算方法，暂时跳过
+# notes: bucket's view again; track used numbers as a bitmask and
+#        memoize states to skip repeated work
 class Solution3:
     def canPartitionKSubsets(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: bool
+        """
         memo = {}
 
         def backtrack(k, bucket, nums, start, used, target):
-            # 基本 case
+            # base case
             if k == 0:
-                # 所有桶都被装满了，且 nums 全部用完
+                # all buckets filled and nums fully used
                 return True
             if bucket == target:
                 res = backtrack(k - 1, 0, nums, 0, used, target)
-                # 缓存结果
+                # cache the result
                 memo[used] = res
                 return res
             if used in memo:
-                # 避免冗余计算
+                # avoid redundant computation
                 return memo[used]
 
             for i in range(start, len(nums)):
                 if ((used >> i) & 1) == 1:
-                    # nums[i] 已经被装入别的桶中
+                    # nums[i] already placed in another bucket
                     continue
                 if nums[i] + bucket > target:
                     continue
@@ -107,18 +123,21 @@ class Solution3:
 
             return False
 
-        # 确保 k 不大于 nums 的长度
+        # make sure k is not larger than len(nums)
         if k > len(nums):
             return False
         sum_nums = sum(nums)
         if sum_nums % k != 0:
             return False
-        used = 0  # 使用位图技巧
-        target = sum_nums // k  # 每个桶的目标和
-        # k 号桶初始什么都没装，从 nums[0] 开始做选择
+        used = 0  # bitmask trick
+        target = sum_nums // k  # target sum per bucket
+        # bucket k starts empty, begin choosing from nums[0]
         return backtrack(k, 0, nums, 0, used, target)
 
 
 # Tests:
-test = Solution2()
-test.canPartitionKSubsets(nums = [4,3,2,3,5,2,1], k = 4)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.canPartitionKSubsets([4,3,2,3,5,2,1], 4) is True
+    assert sol.canPartitionKSubsets([1,2,3,4], 3) is False
+    assert sol.canPartitionKSubsets([2,2,2,2,3,4,5], 4) is False
+    assert sol.canPartitionKSubsets([4,4], 2) is True

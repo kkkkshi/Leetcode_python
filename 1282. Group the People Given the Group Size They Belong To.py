@@ -1,12 +1,20 @@
+# 1282. Group the People Given the Group Size They Belong To
+
+from typing import List
+
+
 # Hashmap
 # Time: O(n)
 # Space: O(n)
 # 2023.09.11: yes
-# notes: O(n)是O(n)但是真的很蠢。。。不过算是熟悉了一下dictionary的写法吧。。。
-from typing import List
-
+# notes: O(n) but pretty clunky; mostly a refresher on dictionary
+#        usage, bucket indices by size then chunk each bucket
 class Solution:
     def groupThePeople(self, groupSizes: List[int]) -> List[List[int]]:
+        """
+        :type groupSizes: List[int]
+        :rtype: List[List[int]]
+        """
         results = []
         saving = {}
         for i,n in enumerate(groupSizes):
@@ -26,13 +34,18 @@ class Solution:
                 tmp = []
         return results
 
+
 # Greedy
 # Time: O(n)
 # Space: O(n)
 # 2023.09.11: no
-# notes: 很棒的方法
+# notes: nice approach
 class Solution2:
     def groupThePeople(self, groupSizes):
+        """
+        :type groupSizes: List[int]
+        :rtype: List[List[int]]
+        """
         ans = []
 
         # A list of lists to store indices based on group size.
@@ -49,6 +62,23 @@ class Solution2:
         return ans
 
 
+def normalize(groups):
+    # order-independent view: sort each group and the list of groups
+    return sorted(sorted(g) for g in groups)
+
+
+def valid(groups, group_sizes):
+    # every person appears once and each group has the wanted size
+    seen = sorted(p for g in groups for p in g)
+    if seen != list(range(len(group_sizes))):
+        return False
+    return all(len(g) == group_sizes[g[0]] for g in groups)
+
+
 # Tests:
-test = Solution2()
-test.groupThePeople(groupSizes = [3,3,3,3,3,1,3])
+for sol in (Solution(), Solution2()):
+    res = sol.groupThePeople([3, 3, 3, 3, 3, 1, 3])
+    assert valid(res, [3, 3, 3, 3, 3, 1, 3]) is True
+    res = sol.groupThePeople([2, 1, 3, 3, 3, 2])
+    assert valid(res, [2, 1, 3, 3, 3, 2]) is True
+    assert normalize(sol.groupThePeople([1, 1, 1])) == [[0], [1], [2]]

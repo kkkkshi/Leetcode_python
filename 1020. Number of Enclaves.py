@@ -1,12 +1,25 @@
+# 1020. Number of Enclaves
+
+from collections import deque
+
+
 # BFS Approach
 # Time: O(mn)
 # Space: O(min(m,n))
 # 2023.08.03: yes
-# notes: 把边界变成0，剩下的个数就是1的个数，直接加起来就行，根本就不需要遍历里面
-from collections import deque
-
+# notes: flood the land cells touching the border to 0, then the
+#        remaining 1s are the enclaves, so just sum them up.
 class Solution:
     def bfs(self, x, y, m, n, grid, visit):
+        """
+        :type x: int
+        :type y: int
+        :type m: int
+        :type n: int
+        :type grid: List[List[int]]
+        :type visit: List[List[bool]]
+        :rtype: None
+        """
         q = deque()
         q.append((x, y))
         visit[x][y] = True
@@ -28,6 +41,10 @@ class Solution:
                     visit[r][c] = True
 
     def numEnclaves(self, grid):
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         m = len(grid)
         n = len(grid[0])
         visit = [[False for _ in range(n)] for _ in range(m)]
@@ -61,8 +78,14 @@ class Solution:
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.13: yes
+# notes: from every border 1, dfs and sink the connected land to 0, then
+#        the leftover 1s are enclaves.
 class Solution2:
     def numEnclaves(self, grid) -> int:
+        """
+        :type grid: List[List[int]]
+        :rtype: int
+        """
         def dfs(i, j):
             grid[i][j] = 0
             for x, y in (i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1):
@@ -75,22 +98,17 @@ class Solution2:
                     dfs(i, j)
         return sum(sum(row) for row in grid)
 
+
 # Tests:
-test = Solution()
-test.numEnclaves([[0,0,0,1,1,1,0,1,1,1,1,1,0,0,0],
-                  [1,1,1,1,0,0,0,1,1,0,0,0,1,1,1],
-                  [1,1,1,0,0,1,0,1,1,1,0,0,0,1,1],
-                  [1,1,0,1,0,1,1,0,0,0,1,1,0,1,0],
-                  [1,1,1,1,0,0,0,1,1,1,0,0,0,1,1],
-                  [1,0,1,1,0,0,1,1,1,1,1,1,0,0,0],
-                  [0,1,0,0,1,1,1,1,0,0,1,1,1,0,0],
-                  [0,0,1,0,0,0,0,1,1,0,0,1,0,0,0],
-                  [1,0,1,0,0,1,0,0,0,0,0,0,1,0,1],
-                  [1,1,1,0,1,0,1,0,1,1,1,0,0,1,0]])
-test.numEnclaves([[0,0,0,0],
-                  [1,0,1,0],
-                  [0,1,1,0],
-                  [0,0,0,0]])
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.numEnclaves([[0,0,0,0],
+                            [1,0,1,0],
+                            [0,1,1,0],
+                            [0,0,0,0]]) == 3
+    assert sol.numEnclaves([[0,1,1,0],
+                            [0,0,1,0],
+                            [0,0,1,0],
+                            [0,0,0,0]]) == 0
+    assert sol.numEnclaves([[0,0,0],
+                            [0,1,0],
+                            [0,0,0]]) == 1

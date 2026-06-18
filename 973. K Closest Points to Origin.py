@@ -1,20 +1,38 @@
+# 973. K Closest Points to Origin
+
+from random import randint
+import heapq
+
+
 # Sort
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.20: yes
-from random import randint
-class Solution(object):
+# notes: sort all points by squared distance, take the first K
+class Solution:
     def kClosest(self, points, K):
+        """
+        :type points: List[List[int]]
+        :type K: int
+        :rtype: List[List[int]]
+        """
         points.sort(key = lambda P: P[0]**2 + P[1]**2)
         return points[:K]
+
 
 # Divide and Conquer
 # Time: O(n)
 # Space: O(n)
 # 2023.07.20: no
-# notes: 只需要找top k就行了，后面压根不需要排序
-class Solution2(object):
+# notes: we only need the top K, so quickselect-partition the array
+#        and stop early; no full sort needed
+class Solution2:
     def kClosest(self, points, K):
+        """
+        :type points: List[List[int]]
+        :type K: int
+        :rtype: List[List[int]]
+        """
         dist = lambda i: points[i][0]**2 + points[i][1]**2
 
         def sort(i, j, K):
@@ -53,12 +71,13 @@ class Solution2(object):
         sort(0, len(points) - 1, K)
         return points[:K]
 
-# Sort
+
+# Heap
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.07.20: yes
-import heapq
-class Solution3(object):
+# notes: push (distance, point) into a heap, pop the K smallest
+class Solution3:
     def kClosest(self, points, k):
         """
         :type points: List[List[int]]
@@ -82,7 +101,12 @@ class Solution3(object):
             final.append(heapq.heappop(saving)[1])
         return final
 
-# Tests:
-test = Solution2()
-test.kClosest([[3,3],[5,-1],[-2,4]], 2)
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    res = sol.kClosest([[1, 3], [-2, 2]], 1)
+    assert sorted(map(list, res)) == [[-2, 2]]
+    res = sol.kClosest([[3, 3], [5, -1], [-2, 4]], 2)
+    assert sorted(map(list, res)) == [[-2, 4], [3, 3]]
+    res = sol.kClosest([[0, 1], [1, 0]], 2)
+    assert sorted(map(list, res)) == [[0, 1], [1, 0]]

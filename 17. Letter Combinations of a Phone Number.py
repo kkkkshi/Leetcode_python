@@ -1,8 +1,12 @@
+# 17. Letter Combinations of a Phone Number
+
 # Backtrack
 # Time: O(4^N*N)
 # Space: O(n)
 # 2023.08.03: yes
-class Solution(object):
+# notes: map each digit to its letters and build strings by choosing
+#        one letter per digit, backtracking when a string is complete
+class Solution:
     def letterCombinations(self, digits):
         """
         :type digits: str
@@ -25,6 +29,11 @@ class Solution(object):
         backtrack(0, [])
         return results
 
+
 # Tests:
-test = Solution()
-test.letterCombinations(digits = "23")
+for sol in (Solution(),):
+    assert sol.letterCombinations("23") == [
+        "ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"]
+    assert sol.letterCombinations("") == []
+    assert sol.letterCombinations("2") == ["a", "b", "c"]
+    assert sol.letterCombinations("9") == ["w", "x", "y", "z"]

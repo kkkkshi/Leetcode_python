@@ -1,15 +1,54 @@
-from serializeAndDeserialize import deserialize_BFS, serialize_BFS
+# 538. Convert BST to Greater Tree
+
+from collections import deque
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # build a tree from a level-order list (None marks a missing node)
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = deque([root])
+    i = 1
+    while queue and i < len(values):
+        node = queue.popleft()
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
+def inorder(root):
+    # collect node values left to right
+    res = []
+    def walk(node):
+        if node:
+            walk(node.left)
+            res.append(node.val)
+            walk(node.right)
+    walk(root)
+    return res
+
+
 # Recursion Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution(object):
+# notes: reverse in-order (right, node, left) while adding a running
+#        total so each node gets the sum of all greater values
+class Solution:
     def convertBST(self, root):
         """
         :type root: TreeNode
@@ -26,11 +65,13 @@ class Solution(object):
             return root
         return convert(root)
 
+
 # Interation Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution2(object):
+# notes: iterative reverse in-order with a stack, carrying the total
+class Solution2:
     def convertBST(self, root):
         """
         :type root: TreeNode
@@ -52,11 +93,13 @@ class Solution2(object):
             root = root.left
         return cur
 
+
 # Morris Approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.29: no
-class Solution3(object):
+# notes: Morris reverse in-order using temporary links, so no stack
+class Solution3:
     def convertBST(self, root):
         # Get the node with the smallest value greater than this one.
         def get_successor(node):
@@ -97,7 +140,8 @@ class Solution3(object):
 
 
 # Tests:
-r = deserialize_BFS(root = [4,1,6,0,2,5,7,None,None,None,3,None,None,None,8])
-test = Solution3()
-r_change = test.convertBST(r)
-serialize_BFS(r_change)
+for sol in (Solution(), Solution2(), Solution3()):
+    r = build([4, 1, 6, 0, 2, 5, 7, None, None, None, 3, None, None, None, 8])
+    assert inorder(sol.convertBST(r)) == [36, 36, 35, 33, 30, 26, 21, 15, 8]
+    assert inorder(sol.convertBST(build([0, None, 1]))) == [1, 1]
+    assert sol.convertBST(build([])) is None

@@ -1,8 +1,12 @@
+# 33. Search in Rotated Sorted Array
+
 # Binary Search Approach
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.25: yes
-class Solution(object):
+# notes: first binary search the rotation point (min), then pick the
+#        sorted half that can contain target and binary search there
+class Solution:
 
     def findMin(self, nums):
         """
@@ -44,12 +48,20 @@ class Solution(object):
             return -1
         return left if nums[left] == target else -1
 
+
 # One Pass Binary Search Approach(best approach)
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.25: no
+# notes: one binary search; at each step one half is sorted, decide
+#        whether target lies in it and move accordingly
 class Solution2:
     def search(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: int
+        """
         start, end = 0, len(nums) - 1
         while start <= end:
             mid = start + (end - start) // 2
@@ -69,23 +81,9 @@ class Solution2:
 
 
 # Tests:
-test = Solution2()
-test.search(nums = [3,4,5,6,7,8,9,0,1,2], target = 1)
-test.search(nums = [4,5,6,7,0,1,2], target = 1)
-test.search(nums = [4,5,6,7,0,1,2], target = 7)
-test.search(nums = [4,5,6,7,0,1,2], target = 3)
-test.search([1], 0)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.search([4, 5, 6, 7, 0, 1, 2], 0) == 4
+    assert sol.search([4, 5, 6, 7, 0, 1, 2], 3) == -1
+    assert sol.search([4, 5, 6, 7, 0, 1, 2], 7) == 3
+    assert sol.search([1], 0) == -1
+    assert sol.search([1], 1) == 0

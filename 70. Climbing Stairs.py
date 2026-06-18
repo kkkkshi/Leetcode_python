@@ -1,8 +1,14 @@
+# 70. Climbing Stairs
+
+import math
+
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.31: yes
-class Solution(object):
+# notes: dp[i] = dp[i-1] + dp[i-2], ways to reach step i
+class Solution:
     def climbStairs(self, n):
         """
         :type n: int
@@ -14,11 +20,13 @@ class Solution(object):
             dp[i] = dp[i-2] + dp[i-1]
         return dp[n]
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.31: yes
-class Solution2(object):
+# notes: roll only the last two values instead of a full dp array
+class Solution2:
     def climbStairs(self, n):
         """
         :type n: int
@@ -30,27 +38,27 @@ class Solution2(object):
             dp_0, dp_1 = dp_1, dp_2
         return dp_1
 
+
 # Fibonacci Number
 # Time: O(logn)
 # Space: O(1)
 # 2023.07.31: no
-# notes: 数学公式暂时跳过
-import math
-class Solution3(object):
+# notes: closed-form Binet formula for the Fibonacci number
+class Solution3:
     def climbStairs(self, n):
+        """
+        :type n: int
+        :rtype: int
+        """
         sqrt5 = math.sqrt(5)
         phi = (1 + sqrt5) / 2
         psi = (1 - sqrt5) / 2
         return int((math.pow(phi, n + 1) - math.pow(psi, n + 1)) / sqrt5)
 
 
-
 # Tests:
-test = Solution2()
-test.climbStairs(2)
-test.climbStairs(3)
-test.climbStairs(4)
-
-
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.climbStairs(2) == 2
+    assert sol.climbStairs(3) == 3
+    assert sol.climbStairs(4) == 5
+    assert sol.climbStairs(1) == 1

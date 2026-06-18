@@ -1,11 +1,15 @@
+# 346. Moving Average from Data Stream
+
+from collections import deque
+
+
 # Double-ended Queue
 # Time: O(1)
 # Space: O(n)
 # 2023.07.07: no
-from collections import deque
-
-
-class MovingAverage(object):
+# notes: keep a window deque and a running sum, drop the oldest
+#        value once the window is full
+class MovingAverage:
 
     def __init__(self, size):
         """
@@ -28,12 +32,18 @@ class MovingAverage(object):
         self.window_sum += val
         return self.window_sum/len(self.window)
 
+
 # Circular Queue with Array
 # Time: O(1)
 # Space: O(n)
 # 2023.07.07: no
+# notes: fixed array used as a ring buffer; subtract the value
+#        being overwritten and add the new one
 class MovingAverage2:
     def __init__(self, size: int):
+        """
+        :type size: int
+        """
         self.size = size
         self.queue = [0] * self.size
         self.head = self.window_sum = 0
@@ -41,6 +51,10 @@ class MovingAverage2:
         self.count = 0
 
     def next(self, val: int) -> float:
+        """
+        :type val: int
+        :rtype: float
+        """
         self.count += 1
         # calculate the new sum by shifting the window
         tail = (self.head + 1) % self.size
@@ -50,10 +64,11 @@ class MovingAverage2:
         self.queue[self.head] = val
         return self.window_sum / min(self.size, self.count)
 
-# Your MovingAverage object will be instantiated and called as such:
-obj = MovingAverage2(3)
-param_1 = obj.next(1)
-param_2 = obj.next(10)
-param_3 = obj.next(3)
-param_4 = obj.next(5)
-param_5 = obj.next(5)
+
+# Tests:
+for cls in (MovingAverage, MovingAverage2):
+    obj = cls(3)
+    assert obj.next(1) == 1.0
+    assert obj.next(10) == 5.5
+    assert obj.next(3) == (1 + 10 + 3) / 3
+    assert obj.next(5) == (10 + 3 + 5) / 3

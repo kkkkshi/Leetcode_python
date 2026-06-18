@@ -1,13 +1,17 @@
+# 241. Different Ways to Add Parentheses
+
+import functools
+from typing import List
+
+
 # Divide and conquer
 # Time: O(n)
 # Space: O(n)
 # 2023.09.11: no
-# notes: Divide and Conquer!!!!啊， l和r的部分就是根据operation分开，ret.extend的部分就是合并
-# 下面是同一个方法，只是不一样的写法，主要是感觉这个写法不停调用主方程很奇怪
-# solution4是我自己改的，感觉好一点，而且也快，第一个方法的m一直在重复清零，根本没有起到Memorization的作用
-import functools
-from typing import List
-
+# notes: split at each operator into left and right results, then
+#        combine every pair; ret.extend does the merge. Solution4 is my
+#        own version which caches properly (the first one keeps clearing
+#        m so it never really memoizes)
 class Solution:
     def diffWaysToCompute(self, expression: str) -> List[int]:
         m = {}
@@ -28,10 +32,10 @@ class Solution:
         m[input] = ret
         return ret
 
+
 class Solution2:
     @functools.lru_cache(None)
     def diffWaysToCompute(self, expression: str) -> List[int]:
-
         if expression.isdigit():
             return [int(expression)]
 
@@ -47,7 +51,6 @@ class Solution2:
 
 class Solution3:
     def diffWaysToCompute(self, expression: str) -> List[int]:
-
         if ('+' not in expression) and ('-' not in expression) and ('*' not in expression):
             return [int(expression)]
 
@@ -88,6 +91,9 @@ class Solution4:
         self.m[input] = ret
         return ret
 
+
 # Tests:
-test = Solution4()
-test.diffWaysToCompute("2*3-4*5")
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sorted(sol.diffWaysToCompute("2-1-1")) == [0, 2]
+    assert sorted(sol.diffWaysToCompute("2*3-4*5")) == [-34, -14, -10, -10, 10]
+    assert sol.diffWaysToCompute("11") == [11]

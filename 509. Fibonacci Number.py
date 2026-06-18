@@ -1,9 +1,16 @@
+# 509. Fibonacci Number
+
 # Recursion
 # Time: O(2^n)
 # Space: O(n)
 # 2023.06.20: yes
+# notes: plain recursion on fib(N-1) + fib(N-2)
 class Solution:
     def fib(self, N: int) -> int:
+        """
+        :type N: int
+        :rtype: int
+        """
         if N <= 1:
             return N
         return self.fib(N - 1) + self.fib(N - 2)
@@ -13,8 +20,13 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.20: yes
+# notes: bottom-up cache array, each entry sums the prior two
 class Solution2:
     def fib(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
         if N <= 1:
             return N
 
@@ -24,12 +36,18 @@ class Solution2:
             cache[i] = cache[i - 1] + cache[i - 2]
         return cache[N]
 
+
 # Matrix Exponentiation
 # Time: O(logn)
 # Space: O(logn)
 # 2023.06.20: no
+# notes: roll two variables instead of a full array, O(1) space
 class Solution3:
     def fib(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
         if (N <= 1):
             return N
         current = 0
@@ -41,13 +59,18 @@ class Solution3:
             prev1 = current
         return current
 
+
 # Matrix Exponentiation
 # Time: O(n)
 # Space: O(n)
 # 2023.06.20: no
-# notes: 纯数，跳过先
+# notes: pure math, skipped for now
 class Solution4:
     def fib(self, N):
+        """
+        :type N: int
+        :rtype: int
+        """
         if (N <= 1):
             return N
 
@@ -83,22 +106,21 @@ class Solution4:
 # Time: O(logn)
 # Space: O(1)
 # 2023.06.20: no
-# notes: Binet's formula去计算，纯数跳过
+# notes: Binet's formula, pure math, skipped
 class Solution5:
     def fib(self, N: int) -> int:
+        """
+        :type N: int
+        :rtype: int
+        """
         golden_ratio = (1 + (5 ** 0.5)) / 2
         return int(round((golden_ratio ** N) / (5 ** 0.5)))
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    assert sol.fib(0) == 0
+    assert sol.fib(1) == 1
+    assert sol.fib(2) == 1
+    assert sol.fib(10) == 55
+    assert sol.fib(15) == 610

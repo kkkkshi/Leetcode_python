@@ -1,14 +1,32 @@
+# 143. Reorder List
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, x, next=None):
         self.val = x
         self.next = next
 
+
+def build(values):
+    head = None
+    for v in reversed(values):
+        head = ListNode(v, head)
+    return head
+
+
+def to_list(head):
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
+
 # Reverse the Second Part of the List and Merge Two Sorted Lists Approach
 # Time: O(n)
 # Space: O(1)
-# Notes: 切半，然后后半部分reverse，再拼起来
-class Solution(object):
+# notes: cut in half, reverse the back half, then weave them together
+class Solution:
     def reorderList(self, head):
         """
         :type head: ListNode
@@ -30,8 +48,12 @@ class Solution(object):
             p1.next, p1 = p2, p1.next
             p2.next, p2 = p1, p2.next
 
-# Test
-a = ListNode(1, ListNode(2, ListNode(3, ListNode(4))))
-test = Solution()
-test.reorderList(a)
 
+# Tests:
+for sol in (Solution(),):
+    h = build([1, 2, 3, 4])
+    sol.reorderList(h)
+    assert to_list(h) == [1, 4, 2, 3]
+    h = build([1, 2, 3, 4, 5])
+    sol.reorderList(h)
+    assert to_list(h) == [1, 5, 2, 4, 3]

@@ -1,8 +1,11 @@
+# 424. Longest Repeating Character Replacement
+
 # Sliding Window + Binary Search Approach
 # Time: O(nlogn)
 # Space: O(m)
 # 2023.06.25: no
-# notes: 先用binary search确认长度，再根据该长度内的frenquency来确定符不符合条件
+# notes: binary search the answer length, then check whether a
+#        window of that length can be made valid by its frequencies
 class Solution:
     def characterReplacement(self, s: str, k: int) -> int:
         # binary search over the length of substring
@@ -57,7 +60,8 @@ class Solution:
 # Time: O(nm) m = 26
 # Space: O(m)
 # 2023.06.25: no
-# notes: 一共26个字母，每个字母做一遍sliiding window,确认每个字母的最大长度
+# notes: there are 26 letters; run a sliding window per letter and
+#        track the longest valid window for each
 class Solution2:
     def characterReplacement(self, s: str, k: int) -> int:
         all_letters = set(s)
@@ -94,10 +98,12 @@ class Solution2:
 # Time: O(n)
 # Space: O(m) m = 26
 # 2023.06.25: no
-# notes: 这个是结合了前两个，但是还有注意的点
-# 1. 这个sliding window从1开始，从不缩小到max_window以下，如果到了max_window还不符合的话，也先往右一个，再不复合，才把左边移动一位
-# 继续max_window，但是永远不小于max_window
-# 2. 还是运用了frequency map的方法，频率最高的那个字符，然后看当前长度符不符合
+# notes: combines the two ideas, two points to remember
+# 1. the window starts at length 1 and never shrinks below
+# max_window; if invalid it slides right by one rather than
+# shrinking, so the window size never decreases
+# 2. still uses a frequency map; take the most frequent char
+# and check whether the current length fits within k
 class Solution3:
     def characterReplacement(self, s: str, k: int) -> int:
         start = 0
@@ -123,10 +129,11 @@ class Solution3:
 
         return longest_substring_length
 
+
 # Tests:
-test = Solution()
-test.characterReplacement('ABBB', 2)
-test.characterReplacement(s = "AABABBA", k = 1)
-test.characterReplacement(s = "ABAB", k = 2)
-test.characterReplacement(s = 'a', k = 1)
-test.characterReplacement(s = 'ab', k = 1)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.characterReplacement('ABBB', 2) == 4
+    assert sol.characterReplacement("AABABBA", 1) == 4
+    assert sol.characterReplacement("ABAB", 2) == 4
+    assert sol.characterReplacement('a', 1) == 1
+    assert sol.characterReplacement('ab', 1) == 2

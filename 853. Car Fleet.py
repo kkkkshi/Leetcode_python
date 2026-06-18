@@ -1,8 +1,12 @@
+# 853. Car Fleet
+
 # Array
 # Time: O(n)
 # Space: O(n)
 # 2023.10.08: no
-# notes: 根据position排序，然后计算需要多少秒到终点，如果比前面一个少，那就fleet
+# notes: sort by position, compute each car's time to the target; going
+#        from the back, a car forms a new fleet only if it is slower
+#        than the fleet ahead, otherwise it merges into it.
 class Solution:
     def carFleet(self, target, pos, speed):
         new_array = sorted(zip(pos, speed))
@@ -15,6 +19,8 @@ class Solution:
         return res
 
 
-# Test
-test = Solution()
-test.carFleet(12, [10,8,0,5,3], [2,4,1,1,3])
+# Tests:
+for sol in (Solution(),):
+    assert sol.carFleet(12, [10, 8, 0, 5, 3], [2, 4, 1, 1, 3]) == 3
+    assert sol.carFleet(10, [3], [3]) == 1
+    assert sol.carFleet(100, [0, 2, 4], [4, 2, 1]) == 1

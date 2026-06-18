@@ -1,9 +1,18 @@
+# 1094. Car Pooling
+
 # Time Stamp Approach:
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.19: yes
+# notes: turn each trip into a +k pickup and -k drop event, sort by
+#        time, sweep and check the running load never exceeds cap
 class Solution2:
     def carPooling(self, trips, capacity):
+        """
+        :type trips: List[List[int]]
+        :type capacity: int
+        :rtype: bool
+        """
         timestamp = []
         for trip in trips:
             timestamp.append([trip[1], trip[0]])
@@ -19,13 +28,20 @@ class Solution2:
 
         return True
 
+
 # Bucket Sort Approach:
 # Time: O(n)
 # Space: O(1)
 # 2023.06.19: yes
-# notes: 只需要检查变化中的内容就可以了，不需要整个1000个都检查
+# notes: locations are bounded, so use a diff array over the buckets
+#        and sweep the prefix sum instead of sorting events
 class Solution3:
     def carPooling(self, trips, capacity):
+        """
+        :type trips: List[List[int]]
+        :type capacity: int
+        :rtype: bool
+        """
         timestamp = [0] * 1001
         for trip in trips:
             timestamp[trip[1]] += trip[0]
@@ -39,7 +55,14 @@ class Solution3:
 
         return True
 
-class Solution(object):
+
+# Difference Array Approach:
+# Time: O(n)
+# Space: O(1)
+# 2023.06.19: yes
+# notes: same diff array idea, building the prefix sum into a second
+#        array and checking each value against capacity
+class Solution:
     def carPooling(self, trips, capacity):
         """
         :type trips: List[List[int]]
@@ -59,7 +82,10 @@ class Solution(object):
                     return False
         return True
 
-test = Solution()
-test.carPooling([[2,1,5],[3,3,7]], 4)
-test.carPooling([[2,1,5],[3,3,7]], 5)
-test.carPooling([[9,0,1],[3,3,7]], 4)
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.carPooling([[2,1,5],[3,3,7]], 4) is False
+    assert sol.carPooling([[2,1,5],[3,3,7]], 5) is True
+    assert sol.carPooling([[9,0,1],[3,3,7]], 4) is False
+    assert sol.carPooling([[2,1,5],[3,5,7]], 3) is True

@@ -1,8 +1,15 @@
+# 787. Cheapest Flights Within K Stops
+
+from collections import defaultdict, deque
+import heapq
+
+
 # Dynamic Programming 1D recursion
 # Time: O(mn)
 # Space: O(m)
 # 2023.07.26: no
-# notes: 直接用1D table，真的强， 价格是j， K是i的值，然后把k优化掉，用一个一行来记录上一层k的值
+# notes: keep one row of cheapest prices; relax every flight K times,
+#        each pass allowing one more transfer
 class Solution:
     def findCheapestPrice(self, n, flights, src, dst, K):
         price_table = [float('inf') for _ in range(n)]
@@ -29,9 +36,8 @@ class Solution:
 # Time: O(n+ek)
 # Space: O(n+ek)
 # 2023.07.26: no
-# notes: 非常像Dijkstra，符合条件的push的queue里面，根据k的次数来遍历，每次把所有符合的都Push进去
-from collections import defaultdict, deque
-
+# notes: like Dijkstra by levels; for each of the k allowed stops push
+#        every cheaper neighbor onto the queue
 class Solution2:
     def findCheapestPrice(self, n, flights, src, dst, k):
         adj = defaultdict(list)
@@ -57,11 +63,13 @@ class Solution2:
             stops += 1
         return -1 if dist[dst] == float('inf') else dist[dst]
 
+
 # Bellman Ford
 # Time: O((n+e)k)
 # Space: O(n)
 # 2023.07.26: no
-# notes: 1D DP的简单版，没有Base的情况
+# notes: simple 1D DP without the base-case setup; relax all flights
+#        K+1 times using a fresh copy each round
 class Solution3:
     def findCheapestPrice(self, n, flights, src, dst, k):
         # Distance from source to all other nodes.
@@ -85,8 +93,7 @@ class Solution3:
 # Time: O((n+e)k)
 # Space: O(n)
 # 2023.07.26: no
-# notes: 和bfs不同的是，需要记录k的次数，以权重为pop出来的条件
-import heapq
+# notes: unlike bfs, track the stop count and pop by smallest weight
 class Solution4:
     def findCheapestPrice(self, n, flights, src, dst, k):
         adj = {}
@@ -110,6 +117,8 @@ class Solution4:
 
 
 # Tests:
-test = Solution4()
-test.findCheapestPrice(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1)
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.findCheapestPrice(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1) == 700
+    assert sol.findCheapestPrice(3, [[0,1,100],[1,2,100],[0,2,500]], 0, 2, 1) == 200
+    assert sol.findCheapestPrice(3, [[0,1,100],[1,2,100],[0,2,500]], 0, 2, 0) == 500
+    assert sol.findCheapestPrice(2, [[0,1,50]], 1, 0, 0) == -1

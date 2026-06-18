@@ -1,12 +1,15 @@
+# 42. Trapping Rain Water
+
 # Dynamic Programming Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.19: no
-# notes: 用DP的方法，从两边开始，确认每个值最高值
+# notes: scan from both sides, record the running max on each
+#        side; water at i is min(left_max, right_max) - height[i]
 from typing import List
 
 
-class Solution(object):
+class Solution:
     def trap(self, height):
         if not height:
             return 0
@@ -29,13 +32,15 @@ class Solution(object):
 
         return ans
 
+
 # Using 2 pointers Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.07.19: no
-# notes: 从两边往中间走，都从0开始，高的那边就停，让另一边走，注意点，left和right max的update是在比另一边大了之后进行，不是
-# 一开始遇到今直接update，所以最高点不一定update到
-class Solution2(object):
+# notes: walk inward from both ends; the lower side moves, and
+#        the running max on each side updates only after it is
+#        passed, so the global peak may never update
+class Solution2:
     def trap(self, height):
         left = 0
         right = len(height) - 1
@@ -59,14 +64,15 @@ class Solution2(object):
 
         return ans
 
+
 # stack Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.09.29: no
-# notes: 单调栈的形式，如果stack里面没有东西，说明没有被bounded试不能加入result里面的，
-# 每次新加element，就和最上面的比较，大的话，就压进去，小的话，就弹到比他大的位置，从大到小的单调栈
-# 存index，记录distance，看bounded高度是多少去计算被bounded面积
-class Solution3(object):
+# notes: monotonic decreasing stack of indices; when a taller bar
+#        appears, pop and add the water bounded between the new bar
+#        and the bar below the popped one
+class Solution3:
     def trap(self, height):
         ans = 0
         current = 0
@@ -87,6 +93,11 @@ class Solution3(object):
         return ans
 
 
+# Prefix max arrays Approach
+# Time: O(n)
+# Space: O(n)
+# notes: same idea as the DP method but builds the left and right
+#        running-max arrays explicitly, then sums the trapped water
 class Solution4:
     def trap(self, height: List[int]) -> int:
         left_array, right_array = [], []
@@ -106,7 +117,9 @@ class Solution4:
         return result
 
 
-
 # Tests:
-test = Solution3()
-test.trap([0,1,0,2,1,0,1,3,2,1,2,1])
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.trap([0,1,0,2,1,0,1,3,2,1,2,1]) == 6
+    assert sol.trap([4,2,0,3,2,5]) == 9
+    assert sol.trap([]) == 0
+    assert sol.trap([1,2,3]) == 0

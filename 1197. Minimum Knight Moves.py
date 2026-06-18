@@ -1,10 +1,16 @@
+# 1197. Minimum Knight Moves
+
+from collections import deque
+from functools import lru_cache
+
+
 # BFS Approach (best approach)
 # Time: O((max(|x|, |y|))^2)
 # Space: O((max(|x|, |y|))^2)
 # 2023.07.11: yes
-
-from collections import deque
-class Solution(object):
+# notes: plain BFS from the origin, expanding level by level until
+#        the target square is reached
+class Solution:
     def minKnightMoves(self, x, y):
         """
         :type x: int
@@ -31,13 +37,20 @@ class Solution(object):
                 step += 1
         return bfs(x, y)
 
+
 # Bidirectional BFS Approach
 # Time: O((max(|x|, |y|))^2)
 # Space: O((max(|x|, |y|))^2)
 # 2023.07.11: no
-# notes: 从target朝start point和start point去target，一起会快一点
+# notes: search from origin toward target and from target toward
+#        origin at the same time; they meet faster
 class Solution2:
     def minKnightMoves(self, x: int, y: int) -> int:
+        """
+        :type x: int
+        :type y: int
+        :rtype: int
+        """
         # the offsets in the eight directions
         offsets = [(1, 2), (2, 1), (2, -1), (1, -2),
                    (-1, -2), (-2, -1), (-2, 1), (-1, 2)]
@@ -74,14 +87,21 @@ class Solution2:
                     target_queue.append((next_target_x, next_target_y, target_steps + 1))
                     target_distance[(next_target_x, next_target_y)] = target_steps + 1
 
+
 # DFS (Depth-First Search) with Memoization Approach
 # Time: O((max(|x|, |y|))^2)
 # Space: O((max(|x|, |y|))^2)
 # 2023.07.11: no
-# notes: 核心有两点， 8个点中在4个象限，每4个答案是一样的，比如(x, y), (x, -y), (-x, -y), (-x, y)，所以只需要弄成一个象限即可
-# 可以少求3/4的点，只需要算(x-1, y-2)和(x-2， y-1)就可以了；第二个点，base case, 是x+y = 0,返回0， x+y = 2，返回2
+# notes: by symmetry only one quadrant matters, so fold x,y to abs
+#        values and recurse on (x-1,y-2) and (x-2,y-1); base cases
+#        are x+y==0 -> 0 and x+y==2 -> 2
 class Solution3:
     def minKnightMoves(self, x: int, y: int) -> int:
+        """
+        :type x: int
+        :type y: int
+        :rtype: int
+        """
         @lru_cache(maxsize=None)
         def dfs(x, y):
             if x + y == 0:
@@ -94,6 +114,9 @@ class Solution3:
                 return min(dfs(abs(x - 1), abs(y - 2)), dfs(abs(x - 2), abs(y - 1))) + 1
         return dfs(abs(x), abs(y))
 
+
 # Tests:
-test = Solution3()
-test.minKnightMoves(2,1)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.minKnightMoves(0, 0) == 0
+    assert sol.minKnightMoves(2, 1) == 1
+    assert sol.minKnightMoves(5, 5) == 4

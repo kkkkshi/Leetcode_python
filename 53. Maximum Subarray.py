@@ -1,10 +1,15 @@
+# 53. Maximum Subarray
+
+import math
+
+
 # Sliding Window
 # Time: O(n)
 # Space: O(1)
 # 2023.07.24: no
-# notes: 每次增加一个窗口，如果窗口值小于0，left+1，直到窗口为正，每次right+1的时候，更新窗口
-import math
-class Solution(object):
+# notes: grow the window; once the window sum drops below 0, shrink
+#        from the left until it is positive, updating max as we go
+class Solution:
     def maxSubArray(self, nums):
         """
         :type nums: List[int]
@@ -27,9 +32,9 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.07.24: no
-# notes: dp[i]代表的是，与自己相连的最大值，所以有两个情况，
-# 自成一派最大，和dp[i-1]连在一起最大，取两个中的max即可
-class Solution2(object):
+# notes: dp[i] is the best sum ending at i: either start fresh at
+#        nums[i] or extend dp[i-1]; take the max
+class Solution2:
     def maxSubArray(self, nums):
         """
         :type nums: List[int]
@@ -44,12 +49,13 @@ class Solution2(object):
             dp.append(max(dp[i-1]+nums[i], nums[i]))
         return max(dp)
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.24: no
-# notes: 因为只会用到dp[i-1]一个元素的值去构建下一个值，所以可以压缩空间到O(1m)
-class Solution3(object):
+# notes: each dp value only needs dp[i-1], so collapse it to O(1)
+class Solution3:
     def maxSubArray(self, nums):
         """
         :type nums: List[int]
@@ -68,7 +74,11 @@ class Solution3(object):
         return res
 
 
-class Solution4(object):
+# Brute Force
+# Time: O(n^2)
+# Space: O(1)
+# notes: try every subarray; not recommended
+class Solution4:
     # brute force, not recommended
     def maxSubArray(self, nums):
         max_subarray = -math.inf
@@ -84,36 +94,34 @@ class Solution4(object):
 # Time: O(n)
 # Space: O(1)
 # 2023.07.24: no
-# notes: 两个要点，第一，Presum是到这个节点位置的所有数的集合，第二，presum[i]-min(presum[0]-presum[i-1])是最大的子数组
-# 我们可以先更新一遍presum再在每次循环的时候，更新min(presum)，同时更新res就可以了
-class Solution5(object):
-    # 前缀和技巧解题
+# notes: presum holds the running total; the best subarray ending at i
+#        is presum[i+1] - min(presum[0..i]), tracked as we go
+class Solution5:
+    # solve with the prefix sum trick
     def maxSubArray(self, nums):
         n = len(nums)
         preSum = [0] * (n + 1)
         preSum[0] = 0
-        # 构造 nums 的前缀和数组
+        # build the prefix sum array of nums
         for i in range(1, n + 1):
             preSum[i] = preSum[i - 1] + nums[i - 1]
 
         res = float('-inf')
         minVal = float('inf')
         for i in range(n):
-            # 维护 minVal 是 preSum[0..i] 的最小值
+            # keep minVal as the minimum of preSum[0..i]
             minVal = min(minVal, preSum[i])
-            # 以 nums[i] 结尾的最大子数组和就是 preSum[i+1] - min(preSum[0..i])
+            # best subarray ending at nums[i] is preSum[i+1] - min(preSum[0..i])
             res = max(res, preSum[i + 1] - minVal)
         return res
+
 
 # Divide and Conquer (Advanced)
 # Time: O(nlogn)
 # Space: O(logn)
 # 2023.07.24: no
-# notes: 核心思想是，找到左边最大的，找到右边最大的，找到带着中值最大的
-# 左边和右边最大的，可以根据递归进行
-# 找中间最大的，就找Mid-1这个点往左，最大值是多少，一定要包含mid-1
-# 再找mid+1这个点往右，必须包含mid+1,加上中间点，就是含中间的最大值
-# 左右递归完之后，max(左，中，右)即可
+# notes: combine best-left, best-right, and the best span crossing the
+#        middle (which must include mid-1 and mid+1) at each split
 class Solution6:
     def maxSubArray(self, nums):
         def findBestSubarray(nums, left, right):
@@ -151,6 +159,10 @@ class Solution6:
         return findBestSubarray(nums, 0, len(nums) - 1)
 
 
+# Kadane's Algorithm
+# Time: O(n)
+# Space: O(1)
+# notes: keep a running sum; drop it when it goes negative, else extend
 class Solution7:
     def maxSubArray(self, nums):
         # Initialize our variables using the first element.
@@ -164,9 +176,11 @@ class Solution7:
 
         return max_subarray
 
-test = Solution7()
-test.maxSubArray([-2,1,-3,4,-1,2,1,-5,-5])
-test.maxSubArray([5,1,-3,4,5,2,1,-5,-5])
-test.maxSubArray([-3,-4,-1,-5])
 
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(),
+            Solution5(), Solution6(), Solution7()):
+    assert sol.maxSubArray([-2, 1, -3, 4, -1, 2, 1, -5, 4]) == 6
+    assert sol.maxSubArray([1]) == 1
+    assert sol.maxSubArray([5, 4, -1, 7, 8]) == 23
+    assert sol.maxSubArray([-3, -4, -1, -5]) == -1

@@ -1,7 +1,14 @@
+# 844. Backspace String Compare
+
+import itertools
+
+
 # Two Pointer approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.08: yes
+# notes: rewrite each string in place with a write pointer, backing it
+#        up on '#', then compare the two trimmed prefixes
 class Solution:
     def backspaceCompare(self, s: str, t: str) -> bool:
         def final_str(s):
@@ -20,12 +27,14 @@ class Solution:
         lt = final_str(t)
         return s[:ls] == t[:lt]
 
+
 # Two Pointer approach
 # Time: O(n)
 # Space: O(1)
 # 2023.06.08: no
-# notes: reverse这个string，如果遇到#，就skip下一个，就不用验证sp是不是0了
-class Solution(object):
+# notes: scan each string from the right; on '#' skip the next char, so
+#        there's no need to check whether the write pointer is 0
+class Solution2:
     def backspaceCompare(self, S, T):
         def F(S):
             skip = 0
@@ -37,14 +46,15 @@ class Solution(object):
                 else:
                     yield x
 
-        return all(x == y for x, y in itertools.izip_longest(F(S), F(T)))
+        return all(x == y for x, y in itertools.zip_longest(F(S), F(T)))
 
 
 # Build String approach
 # Time: O(m+n)
 # Space: O(m+n)
 # 2023.06.08: no
-class Solution(object):
+# notes: rebuild each string with a stack, popping on '#', then compare
+class Solution3:
     def backspaceCompare(self, S, T):
         def build(S):
             ans = []
@@ -56,5 +66,10 @@ class Solution(object):
             return "".join(ans)
         return build(S) == build(T)
 
-test = Solution()
-test.backspaceCompare(s = "ab#c", t = "ad#c")
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.backspaceCompare("ab#c", "ad#c") is True
+    assert sol.backspaceCompare("ab##", "c#d#") is True
+    assert sol.backspaceCompare("a#c", "b") is False
+    assert sol.backspaceCompare("", "") is True

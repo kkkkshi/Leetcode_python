@@ -1,9 +1,11 @@
+# 1135. Connecting Cities With Minimum Cost
+
 # Minimum Spanning Tree (Using Kruskal's algorithm) Approach
 # Time: O(mlogm) for sorting
 # Space: O(n)
 # 2023.07.06: yes
-
-
+# notes: sort edges by cost, union endpoints if not already joined,
+#        add the cost; connected iff exactly one component remains
 class UnionFind:
     def __init__(self, n):
         self.parent = [node for node in range(n)]
@@ -33,7 +35,8 @@ class UnionFind:
             self.size[root_A] += self.size[root_B]
         self.count -= 1
 
-class Solution(object):
+
+class Solution:
     def minimumCost(self, n, connections):
         """
         :type n: int
@@ -51,54 +54,56 @@ class Solution(object):
                 mst += connection[2]
         return mst if ufs.count==1 else -1
 
+
 # Prim Approach
 # Time: O(eloge)
 # Space: O(e+v)
 # 2023.07.06: yes
-# notes: 看prim的笔记
-
+# notes: grow the tree from node 0, keep crossing edges in a heap,
+#        always pull the cheapest edge to an outside node
 import heapq
 class Prim:
-    # 核心数据结构，存储「横切边」的优先级队列
+    # core structure: a priority queue holding the crossing edges
     def __init__(self, graph):
         self.graph = graph
-        self.pq = []  # PriorityQueue<int[]> 的实现
-        self.inMST = [False] * len(graph)  # 类似 visited 数组的作用，记录哪些节点已经成为最小生成树的一部分
-        self.weightSum = 0  # 记录最小生成树的权重和
-        self.inMST[0]= True  # 随便从一个点开始切分都可以，我们不妨从节点 0 开始
+        self.pq = []  # the PriorityQueue<int[]> implementation
+        self.inMST = [False] * len(graph)  # like visited: nodes already in the MST
+        self.weightSum = 0  # total weight of the MST
+        self.inMST[0]= True  # start from any node; node 0 here
         self.cut(0)
-        # 不断进行切分，向最小生成树中添加边
+        # keep cutting, adding edges to the MST
         while self.pq:
-            # 按照边的权重从小到大排序
+            # ordered by edge weight, smallest first
             edge = heapq.heappop(self.pq)
-            to = edge[2]  # 表示相邻节点
-            weight = edge[0]  # 表示这条边的权重
-            if self.inMST[to]:  # 节点 to 已经在最小生成树中，跳过。否则这条边会产生环
+            to = edge[2]  # the adjacent node
+            weight = edge[0]  # this edge's weight
+            if self.inMST[to]:  # node to already in MST, skip; else it makes a cycle
                 continue
-            self.weightSum += weight  # 将边 edge 加入最小生成树
+            self.weightSum += weight  # add edge to the MST
             self.inMST[to] = True
-            self.cut(to)  # 节点 to 加入后，进行新一轮切分，会产生更多横切边
+            self.cut(to)  # node to joined, cut again for more crossing edges
 
-    # 将 s 的横切边加入优先队列
+    # add the crossing edges of s into the priority queue
     def cut(self, s):
-        for edge in self.graph[s]:  # 遍历 s 的邻边
-            to = edge[2]  # 相邻的节点
-            if self.inMST[to]:  # 相邻接点 to 已经在最小生成树中，跳过
+        for edge in self.graph[s]:  # walk s's neighbors
+            to = edge[2]  # the adjacent node
+            if self.inMST[to]:  # neighbor to already in MST, skip
                 continue
-            heapq.heappush(self.pq, edge)  # 加入横切边队列
+            heapq.heappush(self.pq, edge)  # push the crossing edge
 
-    # 最小生成树的权重和
+    # total weight of the MST
     def weight(self):
         return self.weightSum
 
-    # 判断最小生成树是否包含图中的所有节点
+    # whether the MST covers every node in the graph
     def allConnected(self) -> bool:
         for i in range(len(self.inMST)):
             if not self.inMST[i]:
                 return False
         return True
 
-class Solution2(object):
+
+class Solution2:
     def minimumCost(self, n, connections):
         """
         :type n: int
@@ -115,7 +120,10 @@ class Solution2(object):
         if not prim.allConnected():
             return -1
         return prim.weight()
-# Test:
-test = Solution2()
-test.minimumCost(n=3, connections=[[1, 2, 5], [1, 3, 6], [2, 3, 1]])
-test.minimumCost(n = 4, connections = [[1,2,3],[3,4,4]])
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.minimumCost(3, [[1, 2, 5], [1, 3, 6], [2, 3, 1]]) == 6
+    assert sol.minimumCost(4, [[1, 2, 3], [3, 4, 4]]) == -1
+    assert sol.minimumCost(2, [[1, 2, 7]]) == 7

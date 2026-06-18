@@ -1,3 +1,8 @@
+# 1038. Binary Search Tree to Greater Sum Tree
+
+from collections import deque
+
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
@@ -5,11 +10,40 @@ class TreeNode:
         self.right = right
 
 
+def build(values):
+    # level-order list -> tree, None marks a missing node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    q = deque([root])
+    i = 1
+    while q and i < len(values):
+        node = q.popleft()
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            q.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            q.append(node.right)
+        i += 1
+    return root
+
+
+def inorder(node):
+    # inorder traversal -> list of values
+    if node is None:
+        return []
+    return inorder(node.left) + [node.val] + inorder(node.right)
+
+
 # Morris Approach  (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.29: yes
-class Solution(object):
+# notes: reverse inorder (right, node, left) keeping a running total, and
+#        use Morris threading so no stack is needed.
+class Solution:
     def bstToGst(self, root):
         """
         :type root: TreeNode
@@ -52,11 +86,14 @@ class Solution(object):
 
         return root
 
+
 # Recursion Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution2(object):
+# notes: reverse inorder traversal accumulating a running total into
+#        self.total and writing it back into each node.
+class Solution2:
     def bstToGst(self, root):
         """
         :type root: TreeNode
@@ -73,11 +110,14 @@ class Solution2(object):
             return root
         return convert(root)
 
+
 # Interation Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.29: yes
-class Solution3(object):
+# notes: iterative reverse inorder using an explicit stack, accumulating
+#        the running total as each node is popped.
+class Solution3:
     def bstToGst(self, root):
         """
         :type root: TreeNode
@@ -100,3 +140,10 @@ class Solution3(object):
         return cur
 
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert inorder(sol.bstToGst(build(
+        [4, 1, 6, 0, 2, 5, 7, None, None, None, 3, None, None, None, 8]))) == \
+        [36, 36, 35, 33, 30, 26, 21, 15, 8]
+    assert inorder(sol.bstToGst(build([0, None, 1]))) == [1, 1]
+    assert inorder(sol.bstToGst(build([1]))) == [1]

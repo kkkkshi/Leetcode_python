@@ -1,10 +1,15 @@
+# 1584. Min Cost to Connect All Points
+
+import heapq
+import math
+
+
 # Minimum Spanning Tree (Using Kruskal's algorithm) Approach
 # Time: O(mlogm) for sorting
 # Space: O(n)
 # 2023.07.06: yes
-import heapq
-import math
-
+# notes: build every edge, sort by weight, add the cheapest edge that
+#        joins two different groups until all nodes are connected
 class UnionFind:
     def __init__(self, size: int) -> None:
         self.group = [0] * size
@@ -68,7 +73,8 @@ class Solution:
 # Time: O(n^2 logn)
 # Space: O(n^2)
 # 2023.07.06: no
-# notes: 造一个fake head,初始heap = [(0,0)], 后面的0代表的是一个节点，第0个节点，对应到points即可
+# notes: make a fake head, start heap = [(0, 0)] where the 0 means node
+#        index 0 in points; pop the cheapest edge and grow the tree
 class Solution2:
     def minCostConnectPoints(self, points):
         n = len(points)
@@ -109,7 +115,8 @@ class Solution2:
 # Time: O(n^2) for sorting
 # Space: O(n)
 # 2023.07.06: no
-# 相比于上一步，用一个数组进行记录最短的是多少，就不用每次比较这么多了
+# notes: keep an array of the shortest distance to each node so we do
+#        not re-scan the whole heap every time
 class Solution3:
     def minCostConnectPoints(self, points):
         n = len(points)
@@ -146,8 +153,10 @@ class Solution3:
 
         return mst_cost
 
+
 # Tests:
-test = Solution3()
-test.minCostConnectPoints(points = [[0,0],[2,2],[3,10],[5,2],[7,0]])
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.minCostConnectPoints([[0, 0], [2, 2], [3, 10], [5, 2], [7, 0]]) == 20
+    assert sol.minCostConnectPoints([[3, 12], [-2, 5], [-4, 1]]) == 18
+    assert sol.minCostConnectPoints([[0, 0]]) == 0
+    assert sol.minCostConnectPoints([[0, 0], [1, 1]]) == 2

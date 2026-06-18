@@ -1,10 +1,18 @@
+# 371. Sum of Two Integers
+
 # Bit Manipulation: Easy and Language-Independent
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 用到的是之前的方法 answer = x ^ y，carry = (x & y) << 1，x, y = answer, carry去加减进位
+# notes: reuse the prior trick answer = x ^ y, carry = (x & y) << 1,
+#        then x, y = answer, carry to fold in the carry/borrow
 class Solution:
     def getSum(self, a, b):
+        """
+        :type a: int
+        :type b: int
+        :rtype: int
+        """
         x, y = abs(a), abs(b)
         # ensure that abs(a) >= abs(b)
         if x < y:
@@ -31,13 +39,19 @@ class Solution:
 
         return x * sign
 
+
 # Bit Manipulation: Short Language-Specific Solution
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 这个和python自己的语言特性有关，先跳过
+# notes: this relies on python's own behavior, skip for now
 class Solution2:
     def getSum(self, a: int, b: int) -> int:
+        """
+        :type a: int
+        :type b: int
+        :rtype: int
+        """
         mask = 0xFFFFFFFF
 
         while b != 0:
@@ -45,3 +59,12 @@ class Solution2:
 
         max_int = 0x7FFFFFFF
         return a if a < max_int else ~(a ^ mask)
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.getSum(1, 2) == 3
+    assert sol.getSum(2, 3) == 5
+    assert sol.getSum(-2, 3) == 1
+    assert sol.getSum(-1, -1) == -2
+    assert sol.getSum(0, 0) == 0

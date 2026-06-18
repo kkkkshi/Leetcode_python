@@ -1,16 +1,37 @@
+# 25. Reverse Nodes in k-Group
+
 # Definition for singly-linked list.
-class ListNode(object):
+class ListNode:
     def __init__(self, val=0, next=None):
         self.val = val
         self.next = next
+
+
+def build(values):
+    # build a linked list from a python list
+    head = None
+    for v in reversed(values):
+        head = ListNode(v, head)
+    return head
+
+
+def to_list(head):
+    # turn a linked list back into a python list
+    out = []
+    while head:
+        out.append(head.val)
+        head = head.next
+    return out
+
 
 # Recursive Approach:
 # Time: O(n)
 # Space: O(n/k)
 # 2023.06.19: no
-# notes: 非常精妙，这个是206->92->25这样的顺序，notes偏多，细节我记录在下面
+# notes: the order is 206 -> 92 -> 25; lots of notes, details below
 class Solution:
-    # 这只是个普通的recursion来翻转linkedlist的方法，最后返回新的头结点（原尾节点）即可
+    # a plain recursion that reverses a linked list and returns the
+    # new head (the old tail)
     def reverseLinkedList(self, head, k):
 
         # Reverse k nodes of the given linked list.
@@ -38,7 +59,7 @@ class Solution:
 
     def reverseKGroup(self, head, k):
 
-        count = 0 # 计数
+        count = 0 # counter
         ptr = head
 
         # First, see if there are atleast k nodes
@@ -51,52 +72,55 @@ class Solution:
         if count == k:
             # Reverse the first k nodes of the list and
             # get the reversed list's head.
-            # 单纯翻转小linked lists
+            # just reverse this small linked list
             reversedHead = self.reverseLinkedList(head, k)
 
             # Now recurse on the remaining linked list. Since
             # our recursion returns the head of the overall processed
             # list, we use that and the "original" head of the "k" nodes
             # to re-wire the connections.
-            # 把尾结点（就是老的头结点）的下一个接到翻转过的尾结点，重点！非常经典一句话
+            # link the tail (the old head) to the reversed remainder;
+            # key step, a classic one-liner
             head.next = self.reverseKGroup(ptr, k)
             return reversedHead
-        # 写的其实很不清晰， 本来的意思就是，如果count不够到k个字符，就返回不到k个nodes的头结点，也就是什么都不需要翻转
+        # if there are fewer than k nodes left, return the head as is
+        # since nothing needs reversing
         return head
+
 
 # Recursive Approach:
 # Time: O(n)
 # Space: O(n/k)
 # 2023.06.19: no
-# notes: labuladong的方法，比标答更好，很容易理解
-# 核心思想是把终止条件改一下，以前是到None为止停止翻转，现在是到next node不需要翻转的时候停，很巧妙
-# 简洁又好用，牛
-class Solution3(object):
-    # 反转区间 [a, b) 的元素，注意是左闭右开,重点
+# notes: labuladong's version, nicer than the standard one and easy
+#        to follow; the trick is to stop at the node that does not
+#        need reversing instead of stopping at None
+class Solution3:
+    # reverse the half-open range [a, b); note left-closed right-open
     def reverse(self, a, b):
         pre, cur, nxt = None, a, a
-        # while  终止的条件改一下就行了
+        # just change the stop condition of the while loop
         while cur != b:
             nxt = cur.next
             cur.next = pre
             pre = cur
             cur = nxt
-        # 返回反转后的头结点
+        # return the head after reversing
         return pre
 
     def reverseKGroup(self, head, k):
         if not head:
             return None
-        # 区间 [a, b) 包含 k 个待反转元素
+        # range [a, b) holds the k nodes to reverse
         a, b = head, head
         for i in range(k):
-            # 不足 k 个，不需要反转，base case
+            # fewer than k nodes, no reversing needed, base case
             if not b:
                 return head
             b = b.next
-        # 反转前 k 个元素, 翻转到b
+        # reverse the first k nodes, up to b
         new_head = self.reverse(a, b)
-        # 递归反转后续链表并连接起来
+        # recurse on the rest and connect them
         a.next = self.reverseKGroup(b, k)
         return new_head
 
@@ -105,6 +129,8 @@ class Solution3(object):
 # Time: O(n)
 # Space: O(1)
 # 2023.06.18: no
+# notes: reverse each k-block in place and stitch blocks together
+#        with ktail (previous block's tail) and head (next block)
 class Solution2:
 
     def reverseLinkedList(self, head, k):
@@ -159,13 +185,16 @@ class Solution2:
                 revHead = self.reverseLinkedList(head, k)
 
                 # new_head is the head of the final linked list
-                # 这个是当没有头的时候，也就是第一次reverse的时候的尾巴，之后的情况，new_head都有值，不会再进这个if statement
+                # this is the tail of the first reverse (no head yet);
+                # afterwards new_head is set and this if is skipped
                 if not new_head:
                     new_head = revHead
 
                 # ktail is the tail of the previous block of
                 # reversed k nodes
-                # 第一次赋值才会跳过，因为第一个reverse的前面是None，之后都会进，除非最后一段，根本连前面的if都没进
+                # only the first assignment skips it, since the first
+                # reverse has None before it; the rest enter, except
+                # the final leftover which never reaches here
                 if ktail:
                     ktail.next = revHead
 
@@ -173,7 +202,8 @@ class Solution2:
                 head = ptr
 
         # attach the final, possibly un-reversed portion
-        # 不需要翻转的时候，他的next就会进这个，因为head永远是头，revhead永远是尾或者新头
+        # the leftover that needs no reversing comes here, since head
+        # is always the front and revHead is always the tail/new head
         if ktail:
             ktail.next = head
 
@@ -181,7 +211,8 @@ class Solution2:
 
 
 # Tests:
-a = ListNode(1, ListNode(2, ListNode(3, ListNode(4, ListNode(5)))))
-test = Solution2()
-test.reverseKGroup(a, 2)
-
+for sol in (Solution(), Solution3(), Solution2()):
+    assert to_list(sol.reverseKGroup(build([1,2,3,4,5]), 2)) == [2,1,4,3,5]
+    assert to_list(sol.reverseKGroup(build([1,2,3,4,5]), 3)) == [3,2,1,4,5]
+    assert to_list(sol.reverseKGroup(build([1,2,3,4,5]), 1)) == [1,2,3,4,5]
+    assert to_list(sol.reverseKGroup(build([1,2]), 2)) == [2,1]

@@ -1,11 +1,15 @@
+# 300. Longest Increasing Subsequence
+
 # Dynamic programming
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.21: no
+# notes: dp[i] is the LIS ending at i, built from every smaller
+#        earlier value
 from bisect import bisect_left
 
 
-class Solution(object):
+class Solution:
     def lengthOfLIS(self, nums):
         """
         :type nums: List[int]
@@ -18,16 +22,20 @@ class Solution(object):
                     dp[i] = max(dp[i], dp[j]+1)
         return max(dp)
 
+
 # Intelligently Build a Subsequence
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.21: no
-# notes: 建议看https://labuladong.github.io/algo/di-er-zhan-a01c6/dong-tai-g-a223e/dong-tai-g-6ea57/
-# 没有证明，但是写的非常清楚，一个array, 从左到右遍历array, 如果新的数比前面的数大，就append到后面，如果比前面的数小
-# 就把前面那个数的位置替换掉，最后数组的长度就是最长的array，替换掉的理由是，能用小的，大的也可以用，但是小的不能用大的
-# 后续只需要取一个就可以了
+# notes: keep a candidate subsequence; append if bigger than the
+#        last, else overwrite the first element it can replace, since
+#        a smaller value leaves more room for later numbers
 class Solution2:
     def lengthOfLIS(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         sub = [nums[0]]
         for num in nums[1:]:
             if num > sub[-1]:
@@ -40,13 +48,18 @@ class Solution2:
 
         return len(sub)
 
+
 # Improve With Binary Search
-# Time: O(nlgon)
+# Time: O(nlogn)
 # Space: O(n)
 # 2023.06.21: no
-# notes: update上面，只是用binary search的方法插入
+# notes: same as above but find the replace position with bisect
 class Solution3:
     def lengthOfLIS(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
         sub = []
         for num in nums:
             i = bisect_left(sub, num)
@@ -63,5 +76,8 @@ class Solution3:
 
 
 # Tests:
-test = Solution()
-test.lengthOfLIS([10,9,2,5,3,7,101,18])
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.lengthOfLIS([10, 9, 2, 5, 3, 7, 101, 18]) == 4
+    assert sol.lengthOfLIS([0, 1, 0, 3, 2, 3]) == 4
+    assert sol.lengthOfLIS([7, 7, 7, 7, 7]) == 1
+    assert sol.lengthOfLIS([4, 10, 4, 3, 8, 9]) == 3

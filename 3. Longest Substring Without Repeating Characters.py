@@ -6,7 +6,7 @@
 # 2023.06.20: yes
 # notes: expand the window to the right; when a char count exceeds 1,
 #        shrink from the left until the window has no duplicates
-class Solution(object):
+class Solution:
     def lengthOfLongestSubstring(self, s):
         """
         :type s: str

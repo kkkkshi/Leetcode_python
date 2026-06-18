@@ -1,8 +1,11 @@
+# 303. Range Sum Query - Immutable
+
 # Caching Approach (best approach):
 # Time: O(n)
 # Space: O(1)
 # 2023.06.19: yes
-class NumArray(object):
+# notes: store prefix sums so a range sum is one subtraction
+class NumArray:
 
     def __init__(self, nums):
         """
@@ -22,10 +25,8 @@ class NumArray(object):
         return self.sum_nums[right+1] - self.sum_nums[left]
 
 
-
-# Your NumArray object will be instantiated and called as such:
-nums = [-2, 0, 3, -5, 2, -1]
-obj = NumArray(nums)
-param_1 = obj.sumRange(0,2)
-param_2 = obj.sumRange(2,5)
-param_3 = obj.sumRange(0,5)
+# Tests:
+obj = NumArray([-2, 0, 3, -5, 2, -1])
+assert obj.sumRange(0, 2) == 1
+assert obj.sumRange(2, 5) == -1
+assert obj.sumRange(0, 5) == -3

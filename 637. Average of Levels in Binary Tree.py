@@ -1,14 +1,42 @@
-class TreeNode(object):
+# 637. Average of Levels in Binary Tree
+
+from collections import deque
+
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    if not values:
+        return None
+    it = iter(values)
+    root = TreeNode(next(it))
+    queue = deque([root])
+    for val in it:
+        node = queue[0]
+        if node.left is None:
+            if val is not None:
+                node.left = TreeNode(val)
+                queue.append(node.left)
+        else:
+            if val is not None:
+                node.right = TreeNode(val)
+                queue.append(node.right)
+            queue.popleft()
+    return root
+
+
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-class Solution(object):
+# notes: process the tree level by level; sum each level's values and
+#        divide by the level size to get its average
+class Solution:
     def averageOfLevels(self, root):
         """
         :type root: TreeNode
@@ -34,10 +62,8 @@ class Solution(object):
         return results
 
 
-
-
 # Tests:
-tree = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
-tree2 = TreeNode(2, TreeNode(2), TreeNode(2))
-test = Solution()
-test.averageOfLevels(tree)
+for sol in (Solution(),):
+    assert sol.averageOfLevels(build([3, 9, 20, None, None, 15, 7])) == [3, 14.5, 11]
+    assert sol.averageOfLevels(build([2, 2, 2])) == [2, 2]
+    assert sol.averageOfLevels(build([5])) == [5]

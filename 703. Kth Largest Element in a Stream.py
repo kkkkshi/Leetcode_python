@@ -1,7 +1,11 @@
+# 703. Kth Largest Element in a Stream
+
 # Array
 # Time: O(n^2)
 # Space: O(n)
 # 2023.10.30: yes
+# notes: keep the top k values sorted; add inserts in order and the
+#        smallest of the k is the kth largest
 import heapq
 from typing import List
 
@@ -46,7 +50,8 @@ class KthLargest:
 # Time: O(nlogn+mlogk)
 # Space: O(n)
 # 2023.10.30: no
-# notes: 这么简单，没想到，吐了，取第k大个，就把k以下的都pop，然后小根堆最下面的就是
+# notes: keep a min-heap of size k; after each push pop the smallest so
+#        the heap top is always the kth largest
 class KthLargest2:
     def __init__(self, k: int, nums: List[int]):
         self.k = k
@@ -62,23 +67,18 @@ class KthLargest2:
         return self.heap[0]
 
 
-# Your KthLargest object will be instantiated and called as such:
-obj = KthLargest2(3, [4,5,8,2])
-obj.add(3)  # 4
-obj.add(5)  # return 5
-obj.add(10)  # return 5
-obj.add(9)   # return 8
-obj.add(4)   # return 8
+# Tests:
+for Impl in (KthLargest, KthLargest2):
+    obj = Impl(3, [4, 5, 8, 2])
+    assert obj.add(3) == 4
+    assert obj.add(5) == 5
+    assert obj.add(10) == 5
+    assert obj.add(9) == 8
+    assert obj.add(4) == 8
 
-obj = KthLargest2(1, [])
-obj.add(-3)  # -3
-obj.add(-2)  # -2
-obj.add(-4)  # -2
-obj.add(0)   # 0
-obj.add(4)   # 4
-
-
-
-
-
-
+    obj = Impl(1, [])
+    assert obj.add(-3) == -3
+    assert obj.add(-2) == -2
+    assert obj.add(-4) == -2
+    assert obj.add(0) == 0
+    assert obj.add(4) == 4

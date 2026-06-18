@@ -1,11 +1,16 @@
+# 1380. Lucky Numbers in a Matrix
+
 # Recursion
 # Time: O(mn)
 # Space: O(1)
 # 2023.08.14: no
-# notes: 时间复杂度高了不难，就是全部检查一遍，但是这道题O(1)的话，就很难理解了
-# 1. 一个Matrix中不可能存在两个lucky number
-# 2. 所以找到所有行最小值的最大值和所有列的最大值的最小值，看看匹配不配即可
+# notes: a matrix has at most one lucky number, so take the max of
+#        each row's min and the min of each col's max and compare
+# 1. a matrix cannot hold two lucky numbers
+# 2. find max of row mins and min of col maxes, lucky if they match
 import math
+
+
 class Solution:
     def luckyNumbers(self, matrix):
         # max of row min
@@ -18,6 +23,10 @@ class Solution:
             minMax = min(minMax, max(col))
         return [maxMin] if maxMin == minMax else []
 
+
 # Tests:
-test = Solution()
-test.luckyNumbers([[3,7,8],[9,11,13],[15,16,17]])
+for sol in (Solution(),):
+    assert sol.luckyNumbers([[3, 7, 8], [9, 11, 13], [15, 16, 17]]) == [15]
+    assert sol.luckyNumbers([[1, 10, 4, 2], [9, 3, 8, 7],
+                             [15, 16, 17, 12]]) == [12]
+    assert sol.luckyNumbers([[7, 8], [1, 2]]) == [7]

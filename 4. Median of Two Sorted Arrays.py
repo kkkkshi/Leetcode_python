@@ -1,9 +1,14 @@
+# 4. Median of Two Sorted Arrays
+
 # Merge Sort
 # Time: O(m+n)
 # Space: O(1)
 # 2023.10.23: yes
-# notes: 不符合题目要求时间需要O(log(m+n))
+# notes: merge the two arrays virtually and stop at the middle
+#        element(s). does not meet the required O(log(m+n)).
 from typing import List
+
+
 class Solution:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         m, n = len(nums1), len(nums2)
@@ -41,9 +46,10 @@ class Solution:
 # Time: O(log(m+n))
 # Space: O(1)
 # 2023.10.23: no
-# notes: 有点复杂，但是解法很新奇，值得学习
-# 找到A和B的中点，average，对比A, B的中点，k是中间点，第(A+B)//2小的点，假设A的中点<B的中点，且k在AB中点均值的右边，把A_left删掉
-# 否则，把B_right删掉，每次减掉1/4的部分
+# notes: find the k-th smallest by comparing the middles of A and B;
+#        each step drops about a quarter of the search space. if A's
+#        middle < B's middle and k is past their midpoint, drop A's
+#        left part, otherwise drop B's right part.
 class Solution2:
     def findMedianSortedArrays(self, A: List[int], B: List[int]) -> float:
         na, nb = len(A), len(B)
@@ -79,12 +85,14 @@ class Solution2:
         else:
             return (solve(n // 2 - 1, 0, na - 1, 0, nb - 1) + solve(n // 2, 0, na - 1, 0, nb - 1)) / 2
 
+
 # A Better Binary Search
 # Time: O(log(min(m+n)))
 # Space: O(1)
 # 2023.10.23: no
-# notes: 很玄妙的方法，left, right是总体的left, right，同时cut左右两边，缩小范围，结束条件是maxLeftA <= minRightB and maxLeftB <= minRightA
-# 同时也能解决奇偶的问题
+# notes: binary-search the cut on the shorter array so that every left
+#        element <= every right element; stop when maxLeftA <= minRightB
+#        and maxLeftB <= minRightA. handles odd and even lengths.
 class Solution3:
     def findMedianSortedArrays(self, nums1: List[int], nums2: List[int]) -> float:
         if len(nums1) > len(nums2):
@@ -111,8 +119,10 @@ class Solution3:
             else:
                 left = partitionA + 1
 
-test = Solution3()
-test.findMedianSortedArrays([1,2,3,4],[3,4,7,8])
 
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.findMedianSortedArrays([1, 3], [2]) == 2.0
+    assert sol.findMedianSortedArrays([1, 2], [3, 4]) == 2.5
+    assert sol.findMedianSortedArrays([1, 2, 3, 4], [3, 4, 7, 8]) == 3.5
+    assert sol.findMedianSortedArrays([], [1]) == 1.0

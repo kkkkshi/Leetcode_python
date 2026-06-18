@@ -1,8 +1,12 @@
+# 216. Combination Sum III
+
 # Backtracking
 # Time: O((9！k)/(9-k)!)
 # Space: O(k)
 # 2023.08.03: yes
-class Solution(object):
+# notes: pick increasing digits 1..9, recurse while tracking the
+#        remaining sum and count
+class Solution:
     def combinationSum3(self, k, n):
         """
         :type k: int
@@ -28,13 +32,20 @@ class Solution(object):
                 self.backtracking(k-1, n-i, cur, results, start+1)
                 cur.pop()
 
+
 # Backtracking
 # Time: O((9！k)/(9-k)!)
 # Space: O(k)
 # 2023.08.03: yes
-# notes: 简化版本，不需要每次从0开始遍历，从后面开始即可
+# notes: simpler version, start each branch from the next index
+#        instead of scanning from the beginning
 class Solution2:
     def combinationSum3(self, k, n):
+        """
+        :type k: int
+        :type n: int
+        :rtype: List[List[int]]
+        """
         results = []
         def backtrack(remain, comb, next_start):
             if remain == 0 and len(comb) == k:
@@ -57,7 +68,10 @@ class Solution2:
 
         return results
 
-test = Solution()
-test.combinationSum3(3,7)
-test.combinationSum3(3,9)
-test.combinationSum3(4,1)
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.combinationSum3(3, 7) == [[1, 2, 4]]
+    assert sol.combinationSum3(3, 9) == [[1, 2, 6], [1, 3, 5], [2, 3, 4]]
+    assert sol.combinationSum3(4, 1) == []
+    assert sol.combinationSum3(2, 18) == []

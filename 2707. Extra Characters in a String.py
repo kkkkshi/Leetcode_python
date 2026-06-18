@@ -1,16 +1,17 @@
-# Top Down Dynamic Programming with Substring Method
-# Time: O(n^3)
-# Space: O(n+m*k)
-# 2023.09.02: no
-# notes: dp returns the minimum number of extra characters needed to form a valid concatenation of words starting from the start index
-# 有点像分解coin change，当前的方法数是当前的后后续的最小值
-# ans = dp(start +1) +1代表着到达前一个节点，必然会多一个没有用到的，看看后面有没有符合的即可
-# 至于为什么要+1， +1，因为str的特性，s[i:i] = ""， s[i:i+1]才有第一个字符
+# 2707. Extra Characters in a String
+
 from functools import cache
 from typing import List
 
 
-class Solution(object):
+# Top Down Dynamic Programming with Substring Method
+# Time: O(n^3)
+# Space: O(n+m*k)
+# 2023.09.02: no
+# notes: dp(start) is the min extra chars for s[start:]; either skip
+#        s[start] for +1, or match a dictionary word and jump past it.
+#        like coin change: each state is the best over later states.
+class Solution:
     def minExtraChar(self, s, dictionary):
         """
         :type s: str
@@ -31,13 +32,20 @@ class Solution(object):
 
         return dp(0)
 
+
 # Bottom Up Dynamic Programming with Substring Method
 # Time: O(n^3)
 # Space: O(n+m*k)
 # 2023.09.02: no
-# notes: 注意初始化的时候要n+1，因为有一个情况是最后一个字符是空的
+# notes: same dp built from the end; size n+1 so dp[n]=0 covers the
+#        empty tail after the last character
 class Solution2:
     def minExtraChar(self, s: str, dictionary: List[str]) -> int:
+        """
+        :type s: str
+        :type dictionary: List[str]
+        :rtype: int
+        """
         n = len(s)
         dictionary = set(dictionary)
         dp = [0]*(n+1)
@@ -48,17 +56,26 @@ class Solution2:
                     dp[i] = min(dp[i], dp[j+1])
         return dp[0]
 
+
 # Top Down Dynamic Programming with Trie
 # Time: O(n^2+MK)
 # Space: O(N+MK)
 # 2023.09.02: no
+# notes: same top-down dp, but walk a trie from start so word matches
+#        are found without slicing substrings each time
 class TrieNode:
     def __init__(self):
         self.children = {}
         self.is_word = False
 
+
 class Solution3:
     def minExtraChar(self, s: str, dictionary: List[str]) -> int:
+        """
+        :type s: str
+        :type dictionary: List[str]
+        :rtype: int
+        """
         def buildTrie(dictionary):
             root = TrieNode()
             for word in dictionary:
@@ -87,12 +104,20 @@ class Solution3:
             return ans
         return dp(0)
 
+
 # Bottom Up Dynamic Programming with Trie
 # Time: O(n^2+MK)
 # Space: O(N+MK)
 # 2023.09.02: no
+# notes: same bottom-up dp, walking the trie from each i to find word
+#        matches instead of slicing substrings
 class Solution4:
     def minExtraChar(self, s: str, dictionary: List[str]) -> int:
+        """
+        :type s: str
+        :type dictionary: List[str]
+        :rtype: int
+        """
         def buildTrie(dictionary):
             root = TrieNode()
             for word in dictionary:
@@ -118,22 +143,9 @@ class Solution4:
         return dp[0]
 
 
-
 # Tests:
-test = Solution4()
-test.minExtraChar(s = "leetscode", dictionary = ["leet","code","leetcode"])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minExtraChar("leetscode", ["leet","code","leetcode"]) == 1
+    assert sol.minExtraChar("sayhelloworld", ["hello","world"]) == 3
+    assert sol.minExtraChar("abc", ["a","b","c"]) == 0
+    assert sol.minExtraChar("xyz", ["a"]) == 3

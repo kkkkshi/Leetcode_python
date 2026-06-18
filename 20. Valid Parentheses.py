@@ -1,8 +1,12 @@
+# 20. Valid Parentheses
+
 # stack Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.17: yes
-class Solution(object):
+# notes: push openers; on a closer, pop and check it matches the
+#        expected opener; valid only if the stack ends empty
+class Solution:
     def isValid(self, s):
         """
         :type s: str
@@ -19,6 +23,11 @@ class Solution(object):
                 stack.append(char)
         return not stack
 
+
 # Tests:
-test = Solution()
-test.isValid("()[]{}")
+for sol in (Solution(),):
+    assert sol.isValid("()[]{}") is True
+    assert sol.isValid("()") is True
+    assert sol.isValid("(]") is False
+    assert sol.isValid("([)]") is False
+    assert sol.isValid("(") is False

@@ -1,14 +1,18 @@
+# 208. Implement Trie (Prefix Tree)
+
 # Trie
 # Time: insert, search, search_prefix: O(m)
 # Space: insert: O(m), search, search_prefix: O(1)
 # 2023.07.16: yes
-
+# notes: each node holds a children map keyed by char; mark the end
+#        node of an inserted word with val=True for exact searches
 class TrieNode:
     def __init__(self):
         self.val = False
         self.children = {}
 
-class Trie(object):
+
+class Trie:
     def __init__(self):
         self.root = TrieNode()
 
@@ -48,9 +52,11 @@ class Trie(object):
             node = node.children[i]
         return True
 
+
 # Tests:
-obj = Trie()
-obj.insert("apple")
-obj.startsWith("app")
-obj.search("apple")
-obj.startsWith("apple")
+for sol in (Trie(),):
+    sol.insert("apple")
+    assert sol.search("apple") is True
+    assert sol.search("app") is False
+    assert sol.startsWith("app") is True
+    assert sol.startsWith("apxle") is False

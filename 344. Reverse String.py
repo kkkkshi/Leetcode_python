@@ -1,9 +1,11 @@
+# 344. Reverse String
+
 # Two Pointers Approach (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.18: yes
-
-class Solution(object):
+# notes: swap the two ends and move both pointers inward
+class Solution:
     def reverseString(self, s):
         """
         :type s: List[str]
@@ -16,13 +18,19 @@ class Solution(object):
             rp -=1
         return
 
+
 # Recursion Approach:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.18: yes
-# notes:只是提供一个方法，但是其实不符合题目要求，真的把脱裤子放屁做到了极致
+# notes: only here as an alternative; not really fit for the
+#        problem, a roundabout way to do a simple swap
 class Solution2:
     def reverseString(self, s):
+        """
+        :type s: List[str]
+        :rtype: None
+        """
         def helper(left, right):
             if left < right:
                 s[left], s[right] = s[right], s[left]
@@ -31,7 +39,13 @@ class Solution2:
 
 
 # Tests:
-test = Solution()
-test.reverseString(['a','b','c'])
-test.reverseString([])
-test.reverseString(['a','b'])
+for sol in (Solution(), Solution2()):
+    s = ['a', 'b', 'c']
+    sol.reverseString(s)
+    assert s == ['c', 'b', 'a']
+    s = []
+    sol.reverseString(s)
+    assert s == []
+    s = ['a', 'b']
+    sol.reverseString(s)
+    assert s == ['b', 'a']

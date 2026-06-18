@@ -1,9 +1,12 @@
+# 981. Time Based Key-Value Store
+
 # Hashmap + Linear Search Approach
 # Time: O(m*l),O(l) is the time to hash the string, O(m) is is number of cells
 # Space: O(n*timestamp*l)
 # 2023.06.25: no
-# notes: 以key作为一个新的dictionary的名字，然后value和timestamp作为value和新key,获取的时候，现看有没有元素，
-# 有的话从大到小遍历就可以，因为一定会降到最小
+# notes: use each key as the name of a new dict, storing value by
+#        timestamp; on get, scan timestamps high to low and return
+#        the first one not above the query
 class TimeMap:
     def __init__(self):
         self.key_time_map = {}
@@ -35,8 +38,11 @@ class TimeMap:
 # Time: O(m*l*logm),O(l) is the time to hash the string, O(m) is is number of cells
 # Space: O(m*l)
 # 2023.06.25: no
-# notes: 两个built in，SortedDict和bisect.bisect_right
+# notes: two built-ins, SortedDict and bisect_right, find the slot
+#        and return the value just before it
 from sortedcontainers import SortedDict
+
+
 class TimeMap2:
     def __init__(self):
         self.key_time_map = {}
@@ -62,11 +68,13 @@ class TimeMap2:
         # Return value stored at previous position of current iterator.
         return self.key_time_map[key].peekitem(it - 1)[1]
 
+
 # Array + Binary Search Approach
 # Time: O(m*l*logm),O(l) is the time to hash the string, O(m) is is number of cells
 # Space: O(m*l)
 # 2023.06.25: no
-# notes: 重点是"All the timestamps of set are strictly increasing"，所以放进去的顺序一定是sorted，可以直接binary search
+# notes: since set timestamps are strictly increasing, each bucket is
+#        already sorted, so binary search the array directly
 class TimeMap3:
     def __init__(self):
         self.key_time_map = {}
@@ -101,12 +109,14 @@ class TimeMap3:
         return "" if right == 0 else self.key_time_map[key][right - 1][1]
 
 
-
 # Tests:
-timeMap = TimeMap3()
-timeMap.set("foo", "bar", 3)
-timeMap.get("foo", 2)
-timeMap.get("foo", 3)
-timeMap.set("foo", "bar2", 4)
-timeMap.get("foo", 4)
-timeMap.get("foo", 5)
+for cls in (TimeMap, TimeMap2, TimeMap3):
+    sol = cls()
+    sol.set("foo", "bar", 1)
+    assert sol.get("foo", 1) == "bar"
+    assert sol.get("foo", 3) == "bar"
+    sol.set("foo", "bar2", 4)
+    assert sol.get("foo", 4) == "bar2"
+    assert sol.get("foo", 5) == "bar2"
+    assert sol.get("foo", 0) == ""
+    assert sol.get("missing", 1) == ""

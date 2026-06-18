@@ -1,13 +1,17 @@
+# 239. Sliding Window Maximum
+
+from collections import deque
+from typing import List
+
+
 # Monotonic Stack Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.07.15: yes
-# notes: 构建一个单调栈从大到小，如果当前值和单调栈第一个一样，那就压出，后续往单调栈里压的时候，如果比最后一个值大，
-# 就弹出最后一个值，直到当前值比最后一个值小才能压入，以此类推
-from collections import deque
-
-
-class Solution(object):
+# notes: keep a decreasing deque of indices; pop smaller values from
+#        the back, drop out-of-window indices from the front, the front
+#        is the window max
+class Solution:
     def maxSlidingWindow(self, nums, k):
         """
         :type nums: List[int]
@@ -31,14 +35,14 @@ class Solution(object):
             res.append(nums[dq[0]])
         return res
 
-from typing import List
 
 # Monotonic Stack Approach (best approach)
 # Time: O(n)
 # Space: O(n)
 # 2023.09.10: yes
-# notes: update一下，根本就不需要记录n，只需要记录index即可，因为可以直接拿到数字，记录Index也会更容易对比有没有越界
-# dq[0]就是第一个element, dp[-1]就是最后一个element
+# notes: same idea storing (index, value) pairs; no need to track n
+#        since the value comes along, and the index makes bounds checks
+#        easier
 class Solution2:
     def maxSlidingWindow(self, nums: List[int], k: int) -> List[int]:
         results = []
@@ -58,18 +62,10 @@ class Solution2:
                 results.append(q[0][1])
         return results
 
+
 # Tests:
-test = Solution2()
-test.maxSlidingWindow(nums = [1,3,-1,-3,5,3,6,7], k = 3)
-
-
-
-
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3) == [3,3,5,5,6,7]
+    assert sol.maxSlidingWindow([1], 1) == [1]
+    assert sol.maxSlidingWindow([1,-1], 1) == [1,-1]
+    assert sol.maxSlidingWindow([9,8,7,6], 2) == [9,8,7]

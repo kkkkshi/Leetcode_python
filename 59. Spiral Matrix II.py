@@ -1,9 +1,11 @@
+# 59. Spiral Matrix II
+
 # Traverse Layer by Layer in Spiral Form
 # Time: O(n^2)
 # Space: O(1)
 # 2023.06.20: yes
-# notes: 就是我写的复杂了点，但是思路是一样的
-class Solution(object):
+# notes: mine is a bit more complicated, but the idea is the same
+class Solution:
     def generateMatrix(self, n):
         """
         :type n: int
@@ -38,12 +40,19 @@ class Solution(object):
                 return visited
             check1, check2, check3, check4 = True, True, True, True
 
+
 # Optimized spiral traversal
 # Time: O(n^2)
 # Space: O(1)
 # 2023.06.20: no
+# notes: walk straight in a direction, turn when the next cell wraps
+#        around or is already filled
 class Solution2:
     def generateMatrix(self, n):
+        """
+        :type n: int
+        :rtype: List[List[int]]
+        """
         result = [[0] * n for _ in range(n)]
         cnt = 1
         directions = [[0, 1], [1, 0], [0, -1], [-1, 0]]
@@ -62,5 +71,8 @@ class Solution2:
         return result
 
 
-test = Solution2()
-test.generateMatrix(3)
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.generateMatrix(3) == [[1, 2, 3], [8, 9, 4], [7, 6, 5]]
+    assert sol.generateMatrix(1) == [[1]]
+    assert sol.generateMatrix(2) == [[1, 2], [4, 3]]

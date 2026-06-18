@@ -1,9 +1,12 @@
+# 647. Palindromic Substrings
+
 # Dynamic Programming Approach
 # Time: O(n^3)
 # Space: O(n)
 # 2023.07.22: yes
-# notes: 有一道dp被我做出来了！采用的方法是到dp[i]为止，效率很低
-class Solution(object):
+# notes: for each end i, check every start j by expanding inward to
+#        test if s[j..i] is a palindrome; slow but works
+class Solution:
     def countSubstrings(self, s):
         """
         :type s: str
@@ -30,9 +33,14 @@ class Solution(object):
 # Time: O(n^2)
 # Space: O(n^2)
 # 2023.07.22: no
-# notes: 这才是更好的dp，base case是长度为1和2，然后开始往两边扩展，如果可以的话，就继续扩展，不可以的话，就停，之后也不用测
+# notes: better dp; base cases are length 1 and 2, then a substring is
+#        a palindrome if its inner part is and the ends match
 class Solution2:
     def countSubstrings(self, s: str) -> int:
+        """
+        :type s: str
+        :rtype: int
+        """
         n = len(s)
         ans = 0
 
@@ -64,9 +72,14 @@ class Solution2:
 # Time: O(n^2)
 # Space: O(1)
 # 2023.07.22: no
-# notes: 最简单的一个方法，也好理解，从任何一个节点开始，i为中心，或者i，i+1为中心作为base case，往两边扩展
+# notes: simplest one; take each index (and each adjacent pair) as a
+#        center and expand outward while the two ends match
 class Solution3:
     def countSubstrings(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
         ans = 0
         for i in range(len(s)):
             # odd-length palindromes, single character center
@@ -88,5 +101,8 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.countSubstrings("abcdcb")
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.countSubstrings("abc") == 3
+    assert sol.countSubstrings("aaa") == 6
+    assert sol.countSubstrings("abcdcb") == 8
+    assert sol.countSubstrings("a") == 1

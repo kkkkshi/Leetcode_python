@@ -1,10 +1,15 @@
+# 210. Course Schedule II
+
+from collections import deque, defaultdict
+
+
 # Using Node Indegree Approach
 # Time: O(v+e)
 # Space: O(v+e)
 # 2023.07.04: yes
-from collections import deque
-
-class Solution(object):
+# notes: Kahn's algorithm; keep taking nodes with indegree 0 in order
+#        and decrementing neighbors; empty result means a cycle
+class Solution:
     def findOrder(self, numCourses, prerequisites):
         """
         :type numCourses: int
@@ -32,11 +37,13 @@ class Solution(object):
             return self.onPath
         return []
 
+
 # Using Depth First Search Approach
 # Time: O(v+e)
 # Space: O(v+e)
 # 2023.07.04: no
-from collections import defaultdict
+# notes: DFS coloring nodes; an edge to a GRAY (in-progress) node is
+#        a cycle; push nodes post-order and reverse for the order
 class Solution2:
 
     WHITE = 1
@@ -73,12 +80,13 @@ class Solution2:
             color[node] = Solution2.GRAY
 
             # Traverse on neighboring vertices
-            # 如果遇到白色的点，继续遍历因为没遇到过，遇到灰色的点，形成环了，黑色的点，结束过了，不影响任何
+            # white = unseen, keep going; gray = a cycle; black = done,
+            # already processed so it has no effect
             if node in adj_list:
                 for neighbor in adj_list[node]:
                     if color[neighbor] == Solution2.WHITE:
                         dfs(neighbor)
-                    elif color[neighbor] == Solution.GRAY:
+                    elif color[neighbor] == Solution2.GRAY:
                          # An edge to a GRAY vertex represents a cycle
                         is_possible = False
 
@@ -94,10 +102,20 @@ class Solution2:
         return topological_sorted_order[::-1] if is_possible else []
 
 
-
 # Tests:
-test = Solution()
-test.findOrder(numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]])
-test.findOrder(numCourses = 4, prerequisites = [[1,0],[2,3],[3,1],[3,2]])
-test.findOrder(numCourses = 2, prerequisites = [[1,0]])
-test.findOrder(numCourses = 1, prerequisites = [])
+def is_valid_order(order, numCourses, prerequisites):
+    if len(order) != numCourses:
+        return False
+    pos = {c: i for i, c in enumerate(order)}
+    for after, before in prerequisites:
+        if pos[before] > pos[after]:
+            return False
+    return True
+
+
+for sol in (Solution(), Solution2()):
+    p1 = [[1, 0], [2, 0], [3, 1], [3, 2]]
+    assert is_valid_order(sol.findOrder(4, p1), 4, p1)
+    assert sol.findOrder(2, [[1, 0]]) == [0, 1]
+    assert sol.findOrder(1, []) == [0]
+    assert sol.findOrder(2, [[0, 1], [1, 0]]) == []

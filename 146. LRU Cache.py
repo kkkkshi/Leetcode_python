@@ -1,16 +1,22 @@
+# 146. LRU Cache
+
+import collections
+
+
 # Doubly Linked List
 # Time: O(1) for get and put
-# Space: O(capactiy)
+# Space: O(capacity)
 # 2023.06.17: yes
-# notes: LRU本质上是用了DoubleLinkedList 和hash map来做到get, put都为O(1)
-# 所以在新加nodes的时候，要考虑同时更新两个节点
-# 另一个技巧就是，linked list在更新头尾的时候，非常麻烦，可以用dummy head, dummy tail去解决
+# notes: a doubly linked list plus a hash map give O(1) get and put;
+#        new nodes update both structures together
+# the trick of dummy head/tail avoids messy head/tail edge cases
 class Node:
     def __init__(self, key, val):
         self.key = key
         self.val = val
         self.prev = None
         self.next = None
+
 
 class DoubleList:
     def __init__(self):
@@ -42,36 +48,37 @@ class DoubleList:
     def size(self):
         return self.size
 
+
 class LRUCache:
     def makeRecently(self, key: int):
-        # 将某个 key 提升为最近使用的
+        # promote a key to most recently used
         x = self.map.get(key)
-        # 先从链表中删除这个节点
+        # remove the node from the list first
         self.cache.remove(x)
-        # 重新插到队尾
+        # reinsert it at the tail
         self.cache.append(x)
 
     def addRecently(self, key: int, val: int):
-        # 添加最近使用的元素
+        # add a most recently used element
         x = Node(key, val)
-        # 链表尾部就是最近使用的元素
+        # the list tail is the most recently used element
         self.cache.append(x)
-        # 别忘了在 map 中添加 key 的映射
+        # also add the key mapping in map
         self.map[key] = x
 
     def deleteKey(self, key: int):
-        # 删除某一个 key
+        # delete a key
         x = self.map.get(key)
-        # 从链表中删除
+        # remove from the list
         self.cache.remove(x)
-        # 从 map 中删除
+        # remove from the map
         self.map.pop(key)
 
     def removeLeastRecently(self):
-        # 删除最久未使用的元素
-        # 链表头部的第一个元素就是最久未使用的
+        # delete the least recently used element
+        # the first list element is the least recently used
         deletedNode = self.cache.pop(0)
-        # 同时别忘了从 map 中删除它的 key
+        # also remember to remove its key from map
         deletedKey = deletedNode.key
         self.map.pop(deletedKey)
 
@@ -81,14 +88,14 @@ class LRUCache:
         self.capacity = capacity
 
     def get(self, key: int) -> int:
-        # 读操作
+        # read
         if key not in self.map:
             return -1
         self.makeRecently(key)
         return self.map.get(key).val
 
     def put(self, key: int, value: int) -> None:
-        # 写操作
+        # write
         if key in self.map:
             self.map.get(key).val = value
             self.makeRecently(key)
@@ -98,7 +105,7 @@ class LRUCache:
         self.addRecently(key, value)
 
 
-class LRUCache2(object):
+class LRUCache2:
 
     def __init__(self, capacity):
         """
@@ -106,20 +113,19 @@ class LRUCache2(object):
         """
         self.capacity = capacity
         self.dic = {}
-        self.head = Node(-1,-1) # 处理边缘case，同时去头去尾用dummy head很好
+        self.head = Node(-1, -1)  # dummy head for clean head/tail edges
         self.tail = Node(-1, -1)
-        self.head.next = self.tail # 特别容易忘
+        self.head.next = self.tail  # easy to forget
         self.tail.prev = self.head
 
     def add(self, node):
         # update links of the new added node
-        # 只是加，不考虑越界的问题
+        # only adds, does not handle overflow
         previous_end = self.tail.prev
         previous_end.next = node
         node.next = self.tail
         node.prev = previous_end
         self.tail.prev = node
-
 
     def remove(self, node):
         node.prev.next = node.next
@@ -147,7 +153,7 @@ class LRUCache2(object):
             old_node = self.dic[key]
             self.remove(old_node)
         node = Node(key, value)
-        self.dic[key] = node    # update hash table的内容
+        self.dic[key] = node    # update the hash table contents
         self.add(node)
 
         if len(self.dic) > self.capacity:
@@ -156,14 +162,13 @@ class LRUCache2(object):
             del self.dic[node_to_delete.key]
 
 
-
 # Built-in Approach:
 # Time: O(1) for get and put
 # Space: O(1)
 # 2023.06.17: no
-# notes: 是一个built in function,用的基本都是OrderedDict的功能，面试要问能不能用才能用，最重要的还是double linked list得方法
-import collections
-class LRUCache3(object):
+# notes: built-in OrderedDict; in interviews ask if it is allowed, the
+#        doubly linked list method is the one that matters
+class LRUCache3:
 
     def __init__(self, capacity):
         """
@@ -195,25 +200,15 @@ class LRUCache3(object):
             self.dic.popitem(False)
 
 
-class LRUCache4:
-    def __init__(self, capacity: int):
-        self.capacity = capacity
-
-    def get(self, key: int) -> int:
-        pass
-
-    def put(self, key: int, value: int) -> None:
-        pass
-
-# Test
-obj = LRUCache4(2)
-obj.put(1,1)
-obj.put(2,2)
-obj.get(1)
-obj.put(3,3)
-obj.get(2)
-obj.put(4,4)
-obj.get(3)
-obj.get(4)
-
-
+# Tests:
+for cls in (LRUCache, LRUCache2, LRUCache3):
+    obj = cls(2)
+    obj.put(1, 1)
+    obj.put(2, 2)
+    assert obj.get(1) == 1
+    obj.put(3, 3)        # evicts key 2
+    assert obj.get(2) == -1
+    obj.put(4, 4)        # evicts key 1
+    assert obj.get(1) == -1
+    assert obj.get(3) == 3
+    assert obj.get(4) == 4

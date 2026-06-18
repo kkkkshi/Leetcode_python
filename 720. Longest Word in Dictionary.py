@@ -1,18 +1,23 @@
+# 720. Longest Word in Dictionary
+
 # Trie + Depth-First Search [Accepted]
 # Time: O(sigma wi)
 # Space: O(sigma wi)
 # 2023.08.28: no
-# notes: 两步，第一步insert，第二步遍历检查，只不过insert的方法很巧妙，排除了我一个个insert，考虑Node是不是空的情况
-# 也是可以做的，但是这道题不能按照length来排序做，更贴合Trie的性质一点
+# notes: two steps, first insert all words, then traverse to check.
+#        the insert is clever and skips checking node by node; sorting
+#        by length also works but the trie fits the problem better
 import collections
 
-class TrieNode(object):
+
+class TrieNode:
     def __init__(self):
         self.children = collections.defaultdict(TrieNode)
         self.isEnd = False
         self.word = ""
 
-class Trie(object):
+
+class Trie:
     def __init__(self):
         self.root = TrieNode()
 
@@ -35,8 +40,13 @@ class Trie(object):
                         res = n.word
         return res
 
-class Solution(object):
+
+class Solution:
     def longestWord(self, words):
+        """
+        :type words: List[str]
+        :rtype: str
+        """
         trie = Trie()
         for w in words:
             trie.insert(w)
@@ -44,5 +54,7 @@ class Solution(object):
 
 
 # Tests:
-test = Solution()
-test.longestWord(["w", "wo", "wor", "worl", "world"])
+for sol in (Solution(),):
+    assert sol.longestWord(["w","wo","wor","worl","world"]) == "world"
+    assert sol.longestWord(["a","banana","app","appl","ap","apply","apple"]) == "apple"
+    assert sol.longestWord(["a","b","c"]) == "a"

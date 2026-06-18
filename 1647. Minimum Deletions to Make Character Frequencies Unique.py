@@ -1,9 +1,15 @@
+# 1647. Minimum Deletions to Make Character Frequencies Unique
+
+import heapq
+from collections import Counter
+
+
 # Sorting (best method)
 # Time: O(n+klogk)
 # Space: O(k)
 # 2023.09.12: yes
-import heapq
-from collections import Counter
+# notes: sort counts descending; each count must be below the previous
+#        kept one, so delete down to it and tally the deletions
 class Solution:
     def minDeletions(self, s: str) -> int:
         results = 0
@@ -20,8 +26,14 @@ class Solution:
                     prev -= 1
         return results
 
-# notes: 和上面方法一样，只不过我用的prev来记录前一个点，标答用的max_freq_allowed，因为是sorted所以我的方法不会
-# 出现当前的可能性到更大的情况，因为只有deletion，如果还有insertion的话，他的方法应该会更好
+
+# Sorting (max frequency allowed)
+# Time: O(n+klogk)
+# Space: O(k)
+# 2023.09.12: yes
+# notes: same idea as above but tracked with max_freq_allowed instead
+#        of prev; since it is sorted my version never overshoots, but
+#        with insertion allowed this version would be better
 class Solution2:
     def minDeletions(self, s: str) -> int:
 
@@ -52,8 +64,8 @@ class Solution2:
 # Time: O(n+k^2logk)
 # Space: O(k)
 # 2023.09.12: no
-# notes: 如果当前pop的和下一个一样，当前的就-1，然后塞进去，delete_count+1，以此往复
-# 直到queue里没东西为止
+# notes: if the popped count equals the next one, decrement it, push it
+#        back and add one deletion; repeat until the queue is empty
 class Solution3:
     def minDeletions(self, s: str) -> int:
 
@@ -84,10 +96,12 @@ class Solution3:
         return delete_count
 
 
-# Decrement Each Duplicate Until it is Unique (不推荐)
+# Decrement Each Duplicate Until it is Unique (not recommended)
 # Time: O(n+k^2)
 # Space: O(k)
 # 2023.09.12: yes
+# notes: for each count, keep decrementing while it is already in the
+#        seen set, then record the count we settled on
 class Solution4:
     def minDeletions(self, s: str) -> int:
 
@@ -110,12 +124,11 @@ class Solution4:
 
         return delete_count
 
+
 # Tests:
-test = Solution3()
-test.minDeletions("abcabc")
-test.minDeletions("ceabaacb")
-test.minDeletions("aaabbbcc")
-
-
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minDeletions("abcabc") == 3
+    assert sol.minDeletions("ceabaacb") == 2
+    assert sol.minDeletions("aaabbbcc") == 2
+    assert sol.minDeletions("aab") == 0
+    assert sol.minDeletions("a") == 0

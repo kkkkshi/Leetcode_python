@@ -1,17 +1,41 @@
+# 199. Binary Tree Right Side View
+
 from collections import deque
 
 
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(vals):
+    # build a tree from level-order values, None means missing
+    if not vals or vals[0] is None:
+        return None
+    root = TreeNode(vals[0])
+    q = deque([root])
+    i = 1
+    while q and i < len(vals):
+        node = q.popleft()
+        if i < len(vals) and vals[i] is not None:
+            node.left = TreeNode(vals[i])
+            q.append(node.left)
+        i += 1
+        if i < len(vals) and vals[i] is not None:
+            node.right = TreeNode(vals[i])
+            q.append(node.right)
+        i += 1
+    return root
+
+
 # breadth-first Search Approach (best approach)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
-class Solution(object):
+# notes: BFS level by level; take the last node of each level
+class Solution:
     def rightSideView(self, root):
         """
         :type root: TreeNode
@@ -33,12 +57,19 @@ class Solution(object):
                     q.append(node.right)
         return results
 
+
 # depth-first Search Approach (beset approach)
 # Time: O(n)
 # Space: O(h), h is height
 # 2023.07.03: yes
+# notes: DFS visiting right before left; the first node seen at each
+#        depth is the rightmost one
 class Solution2:
     def rightSideView(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
         if root is None:
             return []
 
@@ -54,12 +85,19 @@ class Solution2:
         helper(root, 0)
         return rightside
 
-# BFS: One Queue + Sentinel（不如前两个方法好）
+
+# BFS: One Queue + Sentinel (not as clean as the first two)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
+# notes: one queue with a None sentinel marking level ends; the node
+#        before each sentinel is the rightmost of its level
 class Solution3:
     def rightSideView(self, root: TreeNode):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
         if root is None:
             return []
 
@@ -89,12 +127,19 @@ class Solution3:
 
         return rightside
 
-# BFS: Two Queues（不如前三个方法好）
+
+# BFS: Two Queues (not as clean as the first three)
 # Time: O(n)
 # Space: O(d), d is diameter
 # 2023.07.03: yes
+# notes: keep two queues, swap to the next level each round; the last
+#        node popped from a level is the rightmost
 class Solution4:
     def rightSideView(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
         if root is None:
             return []
 
@@ -122,13 +167,10 @@ class Solution4:
 
         return rightside
 
+
 # Tests:
-tree = TreeNode(1, TreeNode(2, None, TreeNode(5)), TreeNode(3, None, TreeNode(4)))
-test = Solution2()
-test.rightSideView(tree)
-
-
-
-
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.rightSideView(build([1, 2, 3, None, 5, None, 4])) == [1, 3, 4]
+    assert sol.rightSideView(build([1, None, 3])) == [1, 3]
+    assert sol.rightSideView(build([])) == []
+    assert sol.rightSideView(build([1, 2])) == [1, 2]

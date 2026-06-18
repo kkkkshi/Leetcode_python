@@ -1,10 +1,12 @@
+# 5. Longest Palindromic Substring
+
 # Expand From Centers Approach (best approach):
 # Time: O(n^2)
 # Space: O(1)
 # 2023.06.18: no
-# notes:核心思路，找到以s[i]，s[i]（奇数长度）或者s[i], s[j]（偶数长度）为中心的最长子串
-# 实时更新最长子串
-class Solution(object):
+# notes: for each center s[i] (odd) or s[i], s[j] (even) find the
+# longest palindrome around it and keep the longest seen
+class Solution:
     def longestPalindrome(self, s):
         """
         :type s: str
@@ -29,12 +31,18 @@ class Solution(object):
                 break
         return s[l+1:r]
 
+
 # Check All Substrings
 # Time: O(n^3)
 # Space: O(1)
 # 2023.06.18: yes
+# notes: try substrings longest first; return the first palindrome
 class Solution2:
     def longestPalindrome(self, s: str) -> str:
+        """
+        :type s: str
+        :rtype: str
+        """
         def check(i, j):
             left = i
             right = j - 1
@@ -61,11 +69,15 @@ class Solution2:
 # Space: O(n^2)
 # 2023.06.18: no
 # notes: 08.15 update:
-# 计算的是i到i位置上最长的回文串，如果是回文，就是True,否则False
-# 两个base case， i-i，自己是回文； i-i+1，相邻两个是不是回文
-# 之后都是根据这两个展开
+# dp[i][j] is True if s[i..j] is a palindrome
+# two base cases: single char i-i; adjacent pair i-(i+1)
+# everything else builds out from those two
 class Solution3:
     def longestPalindrome(self, s: str) -> str:
+        """
+        :type s: str
+        :rtype: str
+        """
         n = len(s)
         dp = [[False] * n for _ in range(n)]
         ans = [0, 0]
@@ -89,15 +101,21 @@ class Solution3:
         return s[i:j + 1]
 
 
-
 # Manacher's Algorithm
-# R拓宽的最远， C中心点
-# 1. i的位置在R之外->暴力扩
-# 2. a. i的回文位置在R之内，和i'一样，i'就是以C为中心i的对应点
-# 2. b. i的回文位置在R之外，R-i就是长度，否则C就可以往外扩了
-# 2. c. i的回文正好压在R，L的线上，不知道L的左边是什么了->暴力扩
+# notes: R is the farthest right reach, C the center
+# 1. i is outside R -> expand by brute force
+# 2a. i's mirror palindrome stays inside R, same as i' (i's
+#     mirror about C)
+# 2b. i's mirror reaches outside R, so R-i is the length, else C
+#     can expand further
+# 2c. i's palindrome lands exactly on the R, L bound, unknown
+#     beyond L -> expand by brute force
 class Solution4:
     def longestPalindrome(self, s: str) -> str:
+        """
+        :type s: str
+        :rtype: str
+        """
         s_prime = '#' + '#'.join(s) + '#'
         n = len(s_prime)
         palindrome_radii = [0] * n
@@ -121,7 +139,11 @@ class Solution4:
 
 
 # Tests:
-test = Solution4()
-test.longestPalindrome("babad")
-test.longestPalindrome("cbbd")
-
+# "babad" has two valid answers (bab/aba), so check it is a
+# palindrome of the right length; the others are unique.
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    r = sol.longestPalindrome("babad")
+    assert r == r[::-1] and len(r) == 3
+    assert sol.longestPalindrome("cbbd") == "bb"
+    assert sol.longestPalindrome("a") == "a"
+    assert sol.longestPalindrome("ac") in ("a", "c")

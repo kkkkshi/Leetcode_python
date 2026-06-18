@@ -1,8 +1,11 @@
+# 684. Redundant Connection
+
 # DFS
 # Time: O(n^2)
 # Space: O(n)
 # 2023.10.31: no
-# notes: dfs遍历，根据顺序遍历每一条边，遇到就加到set里，并确认是不是有环
+# notes: add edges one by one; before adding an edge, dfs to see if its
+#        two ends are already connected. if so, that edge is redundant
 import collections
 from typing import List
 
@@ -33,7 +36,8 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.10.31: no
-# notes: 常规union-find
+# notes: standard union-find; the first edge whose ends already share a
+#        root closes a cycle and is the answer
 class Union_Find:
     def __init__(self):
         self.parent = list(range(1001))
@@ -56,6 +60,7 @@ class Union_Find:
             self.parent[p] = self.find(self.parent[p])
         return self.parent[p]
 
+
 class Solution2:
     def findRedundantConnection(self, edges: List[List[int]]) -> List[int]:
         uf = Union_Find()
@@ -63,9 +68,10 @@ class Solution2:
             if uf.union(edge[0], edge[1]):
                 return edge
 
+
 # Tests:
-test = Solution2()
-test.findRedundantConnection(edges=[[1, 2], [1, 3], [2, 3]])
-
-
-
+for sol in (Solution(), Solution2()):
+    assert sol.findRedundantConnection([[1, 2], [1, 3], [2, 3]]) == [2, 3]
+    assert sol.findRedundantConnection(
+        [[1, 2], [2, 3], [3, 4], [1, 4], [1, 5]]) == [1, 4]
+    assert sol.findRedundantConnection([[1, 2], [2, 3], [1, 3]]) == [1, 3]

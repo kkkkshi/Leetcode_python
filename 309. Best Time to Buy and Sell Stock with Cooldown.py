@@ -1,18 +1,24 @@
+# 309. Best Time to Buy and Sell Stock with Cooldown
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# notes: i-1改成i-1因为冷却两天
-# 参考神中神六六归一算法
+# notes: use i-2 for the buy state because of the one-day cooldown
+# reference labuladong's unified stock DP framework
 # https://labuladong.github.io/algo/di-er-zhan-a01c6/yong-dong--63ceb/yi-ge-fang-3b01b/
-# base case：
+# base case:
 # dp[-1][0] = dp[...][0] = 0
 # dp[-1][1] = dp[...][1] = -infinity
-# 状态转移方程：
+# transition:
 # dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
 # dp[i][1] = max(dp[i-1][1], dp[i-2][0] - prices[i])
 class Solution:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         dp = [[0]*2 for _ in range(n)]
         for i in range(n):
@@ -25,13 +31,18 @@ class Solution:
             dp[i][1] = max(dp[i-1][1], dp[i-2][0] - prices[i])
         return dp[n - 1][0]
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 多记录一个前面的值即可
-class Solution2(object):
+# notes: keep one extra previous value to drop the dp array
+class Solution2:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         dp_i_0, dp_i_1, dp_pre_0 = 0, float('-inf'), 0
         for i in range(n):
@@ -41,12 +52,13 @@ class Solution2(object):
             dp_pre_0 = temp
         return dp_i_0
 
+
 # Yet-Another Dynamic Programming
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.28: no
-# notes: 数学方法暂时跳过
-class Solution3(object):
+# notes: math-style version, skipped for now
+class Solution3:
     def maxProfit(self, prices):
         """
         :type prices: List[int]
@@ -70,3 +82,12 @@ class Solution3(object):
             MP[i] = max(C1, C2)
 
         return MP[0]
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.maxProfit([1, 2, 3, 0, 2]) == 3
+    assert sol.maxProfit([1]) == 0
+    assert sol.maxProfit([2, 1]) == 0
+    assert sol.maxProfit([1, 2, 4]) == 3
+    assert sol.maxProfit([6, 1, 3, 2, 4, 7]) == 6

@@ -1,9 +1,13 @@
+# 39. Combination Sum
+
 # Backtracking (best approach)
 # Time: O(n^(t/m+1)), t/m is height
 # Space: O(t/m)
 # 2023.06.24: yes
-class Solution(object):
-    # start 是起始 index
+# notes: backtrack picking from start onward; reuse allowed, so the
+#        recursion keeps the same index i
+class Solution:
+    # start is the starting index
     def backtrack(self, candidates, results, combination, start, remain):
         if remain < 0:
             return results
@@ -25,5 +29,12 @@ class Solution(object):
         return result
 
 
-test = Solution()
-test.combinationSum([2,3,6,7], 7)
+# Tests:
+for sol in (Solution(),):
+    assert sol.combinationSum([2, 3, 6, 7], 7) == [[2, 2, 3], [7]]
+    assert sol.combinationSum([2, 3, 5], 8) == [[2, 2, 2, 2], [2, 3, 3], [3, 5]]
+    assert sol.combinationSum([2], 1) == []
+    assert sol.combinationSum([7, 3, 2], 18) == \
+        [[7, 7, 2, 2], [7, 3, 3, 3, 2], [7, 3, 2, 2, 2, 2],
+         [3, 3, 3, 3, 3, 3], [3, 3, 3, 3, 2, 2, 2],
+         [3, 3, 2, 2, 2, 2, 2, 2], [2, 2, 2, 2, 2, 2, 2, 2, 2]]

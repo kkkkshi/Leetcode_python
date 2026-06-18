@@ -1,7 +1,5 @@
-# Depth First Search, Recursion
-# Time: O(n)
-# Space: O(n)
-# 2023.10.30: yes
+# 1448. Count Good Nodes in Binary Tree
+
 # Definition for a binary tree node.
 from collections import deque
 
@@ -12,6 +10,33 @@ class TreeNode:
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order build; None marks a missing child
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
+# Depth First Search, Recursion
+# Time: O(n)
+# Space: O(n)
+# 2023.10.30: yes
+# notes: carry the max value on the path; a node is good if it is not
+#        smaller than that max
 class Solution:
     def goodNodes(self, root: TreeNode) -> int:
         def recursion(cur_node, max_value):
@@ -22,11 +47,12 @@ class Solution:
             return left_max + right_max + int(cur_node.val >= max_value)
         return recursion(root, float('-inf'))
 
+
 # Depth First Search, Iterative
 # Time: O(n)
 # Space: O(n)
 # 2023.10.30: no
-# notes: 一层层存储，存储当前节点和max_so_far即可
+# notes: stack of (node, max_so_far); count when node.val >= max_so_far
 class Solution2:
     def goodNodes(self, root: TreeNode) -> int:
         stack = [(root, float("-inf"))]
@@ -41,11 +67,12 @@ class Solution2:
                 stack.append((node.right, max(node.val, max_so_far)))
         return num_good_nodes
 
+
 # Breadth First Search
 # Time: O(n)
 # Space: O(n)
 # 2023.10.30: no
-# notes: 和dfs-iterative一样
+# notes: same as dfs-iterative but with a queue
 class Solution3:
     def goodNodes(self, root: TreeNode) -> int:
         num_good_nodes = 0
@@ -63,9 +90,9 @@ class Solution3:
 
         return num_good_nodes
 
-# test
-test = Solution2()
-t1 = TreeNode(3, TreeNode(1, TreeNode(3), None), TreeNode(4, TreeNode(1), TreeNode(5)))
-test.goodNodes(t1)
-t2 = TreeNode(3, TreeNode(3, TreeNode(4), TreeNode(2)))
-test.goodNodes(t2)
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.goodNodes(build([3, 1, 4, 3, None, 1, 5])) == 4
+    assert sol.goodNodes(build([3, 3, None, 4, 2])) == 3
+    assert sol.goodNodes(build([1])) == 1

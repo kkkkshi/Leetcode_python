@@ -1,9 +1,12 @@
+# 304. Range Sum Query 2D - Immutable
+
 # Caching Smarter Approach (best approach):
 # Time: O(1)
 # Space: O(mn)
 # 2023.06.19: yes
-
-class NumMatrix(object):
+# notes: build a 2D prefix-sum grid so any region is found by adding
+#        and subtracting four corner sums
+class NumMatrix:
 
     def __init__(self, matrix):
         """
@@ -26,22 +29,21 @@ class NumMatrix(object):
         """
         return self.sum_matrix[row2 + 1][col2 + 1] - self.sum_matrix[row1][col2 + 1] - self.sum_matrix[row2 + 1][col1] + self.sum_matrix[row1][col1]
 
+
 # Tests:
 numMatrix = NumMatrix([[3, 0, 1, 4, 2], [5, 6, 3, 2, 1], [1, 2, 0, 1, 5], [4, 1, 0, 1, 7], [1, 0, 3, 0, 5]])
-numMatrix.sumRegion(2, 1, 4, 3)
-numMatrix.sumRegion(1, 1, 2, 2)
-numMatrix.sumRegion(1, 2, 2, 4)
-numMatrix.sumRegion(0, 1, 2, 2)
-numMatrix.sumRegion(1, 0, 2, 2)
+assert numMatrix.sumRegion(2, 1, 4, 3) == 8
+assert numMatrix.sumRegion(1, 1, 2, 2) == 11
+assert numMatrix.sumRegion(1, 2, 2, 4) == 12
 numMatrix2 = NumMatrix([[-1]])
-numMatrix2.sumRegion(0,0,0,0)
-numMatrix3 = NumMatrix([[-4,-5]])
-numMatrix3.sumRegion(0,0,0,0)
-numMatrix3.sumRegion(0,0,0,1)
+assert numMatrix2.sumRegion(0, 0, 0, 0) == -1
+numMatrix3 = NumMatrix([[-4, -5]])
+assert numMatrix3.sumRegion(0, 0, 0, 0) == -4
+assert numMatrix3.sumRegion(0, 0, 0, 1) == -9
 
 """
 
-class NumMatrix(object):
+class NumMatrix:
     # my way that cannot handle row2, or col2 = 0
     def __init__(self, matrix):
         self.matrix = matrix
@@ -78,7 +80,7 @@ class NumMatrix(object):
         return self.block[row2][col2] - self.block[row2][col1-1] - self.block[row1-1][col2] + self.block[row1-1][col1-1]
 
 
-class NumMatrix2(object):
+class NumMatrix2:
     def __init__(self, matrix):
         if matrix is None or not matrix:
             return

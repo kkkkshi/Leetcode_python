@@ -1,13 +1,29 @@
+# 95. Unique Binary Search Trees II
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def serialize(node):
+    if not node:
+        return None
+    return (node.val, serialize(node.left), serialize(node.right))
+
+
+def shapes(trees):
+    return sorted((serialize(t) for t in trees), key=str)
+
+
 # Recursive Dynamic Programming Approach
 # Time: complicated
 # Space: complicated
 # 2023.06.30: no
+# notes: pick each value as the root, recursively build all left and
+#        right subtrees, then combine every left/right pair; memoize by
+#        (start, end) range
 class Solution:
     def allPossibleBST(self, start, end, memo):
         res = []
@@ -32,6 +48,10 @@ class Solution:
         return res
 
     def generateTrees(self, n):
+        """
+        :type n: int
+        :rtype: List[TreeNode]
+        """
         memo = {}
         return self.allPossibleBST(1, n, memo)
 
@@ -40,8 +60,14 @@ class Solution:
 # Time: complicated
 # Space: complicated
 # 2023.06.30: no
+# notes: bottom-up over subtree size; dp[start][end] holds every BST on
+#        that value range, built by combining smaller ranges
 class Solution2:
     def generateTrees(self, n: int):
+        """
+        :type n: int
+        :rtype: List[TreeNode]
+        """
         dp = [[[] for _ in range(n + 1)] for _ in range(n + 1)]
         for i in range(1, n + 1):
             dp[i][i] = [TreeNode(i)]
@@ -60,12 +86,19 @@ class Solution2:
 
         return dp[1][n]
 
+
 # Dynamic Programming with Space Optimization
 # Time: complicated
 # Space: complicated
 # 2023.06.30: no
+# notes: only track trees by node count; reuse smaller results and
+#        clone the right subtree with a value offset to shift its range
 class Solution3:
     def generateTrees(self, n: int):
+        """
+        :type n: int
+        :rtype: List[TreeNode]
+        """
         dp = [[] for _ in range(n + 1)]
         dp[0].append(None)
 
@@ -86,3 +119,10 @@ class Solution3:
         cloned_node.left = self.clone(node.left, offset)
         cloned_node.right = self.clone(node.right, offset)
         return cloned_node
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert shapes(sol.generateTrees(1)) == [(1, None, None)]
+    assert len(sol.generateTrees(2)) == 2
+    assert len(sol.generateTrees(3)) == 5

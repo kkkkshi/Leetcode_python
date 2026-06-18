@@ -1,13 +1,16 @@
-# Heap Approach
-# Time: O(nlogk)
-# Space: O(n+k)
-# 2023.06.23: yes
+# 347. Top K Frequent Elements
+
 import heapq
 from collections import Counter
 import random
 
 
-class Solution(object):
+# Heap Approach
+# Time: O(nlogk)
+# Space: O(n+k)
+# 2023.06.23: yes
+# notes: count frequencies, sort by count and take the top k
+class Solution:
     def topKFrequent(self, nums, k):
         """
         :type nums: List[int]
@@ -21,13 +24,19 @@ class Solution(object):
             results.append(sorted_counter[i][0])
         return results
 
+
 # Heap Approach
 # Time: O(nlogk)
 # Space: O(n+k)
 # 2023.06.23: yes
-# notes: 标答，写的更简洁
+# notes: more concise using heapq.nlargest
 class Solution2:
     def topKFrequent(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
         # O(1) time
         if k == len(nums):
             return nums
@@ -40,14 +49,20 @@ class Solution2:
         # O(N log k) time
         return heapq.nlargest(k, count.keys(), key=count.get)
 
+
 # Quickselect (Hoare's selection algorithm) (best approach)
 # Time: O(n)
 # Space: O(n+)
 # 2023.06.23: no
-# notes: 只需要排列前面k位就可以了，用quickselect的方法，重点是返回顺序无所谓，所以根本不需要全部按顺序排列，比较大小就可以
-# 只要正好需要排列的前k位到了就可以了
+# notes: only the top k matter and their order does not, so
+#        quickselect partitions until the kth boundary is placed
 class Solution3:
     def topKFrequent(self, nums, k):
+        """
+        :type nums: List[int]
+        :type k: int
+        :rtype: List[int]
+        """
         count = Counter(nums)
         unique = list(count.keys())
 
@@ -103,8 +118,9 @@ class Solution3:
         # Return top k frequent elements
         return unique[n - k:]
 
+
 # Tests:
-test = Solution3()
-test.topKFrequent([1,1,1,2,2,3],2)
-test.topKFrequent(nums = [1], k = 1)
-test.topKFrequent([1,1,1,2,2,3,3,3,3,5,1], 3)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sorted(sol.topKFrequent([1, 1, 1, 2, 2, 3], 2)) == [1, 2]
+    assert sorted(sol.topKFrequent([1], 1)) == [1]
+    assert sorted(sol.topKFrequent([1, 1, 1, 2, 2, 3, 3, 3, 3, 5, 1], 3)) == [1, 2, 3]

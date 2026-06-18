@@ -1,9 +1,17 @@
+# 15. 3Sum
+
 # Two Pointers Approach
 # Time: O(n^2)
 # Space: O(logn)
 # 2023.06.24: yes
+# notes: sort, fix one number, then two-pointer scan the rest;
+#        skip duplicates to avoid repeated triplets
 class Solution:
     def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         res = []
         nums.sort()
         for i in range(len(nums)):
@@ -28,12 +36,19 @@ class Solution:
                 while lo < hi and nums[lo] == nums[lo - 1]:
                     lo += 1
 
+
 # Hashset Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.24: yes
+# notes: for each first number, use a seen set to find the third
+#        number that completes a zero sum
 class Solution2:
     def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         res, dups = set(), set()
         seen = {}
         for i, val1 in enumerate(nums):
@@ -46,12 +61,18 @@ class Solution2:
                     seen[val2] = i
         return res
 
+
 # "No-Sort" Approach
 # Time: O(n^2)
 # Space: O(n)
 # 2023.06.24: yes
+# notes: same hashset idea without pre-sorting the input
 class Solution3:
     def threeSum(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: List[List[int]]
+        """
         res, dups = set(), set()
         seen = {}
         for i, val1 in enumerate(nums):
@@ -66,10 +87,12 @@ class Solution3:
 
 
 # Tests:
-nums = [-1,0,1,2,-1,-4,-2,-3,3,0,4]
-test = Solution()
-test.threeSum(nums)
+def norm(triplets):
+    return sorted(tuple(sorted(t)) for t in triplets)
 
 
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert norm(sol.threeSum([-1, 0, 1, 2, -1, -4])) == \
+        [(-1, -1, 2), (-1, 0, 1)]
+    assert norm(sol.threeSum([0, 1, 1])) == []
+    assert norm(sol.threeSum([0, 0, 0])) == [(0, 0, 0)]

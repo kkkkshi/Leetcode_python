@@ -1,15 +1,36 @@
-# Recursion Approach
-# Time: O(n)
-# Space: O(n)
-# 2023.06.27: yes
+# 889. Construct Binary Tree from Preorder and Postorder Traversal
 
-class TreeNode(object):
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
-class Solution(object):
+
+def build_level(root):
+    out = []
+    queue = [root]
+    while queue:
+        node = queue.pop(0)
+        if node:
+            out.append(node.val)
+            queue.append(node.left)
+            queue.append(node.right)
+        else:
+            out.append(None)
+    while out and out[-1] is None:
+        out.pop()
+    return out
+
+
+# Recursion Approach
+# Time: O(n)
+# Space: O(n)
+# 2023.06.27: yes
+# notes: preorder gives the root; the next preorder value marks the
+#        left subtree boundary via its postorder index, recurse on both
+class Solution:
     def constructFromPrePost(self, preorder, postorder):
         """
         :type preorder: List[int]
@@ -37,8 +58,11 @@ class Solution(object):
             return root
         return array_to_tree(0, len(postorder) - 1)
 
+
 # Tests:
-test = Solution()
-a = test.constructFromPrePost(preorder = [1,2,4,5,3,6,7], postorder = [4,5,2,6,7,3,1])
-b = test.constructFromPrePost(preorder = [1], postorder = [1])
-c = test.constructFromPrePost(preorder = [1,2,3], postorder = [3,2,1])
+for sol in (Solution(),):
+    assert build_level(sol.constructFromPrePost(
+        [1, 2, 4, 5, 3, 6, 7], [4, 5, 2, 6, 7, 3, 1])) == [1, 2, 3, 4, 5, 6, 7]
+    assert build_level(sol.constructFromPrePost([1], [1])) == [1]
+    assert build_level(sol.constructFromPrePost(
+        [1, 2, 3], [3, 2, 1])) == [1, 2, None, 3]

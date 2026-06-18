@@ -1,8 +1,11 @@
+# 131. Palindrome Partitioning
+
 # Backtracking
 # Time: O(n*2^n)
 # Space: O(n)
 # 2023.10.30: no
-
+# notes: try every cut; if the prefix is a palindrome, recurse on
+#        the rest and backtrack
 from typing import List
 class Solution:
     def partition(self, s):
@@ -32,7 +35,7 @@ class Solution:
 # Time: O(n*2^n)
 # Space: O(n^2)
 # 2023.10.30: no
-# notes: 看solution3，才是dp正确版本
+# notes: see Solution3 for the proper dp version
 class Solution2:
     def partition(self, s):
         result = []
@@ -65,7 +68,13 @@ class Solution2:
             end -= 1
         self.dp[start_set][end_set] = True
 
-# notes: 根据前一个start+1, end-1和start == end去解析最新的格子，不用计算palindrome
+
+# Backtracking with Dynamic Programming
+# Time: O(n*2^n)
+# Space: O(n^2)
+# 2023.10.30: no
+# notes: fill each cell from start+1/end-1 and start==end, so no
+#        separate palindrome check is needed
 class Solution3:
     def partition(self, s: str) -> List[List[str]]:
         length = len(s)
@@ -86,8 +95,8 @@ class Solution3:
 
 
 # Tests:
-test = Solution2()
-test.partition("abbab")
-test.partition("aab")
-
-
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.partition("aab") == [["a", "a", "b"], ["aa", "b"]]
+    assert sol.partition("a") == [["a"]]
+    assert sol.partition("ab") == [["a", "b"]]
+    assert sol.partition("aba") == [["a", "b", "a"], ["aba"]]

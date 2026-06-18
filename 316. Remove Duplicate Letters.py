@@ -1,31 +1,39 @@
+# 316. Remove Duplicate Letters
+
 # Greedy - Solving with Stack (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.22: no
-# 1. 通过栈保持顺序一致，且只有一个（判断栈里有没有）2.配合count确保之后还会再出现的字符才会被pop掉
+# notes: 1. keep order with a stack, each char appears once (track via
+#        inStack). 2. use a count so a stack top is only popped when it
+#        still appears again later
 class Solution:
-    def removeDuplicateLetters(self,s):
+    def removeDuplicateLetters(self, s):
+        """
+        :type s: str
+        :rtype: str
+        """
         stk = []  # Stack to store the result after removing duplicates
 
-        # 维护一个计数器记录字符串中字符的数量
-        # 因为输入为 ASCII 字符，大小 256 够用了
+        # keep a counter of how many of each char remain in the string
+        # input is ASCII, so size 256 is enough
         count = [0] * 256
         for c in s:
             count[ord(c)] += 1
 
         inStack = [False] * 256
         for c in s:
-            # 每遍历过一个字符，都将对应的计数减一
+            # decrement the count for each char as we pass it
             count[ord(c)] -= 1
 
             if inStack[ord(c)]:
                 continue
 
             while stk and stk[-1] > c:
-                # 若之后不存在栈顶元素了，则停止 pop
+                # stop popping if the stack top no longer appears later
                 if count[ord(stk[-1])] == 0:
                     break
-                # 若之后还有，则可以 pop
+                # otherwise it still appears, so we can pop it
                 inStack[ord(stk.pop())] = False
 
             stk.append(c)
@@ -35,7 +43,7 @@ class Solution:
         while stk:
             sb.append(stk.pop())
 
-        # 栈中元素插入顺序是反的，需要 reverse 一下
+        # stack pops in reverse insertion order, so reverse it back
         return ''.join(sb[::-1])
 
 
@@ -43,12 +51,16 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.22: no
-# notes: 很复杂，递归+greedy，没看懂
+# notes: tricky, recursion + greedy, didn't fully get it
 from collections import Counter
+
 
 class Solution2:
     def removeDuplicateLetters(self, s: str) -> str:
-
+        """
+        :type s: str
+        :rtype: str
+        """
         # find pos - the index of the leftmost letter in our solution
         # we create a counter and end the iteration once the suffix doesn't have each unique character
         # pos will be the index of the smallest character we encounter before the iteration ends
@@ -64,6 +76,10 @@ class Solution2:
         # note we have to get rid of further occurrences of s[pos] to ensure that there are no duplicates
         return s[pos] + self.removeDuplicateLetters(s[pos:].replace(s[pos], "")) if s else ''
 
+
 # Tests:
-test = Solution2()
-test.removeDuplicateLetters("bcabc")
+for sol in (Solution(), Solution2()):
+    assert sol.removeDuplicateLetters("bcabc") == "abc"
+    assert sol.removeDuplicateLetters("cbacdcbc") == "acdb"
+    assert sol.removeDuplicateLetters("") == ""
+    assert sol.removeDuplicateLetters("a") == "a"

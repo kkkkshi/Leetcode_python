@@ -1,9 +1,11 @@
+# 198. House Robber
+
 # Iteration DP
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# notes: 顺利，dp[i] = max(nums[i] + dp[i-2], dp[i-1])是动态转移方程
-class Solution(object):
+# notes: smooth; dp[i] = max(nums[i] + dp[i-2], dp[i-1])
+class Solution:
     def rob(self, nums):
         """
         :type nums: List[int]
@@ -21,16 +23,21 @@ class Solution(object):
             dp[i] = max(nums[i] + dp[i-2], dp[i-1])
         return dp[n-1]
 
+
 # Recursion DP
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
+# notes: top-down memoized recursion; rob house i and skip i+1, or
+#        skip i, taking the better of the two
 class Solution2:
     def __init__(self):
         self.memo = {}
+
     def rob(self, nums):
         self.memo = {}
         return self.robFrom(0, nums)
+
     def robFrom(self, i, nums):
         # No more houses left to examine.
         if i >= len(nums):
@@ -44,11 +51,13 @@ class Solution2:
         self.memo[i] = ans
         return ans
 
+
 # Optimized Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 以为O(n)不错了，忘记其实只需要两个variable了，可以压O(a)
+# notes: O(n) seemed fine, but only two rolling variables are needed,
+#        so space drops to O(1)
 class Solution3:
     def rob(self, nums):
         # Special handling for empty case.
@@ -66,8 +75,10 @@ class Solution3:
             rob_next = current
         return rob_next
 
+
 # Tests:
-test = Solution()
-test.rob([1,2,3,1])
-test.rob([2,7,9,3,1])
-test.rob([5,30,99,60,5,10])
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.rob([1, 2, 3, 1]) == 4
+    assert sol.rob([2, 7, 9, 3, 1]) == 12
+    assert sol.rob([5, 30, 99, 60, 5, 10]) == 114
+    assert sol.rob([5]) == 5

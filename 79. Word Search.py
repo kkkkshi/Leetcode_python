@@ -1,8 +1,12 @@
+# 79. Word Search
+
 # Backtracking
 # Time: O(n3^l)
 # Space: O(l)
 # 2023.07.14: yes
-class Solution(object):
+# notes: from each cell, match the word letter by letter; mark a used
+#        cell with '#' and restore it when backing out
+class Solution:
     def exist(self, board, word):
         """
         :type board: List[List[str]]
@@ -34,8 +38,14 @@ class Solution(object):
                     return True
         return False
 
+
 # Tests:
-test = Solution()
-test.exist(board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCB")
-test.exist([["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]],"SEE")
-test.exist(board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]], word = "ABCCED")
+# exist mutates the board, so each call gets a fresh copy.
+def make_board():
+    return [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+
+for sol in (Solution(),):
+    assert sol.exist(make_board(), "ABCCED") is True
+    assert sol.exist(make_board(), "SEE") is True
+    assert sol.exist(make_board(), "ABCB") is False
+    assert sol.exist([["a"]], "a") is True

@@ -1,14 +1,40 @@
-class TreeNode(object):
+# 103. Binary Tree Zigzag Level Order Traversal
+
+from collections import deque
+
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order list -> tree, None marks a missing node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    q = deque([root])
+    i = 1
+    while q and i < len(values):
+        node = q.popleft()
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            q.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            q.append(node.right)
+        i += 1
+    return root
+
+
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-class Solution(object):
+class Solution:
     def zigzagLevelOrder(self, root):
         """
         :type root: TreeNode
@@ -43,8 +69,6 @@ class Solution(object):
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-from collections import deque
-
 class Solution2:
     def zigzagLevelOrder(self, root):
         """
@@ -71,9 +95,11 @@ class Solution2:
 
         return results
 
+
 # Tests:
-tree = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
-tree2 = TreeNode(0, TreeNode(2, TreeNode(1, TreeNode(5), TreeNode(1)), None),
-                 TreeNode(4, TreeNode(3, None, TreeNode(6)), TreeNode(-1, None, TreeNode(8))))
-test = Solution()
-test.zigzagLevelOrder(tree2)
+for sol in (Solution(), Solution2()):
+    assert [list(x) for x in
+            sol.zigzagLevelOrder(build([3, 9, 20, None, None, 15, 7]))] == \
+        [[3], [20, 9], [15, 7]]
+    assert [list(x) for x in sol.zigzagLevelOrder(build([1]))] == [[1]]
+    assert [list(x) for x in sol.zigzagLevelOrder(build([]))] == []

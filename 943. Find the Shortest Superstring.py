@@ -1,9 +1,18 @@
+# 943. Find the Shortest Superstring
+
 # Dynamic Programming
 # Time: O(1) for get and put
 # Space: O()
 # 2023.09.03: no
-class Solution(object):
+# notes: precompute pairwise suffix-prefix overlaps, then bitmask dp
+#        over subsets to find the order with the most total overlap,
+#        and rebuild the string from the parent pointers
+class Solution:
     def shortestSuperstring(self, A):
+        """
+        :type A: List[str]
+        :rtype: str
+        """
         N = len(A)
 
         # Populate overlaps
@@ -60,3 +69,12 @@ class Solution(object):
             ans.append(A[perm[i]][overlap:])
 
         return "".join(ans)
+
+
+# Tests:
+for sol in (Solution(),):
+    r = sol.shortestSuperstring(["alex", "loves", "leetcode"])
+    assert len(r) == 17 and all(w in r for w in ["alex", "loves", "leetcode"])
+    r = sol.shortestSuperstring(["catg", "ctaagt", "gcta", "ttca", "atgcatc"])
+    assert len(r) == 16 and all(w in r for w in ["catg", "ctaagt", "gcta", "ttca", "atgcatc"])
+    assert sol.shortestSuperstring(["abc"]) == "abc"

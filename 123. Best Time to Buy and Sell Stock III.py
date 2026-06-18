@@ -1,44 +1,55 @@
+# 123. Best Time to Buy and Sell Stock III
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# 参考神中神六六归一算法
+# notes: reference the labuladong unified stock framework
 # https://labuladong.github.io/algo/di-er-zhan-a01c6/yong-dong--63ceb/yi-ge-fang-3b01b/
-# base case：
+# base case:
 # dp[-1][...][0] = dp[...][k][0] = 0
 # dp[-1][...][1] = dp[...][k][1] = -infinity
-# 状态转移方程：
+# transition:
 # dp[i][k][0] = max(dp[i-1][k][0], dp[i-1][k][1] + prices[i])
 # dp[i][k][1] = max(dp[i-1][k][1], dp[i-1][k-1][0] - prices[i])
 class Solution:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         max_k = 2
         n = len(prices)
         dp = [[[0] * 2 for _ in range(max_k + 1)] for _ in range(n)]
         for i in range(n):
             for k in range(max_k, 0, -1):
                 if i - 1 == -1:
-                    # 处理 base case
+                    # base case
                     dp[i][k][0] = 0
                     dp[i][k][1] = -prices[i]
                     continue
                 dp[i][k][0] = max(dp[i - 1][k][0], dp[i - 1][k][1] + prices[i])
                 dp[i][k][1] = max(dp[i - 1][k][1], dp[i - 1][k - 1][0] - prices[i])
-        # 穷举了 n × max_k × 2 个状态，正确。
+        # enumerated n x max_k x 2 states, correct
         return dp[n - 1][max_k][0]
+
 
 # Dynamic Programming
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 世界线收束
-# 状态转移方程：
+# notes: the timelines converge into four rolling variables
+# transition:
 # dp[i][2][0] = max(dp[i-1][2][0], dp[i-1][2][1] + prices[i])
 # dp[i][2][1] = max(dp[i-1][2][1], dp[i-1][1][0] - prices[i])
 # dp[i][1][0] = max(dp[i-1][1][0], dp[i-1][1][1] + prices[i])
 # dp[i][1][1] = max(dp[i-1][1][1], -prices[i])
 class Solution2:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         dp_i10 = 0
         dp_i11 = float('-inf')
         dp_i20 = 0
@@ -50,12 +61,14 @@ class Solution2:
             dp_i11 = max(dp_i11, -price)
         return dp_i20
 
+
 # Bidirectional Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: no
-# notes: divide and conquer方法，找到左边最大profit，右边profit，合并中间的profit
-class Solution3(object):
+# notes: divide and conquer; best profit on the left, best on the
+#        right, then merge them across the split point
+class Solution3:
     def maxProfit(self, prices):
         """
         :type prices: List[int]
@@ -86,3 +99,11 @@ class Solution3(object):
             max_profit = max(max_profit, left_profits[i] + right_profits[i+1])
 
         return max_profit
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.maxProfit([3, 3, 5, 0, 0, 3, 1, 4]) == 6
+    assert sol.maxProfit([1, 2, 3, 4, 5]) == 4
+    assert sol.maxProfit([7, 6, 4, 3, 1]) == 0
+    assert sol.maxProfit([1]) == 0

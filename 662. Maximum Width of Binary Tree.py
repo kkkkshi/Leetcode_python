@@ -1,16 +1,48 @@
+# 662. Maximum Width of Binary Tree
+
+
 from collections import deque
-class TreeNode(object):
+
+
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
+def build(values):
+    # level-order build, None means no node
+    if not values:
+        return None
+    root = TreeNode(values[0])
+    queue = [root]
+    i = 1
+    while queue and i < len(values):
+        node = queue.pop(0)
+        if i < len(values) and values[i] is not None:
+            node.left = TreeNode(values[i])
+            queue.append(node.left)
+        i += 1
+        if i < len(values) and values[i] is not None:
+            node.right = TreeNode(values[i])
+            queue.append(node.right)
+        i += 1
+    return root
+
+
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.01: no
+# notes: index each node as if the tree were complete, then the
+#        width of a level is last index minus first index plus 1
 class Solution:
     def widthOfBinaryTree(self, root: TreeNode) -> int:
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
         if not root:
             return 0
         max_width = 0
@@ -37,8 +69,14 @@ class Solution:
 # Time: O(n)
 # Space: O(n)
 # 2023.07.01: no
+# notes: preorder DFS recording the first column index per depth,
+#        width is current column minus that first one plus 1
 class Solution2:
     def widthOfBinaryTree(self, root: TreeNode) -> int:
+        """
+        :type root: TreeNode
+        :rtype: int
+        """
         # table contains the first col_index for each level
         first_col_index_table = {}
         max_width = 0
@@ -56,7 +94,10 @@ class Solution2:
         DFS(root, 0, 0)
         return max_width
 
+
 # Tests:
-tree = TreeNode(1, TreeNode(3, TreeNode(5, TreeNode(6)), None), TreeNode(2, None, TreeNode(9, TreeNode(7))))
-test = Solution2()
-test.widthOfBinaryTree(tree)
+for sol in (Solution(), Solution2()):
+    assert sol.widthOfBinaryTree(build([1, 3, 2, 5, 3, None, 9])) == 4
+    assert sol.widthOfBinaryTree(build([1, 3, 2, 5, None, None, 9, 6, None, 7])) == 7
+    assert sol.widthOfBinaryTree(build([1, 3, 2, 5])) == 2
+    assert sol.widthOfBinaryTree(build([1])) == 1

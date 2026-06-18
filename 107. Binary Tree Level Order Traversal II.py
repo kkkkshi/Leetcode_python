@@ -1,14 +1,20 @@
-class TreeNode(object):
+# 107. Binary Tree Level Order Traversal II
+
+# Definition for a binary tree node.
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
 # breadth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
-class Solution(object):
+# notes: BFS level by level, inserting each level at the front so
+#        the bottom level ends up first
+class Solution:
     def levelOrderBottom(self, root):
         """
         :type root: TreeNode
@@ -33,12 +39,19 @@ class Solution(object):
             level_nodes = []
         return results
 
+
 # depth-first Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.07.02: yes
+# notes: DFS carrying the depth; append values per level then
+#        reverse the level list at the end
 class Solution2:
     def levelOrderBottom(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[List[int]]
+        """
         levels = []
         if not root:
             return levels
@@ -60,9 +73,10 @@ class Solution2:
         helper(root, 0)
         return levels[::-1]
 
+
 # Tests:
 tree = TreeNode(3, TreeNode(9), TreeNode(20, TreeNode(15), TreeNode(7)))
-tree2 = TreeNode(0, TreeNode(2, TreeNode(1, TreeNode(5), TreeNode(1)), None),
-                 TreeNode(4, TreeNode(3, None, TreeNode(6)), TreeNode(-1, None, TreeNode(8))))
-test = Solution()
-test.levelOrderBottom(tree2)
+for sol in (Solution(), Solution2()):
+    assert sol.levelOrderBottom(tree) == [[15, 7], [9, 20], [3]]
+    assert sol.levelOrderBottom(None) == []
+    assert sol.levelOrderBottom(TreeNode(1)) == [[1]]

@@ -1,9 +1,14 @@
+# 514. Freedom Trail
+
+import collections
+
+
 # Dynamic Programming 2D recursion
 # Time: O(mn^2)
 # Space: O(mn)
 # 2023.07.26: no
-# notes: i是当前12:00方向值得数值，j是目前在第几个数值，通过遍历的方法，把所有一圈的可能性都过一遍，找到符合的
-import collections
+# notes: i is the char now at 12:00, j is the index into key; try every
+#        ring position for key[j] and take the cheapest rotation
 class Solution:
     def findRotateSteps(self, ring, key):
         memo = {}
@@ -27,8 +32,9 @@ class Solution:
 # Time: O(mn)
 # Space: O(n)
 # 2023.07.26: no
-# notes: 优化了几个点，用hash map记录节点，用1D table，核心的那句被压缩了，找到所有pre的节点(可能有很多位置)
-# 的最少次数到每一个新字符(也可能有很多位置)的位置，update每个新字符即可，还要min(顺时针，逆时针)+1和加上按下去的时间
+# notes: map each char to its ring positions, keep a 1D table, and for
+#        every new char take the min over all previous positions, adding
+#        min(clockwise, counter-clockwise) plus 1 for the press
 class Solution2:
     def findRotateSteps(self, ring, key):
         indexes, n, dp, pre = collections.defaultdict(list), len(ring), [0] * len(ring), key[0]
@@ -42,7 +48,10 @@ class Solution2:
             pre = c
         return min(dp[i] for i in indexes[key[-1]])
 
-# Tests:
-test = Solution2()
-test.findRotateSteps(ring = "godding", key = "gd")
 
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.findRotateSteps("godding", "gd") == 4
+    assert sol.findRotateSteps("godding", "godding") == 13
+    assert sol.findRotateSteps("iotfo", "fio") == 8
+    assert sol.findRotateSteps("edcba", "abcde") == 10

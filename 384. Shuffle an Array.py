@@ -1,10 +1,14 @@
+# 384. Shuffle an Array
+
 # Fisher-Yates Algorithm
 # Time: O(n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: Fisher-Yates Algorithm，也被成为洗牌算法，第一个元素n个可能性，第二个元素n-1，以此类推
-# 可能性是n!，所以正确
+# notes: Fisher-Yates, aka the shuffle algorithm: first slot has n
+#        choices, second n-1, and so on, giving n! outcomes, so correct
 import random
+
+
 class Solution:
     def __init__(self, nums):
         self.nums = nums
@@ -13,28 +17,25 @@ class Solution:
     def reset(self):
         return self.nums
 
-    # 洗牌算法
+    # shuffle algorithm
     def shuffle(self):
         n = len(self.nums)
         copy = self.nums.copy()
         for i in range(n):
-            # 生成一个 [i, n-1] 区间内的随机数
+            # generate a random number in [i, n-1]
             r = i + self.rand.randint(0, n - i - 1)
-            # 交换 nums[i] 和 nums[r]
+            # swap nums[i] and nums[r]
             copy[i], copy[r] = copy[r], copy[i]
         return copy
 
-# Tests:
-obj = Solution([1,2,3])
-param_1 = obj.reset()
-param_2 = obj.shuffle()
 
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.04: no
-# notes: 从array中随机找一个number，然后放到new_array中，一个个放就是随机的
-class Solution:
+# notes: pick a random number from the array into a new array,
+#        placing them one by one yields a random order
+class Solution2:
     def __init__(self, nums):
         self.array = nums
         self.original = list(nums)
@@ -52,3 +53,11 @@ class Solution:
             self.array[idx] = aux.pop(remove_idx)
 
         return self.array
+
+
+# Tests:
+for cls in (Solution, Solution2):
+    obj = cls([1, 2, 3])
+    assert obj.reset() == [1, 2, 3]
+    assert sorted(obj.shuffle()) == [1, 2, 3]
+    assert obj.reset() == [1, 2, 3]

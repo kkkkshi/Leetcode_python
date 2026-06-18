@@ -1,9 +1,15 @@
+# 227. Basic Calculator II
+
+import itertools
+from math import trunc
+
+
 # Using Stack
 # Time: O(n)
 # Space: O(n)
 # 2023.07.22: yes
-import itertools
-from math import trunc
+# notes: push each number with its preceding sign; for * and / pop
+#        the top and combine, then sum the stack at the end
 class Solution:
     def calculate(self, s):
         if not s:
@@ -29,11 +35,13 @@ class Solution:
                 num = 0
         return sum(stack)
 
+
 # Optimised Approach without the stack
 # Time: O(n)
 # Space: O(1)
 # 2023.09.29: yes
-# notes: 这个的更进方法是，用一个pending res区存储，如果符号是*/的话就先不加到result里面去，因为下一个值还需要用这个值
+# notes: keep a pending result; for * and / hold off adding it to
+#        the final result, since the next number still needs it
 class Solution2:
     def calculate(self, s: str) -> int:
         pending_res = res = num = 0
@@ -62,6 +70,10 @@ class Solution2:
 
         return res
 
+
 # Tests:
-test = Solution2()
-test.calculate("3 +2*2")
+for sol in (Solution(), Solution2()):
+    assert sol.calculate("3+2*2") == 7
+    assert sol.calculate(" 3/2 ") == 1
+    assert sol.calculate(" 3+5 / 2 ") == 5
+    assert sol.calculate("14-3/2") == 13

@@ -1,8 +1,11 @@
+# 75. Sort Colors
+
 # One Pass Algorithm (best approach)
 # Time: O(n)
 # Space: O(1)
 # 2023.06.24: yes
-# notes: 就是荷兰国旗问题，一个头，一个尾
+# notes: Dutch national flag; one pointer at the front, one at the
+#        back, swap 0s forward and 2s backward in a single pass
 class Solution:
     def sortColors(self, nums):
         """
@@ -25,17 +28,15 @@ class Solution:
             else:
                 curr += 1
 
+
 # Tests:
-nums = [2,0,2,1,1,0]
-nums2 = [2,0,1]
-nums3 = [1,1,0,0,2,2]
-test = Solution()
-test.sortColors(nums)
-test.sortColors(nums2)
-test.sortColors(nums3)
-
-
-
-
-
-
+for sol in (Solution(),):
+    nums = [2, 0, 2, 1, 1, 0]
+    sol.sortColors(nums)
+    assert nums == [0, 0, 1, 1, 2, 2]
+    nums = [2, 0, 1]
+    sol.sortColors(nums)
+    assert nums == [0, 1, 2]
+    nums = [1, 1, 0, 0, 2, 2]
+    sol.sortColors(nums)
+    assert nums == [0, 0, 1, 1, 2, 2]

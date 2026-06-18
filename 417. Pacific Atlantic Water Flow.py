@@ -1,9 +1,15 @@
+# 417. Pacific Atlantic Water Flow
+
 # Breadth-First Search Approach
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.14: yes
+# notes: from each ocean's border, BFS uphill to mark reachable cells;
+#        answer is the cells reachable from both oceans.
 from collections import deque
-class Solution(object):
+
+
+class Solution:
     def pacificAtlantic(self, heights):
         """
         :type heights: List[List[int]]
@@ -43,6 +49,7 @@ class Solution(object):
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.14: yes
+# notes: same idea with DFS from each border cell uphill.
 class Solution2:
     def pacificAtlantic(self, matrix):
         if not matrix or not matrix[0]:
@@ -71,12 +78,10 @@ class Solution2:
         return list(pacific_reachable.intersection(atlantic_reachable))
 
 
-
-
-
-
-
 # Tests:
-test = Solution()
-test.pacificAtlantic([[1,2,2,3,5],[3,2,3,4,4],[2,4,5,3,1],[6,7,1,4,5],[5,1,1,2,4]])
-
+grid = [[1, 2, 2, 3, 5], [3, 2, 3, 4, 4], [2, 4, 5, 3, 1],
+        [6, 7, 1, 4, 5], [5, 1, 1, 2, 4]]
+expected = sorted([(0, 4), (1, 3), (1, 4), (2, 2), (3, 0), (3, 1), (4, 0)])
+for sol in (Solution(), Solution2()):
+    assert sorted(tuple(p) for p in sol.pacificAtlantic(grid)) == expected
+    assert sorted(tuple(p) for p in sol.pacificAtlantic([[1]])) == [(0, 0)]

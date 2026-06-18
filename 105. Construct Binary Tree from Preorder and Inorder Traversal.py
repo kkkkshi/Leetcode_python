@@ -1,18 +1,35 @@
-# Recursion Approach:
-# Time: O(n)
-# Space: O(n)
-# 2023.06.27: no
-# notes: 这道题就是654的加难版，本质上是一样的，找到root节点是什么，然后分成左边和右边去递归完成
-# 其中val的值是不重复的，还可以用hash表来快速查找
+# 105. Construct Binary Tree from Preorder and Inorder Traversal
 
 # Definition for a binary tree node.
-class TreeNode(object):
+class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
-class Solution(object):
+
+def preorder(node):
+    # preorder traversal -> list of values
+    if node is None:
+        return []
+    return [node.val] + preorder(node.left) + preorder(node.right)
+
+
+def inorder(node):
+    # inorder traversal -> list of values
+    if node is None:
+        return []
+    return inorder(node.left) + [node.val] + inorder(node.right)
+
+
+# Recursion Approach:
+# Time: O(n)
+# Space: O(n)
+# 2023.06.27: no
+# notes: harder variant of 654, same idea: the first preorder value is the
+#        root, split inorder around it into left and right and recurse. a
+#        hash table gives quick index lookups since values are unique.
+class Solution:
     def buildTree(self, preorder, inorder):
         """
         :type preorder: List[int]
@@ -27,17 +44,17 @@ class Solution(object):
             if preStart > preEnd:
                 return None
 
-            # root 节点对应的值就是前序遍历数组的第一个元素
+            # the root value is the first element of the preorder array
             rootVal = preorder[preStart]
-            # rootVal 在中序遍历数组中的索引
+            # index of rootVal in the inorder array
             index = valToIndex.get(rootVal)
 
             leftSize = index - inStart
 
-            # 先构造出当前根节点
+            # build the current root node first
             root = TreeNode(rootVal)
 
-            # 递归构造左右子树
+            # recursively build the left and right subtrees
             root.left = build(preorder, preStart + 1, preStart + leftSize,
                               inorder, inStart, index - 1)
 
@@ -46,14 +63,20 @@ class Solution(object):
             return root
         return build(preorder, 0, len(preorder) - 1, inorder, 0, len(inorder) - 1)
 
+
 # Recursion Approach:
 # Time: O(n)
 # Space: O(n)
 # 2023.06.27: no
-# notes: 官方答案，非常简洁而且不用算数字，很方便
+# notes: official answer, very concise and avoids index arithmetic by
+#        walking a shared preorder_index pointer.
 class Solution2:
     def buildTree(self, preorder, inorder):
-
+        """
+        :type preorder: List[int]
+        :type inorder: List[int]
+        :rtype: TreeNode
+        """
         def array_to_tree(left, right):
             nonlocal preorder_index
             # if there are no elements to construct the tree
@@ -62,7 +85,6 @@ class Solution2:
             # select the preorder_index element as the root and increment it
             root_value = preorder[preorder_index]
             root = TreeNode(root_value)
-
 
             preorder_index += 1
 
@@ -82,8 +104,12 @@ class Solution2:
 
         return array_to_tree(0, len(preorder) - 1)
 
-# Test:
-test = Solution2()
-test.buildTree(preorder = [3,9,20,15,7], inorder = [9,3,15,20,7])
 
-
+# Tests:
+for sol in (Solution(), Solution2()):
+    t = sol.buildTree([3, 9, 20, 15, 7], [9, 3, 15, 20, 7])
+    assert preorder(t) == [3, 9, 20, 15, 7]
+    assert inorder(t) == [9, 3, 15, 20, 7]
+    t = sol.buildTree([-1], [-1])
+    assert preorder(t) == [-1] and inorder(t) == [-1]
+    assert sol.buildTree([], []) is None

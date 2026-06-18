@@ -1,8 +1,14 @@
+# 994. Rotting Oranges
+
 # BFS Approach
 # Time: O(nm)
 # Space: O(nm)
 # 2023.07.13: yes
+# notes: multi-source BFS from rotten cells, using a (-1, -1) marker
+#        to count elapsed minutes per level
 from collections import deque
+
+
 class Solution:
     def orangesRotting(self, grid):
         queue = deque()
@@ -33,10 +39,13 @@ class Solution:
                             queue.append((neighbor_row, neighbor_col))
         return minutes_elapsed if fresh_oranges == 0 else -1
 
+
 # In-place BFS Approach
 # Time: O(nm)
 # Space: O(nm)
 # 2023.07.13: yes
+# notes: repeatedly sweep the grid, rotting neighbors of the current
+#        timestamp; stop when no fresh orange gets infected
 class Solution2:
     def orangesRotting(self, grid):
         ROWS, COLS = len(grid), len(grid[0])
@@ -70,6 +79,14 @@ class Solution2:
         # return elapsed minutes if no fresh orange left
         return timestamp - 2
 
+
 # Tests:
-test = Solution2()
-test.orangesRotting([[2,1,1],[1,1,0],[0,1,1]])
+def copy_grid(g):
+    return [row[:] for row in g]
+
+
+for sol in (Solution(), Solution2()):
+    assert sol.orangesRotting(copy_grid([[2, 1, 1], [1, 1, 0], [0, 1, 1]])) == 4
+    assert sol.orangesRotting(copy_grid([[2, 1, 1], [0, 1, 1], [1, 0, 1]])) == -1
+    assert sol.orangesRotting(copy_grid([[0, 2]])) == 0
+    assert sol.orangesRotting(copy_grid([[1]])) == -1

@@ -1,8 +1,12 @@
+# 46. Permutations
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.01: yes
-class Solution(object):
+# notes: pick each remaining number in turn, recurse, then put it
+#        back to restore the pool for the next choice
+class Solution:
     def permute(self, nums):
         """
         :type nums: List[int]
@@ -23,5 +27,10 @@ class Solution(object):
         rec(nums,[])
         return results
 
-test = Solution()
-test.permute([1,2,3])
+
+# Tests:
+for sol in (Solution(),):
+    assert sorted(sol.permute([1,2,3])) == [
+        [1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]
+    assert sol.permute([1]) == [[1]]
+    assert sorted(sol.permute([0,1])) == [[0,1],[1,0]]

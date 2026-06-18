@@ -1,10 +1,21 @@
+# 76. Minimum Window Substring
+
+from collections import Counter
+
+
 # Traverse Layer by Layer in Spiral Form
 # Time: O(s+t)
 # Space: O((s+t)*s)
 # 2023.06.20: yes
-from collections import Counter
+# notes: sliding window; expand right until all of t is covered,
+#        then shrink left to find the smallest valid window
 class Solution:
     def minWindow(self, s, t):
+        """
+        :type s: str
+        :type t: str
+        :rtype: str
+        """
         need, window = {}, {}
         for c in t:
             need[c] = need.get(c, 0) + 1
@@ -30,14 +41,16 @@ class Solution:
                 if d in need:
                     if window[d] == need[d]:
                         valid -= 1
-                    window[d] -= 1 
+                    window[d] -= 1
 
         return "" if length == float('inf') else s[start:start + length]
+
 
 # Optimized Sliding Window
 # Time: O(s+t)
 # Space: O(s+t)
-# notes: 非常聪明的方法， 只需要记录含有字母的位置就可以了，变成一个简短的list，减少运算复杂度
+# notes: only keep positions of characters that appear in t, giving
+#        a short list to slide over and less work overall
 class Solution2:
     def minWindow(self, s, t):
         """
@@ -88,7 +101,11 @@ class Solution2:
             r += 1
         return "" if ans[0] == float("inf") else s[ans[1] : ans[2] + 1]
 
-test = Solution2()
-test.minWindow(s = 'aabcdcba', t = 'abc')
-test.minWindow(s = "ADOBECODEBANC", t = "ABC")
-test.minWindow(s = 'ab', t = 'a')
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.minWindow("ADOBECODEBANC", "ABC") == "BANC"
+    assert sol.minWindow("a", "a") == "a"
+    assert sol.minWindow("a", "aa") == ""
+    assert sol.minWindow("ab", "b") == "b"
+    assert sol.minWindow("aabcdcba", "abc") == "abc"

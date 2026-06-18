@@ -1,11 +1,17 @@
+# 743. Network Delay Time
+
+import heapq
+from collections import defaultdict, deque
+from queue import PriorityQueue
+
+
 # Dijkstra Approach (best approach)
 # Time: O(n + elogn)
 # Space: O(n + e)
 # 2023.07.10: yes
-import heapq
-from collections import defaultdict, deque
-from queue import PriorityQueue
-class Solution(object):
+# notes: Dijkstra from k with a priority queue; answer is the max of
+#        all shortest distances, or -1 if any node is unreachable
+class Solution:
     def networkDelayTime(self, times, n, k):
         """
         :type times: List[List[int]]
@@ -45,11 +51,12 @@ class Solution(object):
             res = max(res, dist)
         return res
 
+
 # Dijkstra Approach (best approach)
 # Time: O((n-1)!+eloge)
 # Space: O(n + e)
 # 2023.07.10: yes
-# notes: 别人的优化版，帅
+# notes: someone else's optimized version, slick
 class Solution2:
     def networkDelayTime(self, times, N, K):
         elapsedTime, graph, heap = [0] + [float("inf")] * N, defaultdict(list), [(0, K)] # it's a min-heap
@@ -64,19 +71,21 @@ class Solution2:
         mx = max(elapsedTime)
         return mx if mx < float("inf") else -1
 
-# Tests:
-test = Solution2()
-test.networkDelayTime([[2,1,1],[2,3,1],[3,4,1]], 4, 2)
-test.networkDelayTime([[1,2,1]], 2, 1)
-test.networkDelayTime([[1,2,1]],2,2)
-
 
 # Depth-First Search Approach
 # Time: O(n + elogn)
 # Space: O(n + e)
 # 2023.07.10: no
-class Solution3(object):
+# notes: DFS relaxing distances, visiting neighbours in sorted order
+#        and pruning when the current path is not shorter
+class Solution3:
     def networkDelayTime(self, times, N, K):
+        """
+        :type times: List[List[int]]
+        :type N: int
+        :type K: int
+        :rtype: int
+        """
         graph = defaultdict(list)
         for u, v, w in times:
             graph[u].append((v, w))
@@ -97,6 +106,8 @@ class Solution3(object):
 # Time: O(ne)
 # Space: O(ne)
 # 2023.07.10: no
+# notes: BFS over a queue, relaxing each node's distance and
+#        re-enqueueing neighbours whenever a shorter time is found
 class Solution4:
     def networkDelayTime(self, times, N, K):
         elapsedTime, graph, queue = [0] + [float("inf")] * N, defaultdict(list), deque([(0, K)])
@@ -112,8 +123,12 @@ class Solution4:
         return mx if mx < float("inf") else -1
 
 
-# 以下为大佬的算法，未来可以看
-# Original Bellman–Ford algorithm - Accepted
+# below are other people's algorithms, worth revisiting later
+# Original Bellman-Ford algorithm - Accepted
+# Time: O(ne)
+# Space: O(n)
+# notes: relax every edge N-1 times; works with 0-based indexing on
+#        the distance array
 class Solution5:
     def networkDelayTime(self, times, N, K):
         distance = [float("inf") for _ in range(N)]
@@ -124,7 +139,12 @@ class Solution5:
                     distance[v-1] = distance[u-1] + w
         return max(distance) if max(distance) < float("inf") else -1
 
-# Shortest Path Faster Algorithm (SPFA): An improvement of the Bellman–Ford algorithm - Accepted
+
+# Shortest Path Faster Algorithm (SPFA): An improvement of the Bellman-Ford algorithm - Accepted
+# Time: O(ne)
+# Space: O(n + e)
+# notes: queue-based Bellman-Ford; only re-process a node when its
+#        distance improves
 class Solution6:
     def networkDelayTime(self, times, N, K):
         elapsedTime, graph, queue = [0] + [float("inf")] * N, defaultdict(list), deque([(0, K)])
@@ -141,7 +161,11 @@ class Solution6:
         mx = max(elapsedTime)
         return mx if mx < float("inf") else -1
 
-#  Floyd Warshall - Accepted
+
+# Floyd Warshall - Accepted
+# Time: O(n^3)
+# Space: O(n^2)
+# notes: all-pairs shortest paths; answer is the max over row K-1
 class Solution7:
     def networkDelayTime(self, times, N, K):
         elapsedTimeMatrix = [[float("inf") for _ in range(N)] for _ in range(N)]
@@ -155,4 +179,11 @@ class Solution7:
                     elapsedTimeMatrix[i][j] = min(elapsedTimeMatrix[i][j], elapsedTimeMatrix[i][k] + elapsedTimeMatrix[k][j])
         mx = max(elapsedTimeMatrix[K - 1])
         return mx if mx < float("inf") else -1
-# """
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(),
+            Solution5(), Solution6(), Solution7()):
+    assert sol.networkDelayTime([[2, 1, 1], [2, 3, 1], [3, 4, 1]], 4, 2) == 2
+    assert sol.networkDelayTime([[1, 2, 1]], 2, 1) == 1
+    assert sol.networkDelayTime([[1, 2, 1]], 2, 2) == -1

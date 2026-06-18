@@ -1,15 +1,25 @@
+# 572. Subtree of Another Tree
+
 class TreeNode:
     def __init__(self, val=0, left=None, right=None):
         self.val = val
         self.left = left
         self.right = right
 
+
 # Depth First Search Approach
 # Time: O(mn)
 # Space: O(m+n)
 # 2023.06.29: yes
+# notes: at every node check if the tree rooted there is identical
+#        to subRoot
 class Solution:
     def isSubtree(self, root, subRoot):
+        """
+        :type root: TreeNode
+        :type subRoot: TreeNode
+        :rtype: bool
+        """
         def dfs(node):
             if node is None:
                 return False
@@ -25,12 +35,20 @@ class Solution:
                     is_identical(node1.right, node2.right))
         return dfs(root)
 
+
 # String Matching Approach (KMP)
 # Time: O(mn)
 # Space: O(m+n)
 # 2023.06.29: no
+# notes: serialize both trees to strings, then KMP-search subRoot's
+#        string inside root's string
 class Solution2:
     def isSubtree(self, root, subRoot):
+        """
+        :type root: TreeNode
+        :type subRoot: TreeNode
+        :rtype: bool
+        """
 
         # Function to serialize Tree
         def serialize(node, tree_str):
@@ -115,8 +133,15 @@ class Solution2:
 # Time: O(mn)
 # Space: O(m+n)
 # 2023.06.29: no
+# notes: hash every subtree of root into a set, then check if
+#        subRoot's hash is in it
 class Solution3:
     def isSubtree(self, root: TreeNode, subRoot: TreeNode) -> bool:
+        """
+        :type root: TreeNode
+        :type subRoot: TreeNode
+        :rtype: bool
+        """
 
         MOD_1 = 1_000_000_007
         MOD_2 = 2_147_483_647
@@ -153,6 +178,7 @@ class Solution3:
         # Check if hash of subRoot is present in memo
         return s in memo
 
+
 # Tests:
 a = TreeNode(3, TreeNode(4, TreeNode(1), TreeNode(2)), TreeNode(5))
 b = TreeNode(4, TreeNode(1), TreeNode(2))
@@ -160,7 +186,7 @@ c = TreeNode(3, TreeNode(4, TreeNode(1), TreeNode(2, TreeNode(0))), TreeNode(5))
 d = TreeNode(4, TreeNode(1), TreeNode(2))
 e = TreeNode(3, TreeNode(4, TreeNode(1)), TreeNode(5, TreeNode(2)))
 f = TreeNode(3, TreeNode(1), TreeNode(2))
-test = Solution3()
-result = test.isSubtree(a,b)
-result2 = test.isSubtree(c,d)
-result3 = test.isSubtree(e,f)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isSubtree(a, b) is True
+    assert sol.isSubtree(c, d) is False
+    assert sol.isSubtree(e, f) is False

@@ -1,7 +1,11 @@
+# 392. Is Subsequence
+
 # Two-Pointers
 # Time: O(T)
 # Space: O(1)
 # 2023.10.01: yes
+# notes: walk through t; each time t[j] matches the next s char, advance
+#        i. s is a subsequence iff i reaches the end of s.
 from bisect import bisect, bisect_right
 from collections import defaultdict
 
@@ -19,10 +23,12 @@ class Solution:
                 j += 1
         return i == m
 
-# Recursion (极不推荐)
+
+# Recursion (strongly discouraged)
 # Time: O(T)
 # Space: O(T)
 # 2023.10.01: no
+# notes: recurse over both indices; on match consume s, always consume t.
 class Solution2:
     def isSubsequence(self, s: str, t: str) -> bool:
         LEFT_BOUND, RIGHT_BOUND = len(s), len(t)
@@ -42,11 +48,13 @@ class Solution2:
 
         return rec_isSubsequence(0, 0)
 
+
 # Greedy Match with Character Indices Hashmap
 # Time: O(T + S*logT)
 # Space: O(T)
 # 2023.10.01: no
-# notes: 见792
+# notes: see 792; index each char of t, then binary-search the next
+#        position greater than the current match for each char of s.
 class Solution3:
     def isSubsequence(self, s: str, t: str) -> bool:
 
@@ -69,12 +77,12 @@ class Solution3:
 
         return True
 
+
 # Dynamic Programming
 # Time: O(T)
 # Space: O(T)
 # 2023.10.01: no
-# notes: dp思路是好的，但是真的多余，Levenshtein distance
-
+# notes: dp is fine but overkill here; it is Levenshtein distance.
 class Solution4:
     def isSubsequence(self, s: str, t: str) -> bool:
         source_len, target_len = len(s), len(t)
@@ -104,7 +112,10 @@ class Solution4:
         return False
 
 
-test = Solution3()
-test.isSubsequence(s = "abbc", t = "ahbgdbc")
-test.isSubsequence(s = "axc", t = "ahbgdc")
-test.isSubsequence("b", "abc")
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.isSubsequence("abbc", "ahbgdbc") is True
+    assert sol.isSubsequence("axc", "ahbgdc") is False
+    assert sol.isSubsequence("b", "abc") is True
+    assert sol.isSubsequence("", "ahbgdc") is True
+    assert sol.isSubsequence("abc", "") is False

@@ -1,9 +1,21 @@
+# 55. Jump Game
+
+from enum import Enum
+
+
+class Index(Enum):
+    GOOD = 0
+    BAD = 1
+    UNKNOWN = 2
+
+
 # Greedy
 # Time: O(n)
 # Space: O(1)
 # 2023.07.29: yes
-# notes: for loop找最大，太简单了，无特别
-class Solution(object):
+# notes: track the furthest reachable index in one pass; if some
+#        index sits beyond it we can never get there
+class Solution:
     def canJump(self, nums):
         """
         :type nums: List[int]
@@ -18,19 +30,14 @@ class Solution(object):
                 max_length = nums[i] + i
         return max_length >= n-1
 
+
 # Dynamic Programming Top-down
 # Time: O(n^2)
 # Space: O(n)
 # 2023.07.29: no
-# notes: 超时，但是思路可以借鉴，遇到一个点就找到他最远的点，把路径上的所有点都递归一次，找到更远的
-# 如果遇到了更远的返回的时候一路标记good，不然的话就是bad了，因为不需要这些点也可以返回最远的距离
-from enum import Enum
-
-class Index(Enum):
-    GOOD = 0
-    BAD = 1
-    UNKNOWN = 2
-
+# notes: too slow but worth knowing; from a point recurse to every
+#        reachable point, mark good/bad along the way; we don't need
+#        those points to still return the furthest distance
 class Solution2:
     def canJumpFromPosition(self, position, nums, memo):
         if memo[position] != Index.UNKNOWN:
@@ -50,11 +57,12 @@ class Solution2:
         memo[-1] = Index.GOOD
         return self.canJumpFromPosition(0, nums, memo)
 
+
 # Dynamic Programming Top-down
 # Time: O(n)
 # Space: O(1)
 # 2023.07.29: no
-# notes: 勉强不超时，recursion的dp写法，逆推
+# notes: barely passes; the bottom-up dp form, working backwards
 class Solution3:
     def canJump(self, nums):
         memo = [Index.UNKNOWN] * len(nums)
@@ -69,19 +77,11 @@ class Solution3:
         return memo[0] == Index.GOOD
 
 
-# Tests:
-test = Solution3()
-test.canJump([2,3,1,1,4])
-test.canJump([3,2,1,0,4])
-test.canJump([0])
-test.canJump([2,0,0])
-
-
 # Backtracking
 # Time: O(2^n)
 # Space: O(n)
 # 2023.07.29: no
-# notes: 2^n超大时
+# notes: 2^n, blows up when n is large
 class Solution4:
     def canJumpFromPosition(self, position, nums):
         if position == len(nums) - 1:
@@ -98,6 +98,9 @@ class Solution4:
         return self.canJumpFromPosition(0, nums)
 
 
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.canJump([2, 3, 1, 1, 4]) is True
+    assert sol.canJump([3, 2, 1, 0, 4]) is False
+    assert sol.canJump([0]) is True
+    assert sol.canJump([2, 0, 0]) is True

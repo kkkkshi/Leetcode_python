@@ -1,7 +1,11 @@
+# 516. Longest Palindromic Subsequence
+
 # Recursive Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: no
+# notes: lps(l, r) is the answer on s[l..r]; if ends match add 2 and
+#        shrink both, else drop one side and take the better
 class Solution:
     def longestPalindromeSubseq(self, s: str) -> int:
         n = len(s)
@@ -21,13 +25,14 @@ class Solution:
 
         return lps(0, n - 1)
 
+
 # Iterative Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
-# notes: 找到状态转移方程式重中之重，dp[i][j]是从i到j的最长回文串长度
-# j < i的部分不存在，初始化为0
-class Solution2(object):
+# notes: the transition is the key part; dp[i][j] is the longest
+#        palindrome on s[i..j], and the j < i part is left as 0
+class Solution2:
     def longestPalindromeSubseq(self, s):
         """
         :type s: str
@@ -49,7 +54,8 @@ class Solution2(object):
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: no
-class Solution3(object):
+# notes: same recurrence as Solution2 but keep only the previous row
+class Solution3:
     def longestPalindromeSubseq(self, s):
         """
         :type s: str
@@ -67,7 +73,10 @@ class Solution3(object):
             dpPrev = dp[:]
         return dp[n-1]
 
+
 # Tests:
-test = Solution3()
-test.longestPalindromeSubseq("bbbab")
-test.longestPalindromeSubseq("cbbd")
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.longestPalindromeSubseq("bbbab") == 4
+    assert sol.longestPalindromeSubseq("cbbd") == 2
+    assert sol.longestPalindromeSubseq("a") == 1
+    assert sol.longestPalindromeSubseq("abcde") == 1

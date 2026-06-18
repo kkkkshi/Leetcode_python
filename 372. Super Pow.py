@@ -1,49 +1,63 @@
+# 372. Super Pow
+
 # Recursion
 # Time: O(n)
 # Space: O(1)
 # 2023.08.05: no
-# notes: 核心还是recursion
+# notes: core idea is recursion
 from typing import List
 
 
 class Solution:
-    base = 1337  # 声明一个类变量 base
+    base = 1337  # declare a class variable base
 
-    # 声明一个实例方法 mypow
+    # declare an instance method mypow
     def mypow(self, a, k):
-        a %= self.base  # 对因子 a 求模
+        a %= self.base  # take a modulo the base
         res = 1
         for _ in range(k):
-            res *= a  # 这里有乘法，是潜在的溢出点
-            res %= self.base  # 对乘法结果求模
+            res *= a  # multiply here, a potential overflow point
+            res %= self.base  # take the product modulo base
         return res
 
-    # 声明一个实例方法 superPow
+    # declare an instance method superPow
     def superPow(self, a, b):
+        """
+        :type a: int
+        :type b: List[int]
+        :rtype: int
+        """
         if not b:
             return 1
-        last = b.pop()  # 取出 b 数组的最后一个元素
-        part1 = self.mypow(a, last)  # 计算 a 的 last 次方
-        part2 = self.mypow(self.superPow(a, b), 10)  # 递归计算 superPow(a, b[:len(b)-1]) 的 10 次方
-        return (part1 * part2) % self.base  # 返回结果，每次都对结果求模
+        last = b.pop()  # take the last element of array b
+        part1 = self.mypow(a, last)  # compute a to the last power
+        part2 = self.mypow(self.superPow(a, b), 10)  # recurse: superPow(a, b[:len(b)-1]) to the 10th power
+        return (part1 * part2) % self.base  # return result, take modulo each time
+
 
 # Recursion
 # Time: O(n)
 # Space: O(1)
 # 2023.08.05: no
-# notes: 这个是根据奇偶性，b是奇数的话，a^b = a^(b-1) *a， b是偶数的话，a^b = a^(b//2)^2，效率是一样的，只是写的更简单了
-# 9月3日update: 如果b = m* 10+d， a^b = a^d * a^10^m，这条是递归的关键，可以根据这条拆分b为一个个位数，
-# 通过a^d，再计算a^m^10，利用性质1即可，其中a^m^10也是利用性质1
+# notes: split by parity: if b is odd a^b = a^(b-1)*a, if even
+#        a^b = (a^(b//2))^2. same efficiency, just simpler to write.
+# Sep 3 update: if b = m*10+d then a^b = a^d * (a^m)^10; this is the
+#        key to the recursion, peeling b digit by digit.
 class Solution2:
     base = 1337
 
     def superPow(self, a: int, b: List[int]) -> int:
+        """
+        :type a: int
+        :type b: List[int]
+        :rtype: int
+        """
         if not b:
             return 1
-        last = b.pop()  # 取出 b 数组的最后一个元素
-        part1 = self.mypow(a, last)  # 计算 a 的 last 次方
-        part2 = self.mypow(self.superPow(a, b), 10)  # 递归计算 superPow(a, b[:len(b)-1]) 的 10 次方
-        return (part1 * part2) % self.base  # 返回结果，每次都对结果求模
+        last = b.pop()  # take the last element of array b
+        part1 = self.mypow(a, last)  # compute a to the last power
+        part2 = self.mypow(self.superPow(a, b), 10)  # recurse: superPow(a, b[:len(b)-1]) to the 10th power
+        return (part1 * part2) % self.base  # return result, take modulo each time
 
     def mypow(self, a: int, k: int) -> int:
         if k == 0:
@@ -53,9 +67,17 @@ class Solution2:
         a %= base
 
         if k % 2 == 1:
-            # k 是奇数
+            # k is odd
             return (a * self.mypow(a, k - 1)) % base
         else:
-            # k 是偶数
+            # k is even
             sub = self.mypow(a, k // 2)
             return (sub * sub) % base
+
+
+# Tests:
+for sol in (Solution(), Solution2()):
+    assert sol.superPow(2, [3]) == 8
+    assert sol.superPow(2, [1, 0]) == 1024
+    assert sol.superPow(1, [4, 3, 3, 8, 5, 2]) == 1
+    assert sol.superPow(2147483647, [2, 0, 0]) == 1198

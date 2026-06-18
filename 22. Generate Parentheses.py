@@ -1,12 +1,16 @@
+# 22. Generate Parentheses
+
+import collections
+
+
 # Backtrack
 # Time: O(4^n/root(n))
 # Space: O(n)
 # 2023.08.04: no
-# notes: 这道题就是典型回溯算法，每个地方可以加右括号或者左括号
-# 重点是什么时候这个情况不行，1.右括号比左括号多，直接返回
-# 2. 右括号和左括号的数量是负数了
-import collections
-class Solution(object):
+# notes: classic backtracking, at each spot add '(' or ')'.
+# prune when: 1. there are more ')' left than '(' left, return
+# 2. either remaining count goes negative
+class Solution:
     def generateParenthesis(self, n):
         """
         :type n: int
@@ -33,14 +37,20 @@ class Solution(object):
         self.backtracking(left, right-1, cur, results)
         cur.pop()
 
+
 # Backtrack
 # Time: O(4^n/root(n))
 # Space: O(n)
 # 2023.08.04: no
-# notes: 这个backtrack比上面一个好一点，手动筛选了一些情况，比如left<n的时候可以加左
-# 但是right<left的情况就可以加右了，所以左是必加的，右是看情况加的，效率高一点
+# notes: tighter than the one above, it only adds valid moves: add
+# '(' while left < n, add ')' only while right < left, so the left
+# bracket is always allowed and the right one is conditional
 class Solution2:
     def generateParenthesis(self, n):
+        """
+        :type n: int
+        :rtype: List[str]
+        """
         answer = []
         def backtracking(cur_string, left_count, right_count):
             if len(cur_string) == 2 * n:
@@ -57,16 +67,18 @@ class Solution2:
         backtracking([], 0, 0)
         return answer
 
-test = Solution()
-test.generateParenthesis(3)
 
 # Brute force
 # Time: O(2^2n*n)
 # Space: O(n)
 # 2023.08.04: no
-# notes: 每次加(或者)，不符合就是删掉，符合就留下
+# notes: generate every string of '(' and ')', keep the valid ones
 class Solution3:
     def generateParenthesis(self, n):
+        """
+        :type n: int
+        :rtype: List[str]
+        """
         def isValid(p_string):
             left_count = 0
             for p in p_string:
@@ -96,17 +108,22 @@ class Solution3:
 
         return answer
 
+
 # Divide and Conquer
 # Time: O(4^n/root(n))
 # Space: O(n)
 # 2023.08.04: no
-# notes:这道题的核心是F(3) = "(" + F(0) + ")" + F(2)
-#                        + "(" + F(1) + ")" + F(1)
-#                        + "(" + F(2) + ")" + F(0)
-# 通过在左边加括号把等式分解掉
-class Solution4(object):
+# notes: the key is F(3) = "(" + F(0) + ")" + F(2)
+#                       + "(" + F(1) + ")" + F(1)
+#                       + "(" + F(2) + ")" + F(0)
+# split by adding a pair of brackets on the left
+class Solution4:
     def generateParenthesis(self, N):
-        # @cache， 加快效率，增加空间复杂度
+        """
+        :type N: int
+        :rtype: List[str]
+        """
+        # @cache speeds it up at the cost of more space
         if N == 0: return ['']
         ans = []
         for c in range(N):
@@ -117,8 +134,6 @@ class Solution4(object):
                     ans.append('({}){}'.format(left, right))
         return ans
 
-test = Solution4()
-test.generateParenthesis(2)
 
 # Solution 3 still need some explanation, come back in the future
 # explaination: All valid parenthesis must contain "()" at some point,
@@ -130,6 +145,9 @@ test.generateParenthesis(2)
 # N = 3 "((())), (()()), (())(), ()(()), ()()()"
 
 
-
-
-
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sorted(sol.generateParenthesis(1)) == ["()"]
+    assert sorted(sol.generateParenthesis(2)) == ["(())", "()()"]
+    assert sorted(sol.generateParenthesis(3)) == [
+        "((()))", "(()())", "(())()", "()(())", "()()()"]

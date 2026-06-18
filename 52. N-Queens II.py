@@ -1,7 +1,11 @@
+# 52. N-Queens II
+
 # Backtracking
 # Time: O(n^2)
 # Space: O(n)
 # 2023.08.01: yes
+# notes: place one queen per row, tracking used cols and diagonals;
+#        count every complete board
 class Solution:
     def totalNQueens(self, n):
         # Making use of a helper function to get the
@@ -48,6 +52,11 @@ class Solution:
         backtrack(0, set(), set(), set(), empty_board)
         return len(ans)
 
-test = Solution()
-test.solveNQueens(4)
 
+# Tests:
+for sol in (Solution(),):
+    assert sol.totalNQueens(1) == 1
+    assert sol.totalNQueens(2) == 0
+    assert sol.totalNQueens(3) == 0
+    assert sol.totalNQueens(4) == 2
+    assert sol.totalNQueens(8) == 92

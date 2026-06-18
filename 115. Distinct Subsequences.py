@@ -1,10 +1,11 @@
+# 115. Distinct Subsequences
+
 # Recursion + Memoization
 # Time: O(nlogn)
 # Space: O(n)
 # 2023.06.21: no
-# notes: -- 定义：s[i..] 的子序列中 t[j..] 出现的次数为 dp(s, i, t, j)
-# dp(s, i, t, j) = SUM( dp(s, k + 1, t, j + 1) where k >= i and s[k] == t[j] )
-# 对于所有的s[i] = t[j]都加起来，在之后去找，recursion
+# notes: dp(i, j) = count of t[j..] inside s[i..]; for every k>=i with
+#        s[k] == t[j], add dp(k+1, j+1) and recurse
 class Solution:
     def numDistinct(self, s: str, t: str) -> int:
         memo = [[-1 for _ in range(len(t))] for _ in range(len(s))]
@@ -16,28 +17,30 @@ class Solution:
             # base case 2
             if len(s) - i < len(t) - j:
                 return 0
-            # 查备忘录防止冗余计算
+            # check the memo to avoid redundant work
             if memo[i][j] != -1:
                 return memo[i][j]
             res = 0
-            # 执行状态转移方程
-            # 在 s[i..] 中寻找 k，使得 s[k] == t[j]
+            # apply the transition
+            # find k in s[i..] with s[k] == t[j]
             for k in range(i, len(s)):
                 if s[k] == t[j]:
-                    # 累加结果
+                    # accumulate the result
                     res += dp(k + 1, j + 1)
-            # 存入备忘录
+            # store in the memo
             memo[i][j] = res
             return res
 
         return dp(0, 0)
 
+
 # Recursion + Memoization
 # Time: O(mn)
 # Space: O(mn)
 # 2023.06.21: no
-# 定义：s[i..] 的子序列中 t[j..] 出现的次数为 dp(s, i, t, j)
-# notes: iteration的方法，这个s[i]可以现在匹配t[j]也可以之后匹配，把两个情况加起来, Recursion
+# dp(i, j) = count of t[j..] inside s[i..]
+# notes: iterative idea; s[i] can match t[j] now or later, so sum both
+#        cases, Recursion
 # func(i, j) = func(i + 1, j) + func(i + 1, j + 1) if char matches
 # func(i, j) = func(i + 1, j) if char doesn't matches
 class Solution2:
@@ -72,12 +75,13 @@ class Solution2:
 
         return uniqueSubsequences(0, 0)
 
+
 # Iterative Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.06.21: no
-# notes: Iterative的方法，大概明白意思，但是看的云里雾里
-# 可以重新看lc标答: https://leetcode.com/problems/distinct-subsequences/editorial/
+# notes: iterative version; roughly got it but still a bit hazy
+# can re-read the lc editorial: https://leetcode.com/problems/distinct-subsequences/editorial/
 # recurse(i, j) represents the number of distinct subsequences in string s[i⋯M]
 # that equals the string t[j⋯N]
 class Solution3:
@@ -112,11 +116,13 @@ class Solution3:
 
         return dp[0][0]
 
+
 # Space optimized Dynamic Programming
 # Time: O(mn)
 # Space: O(n)
 # 2023.06.21: no
-# notes: 根据上一步，优化空间，因为其实只需要用到两行，下一行和当前行
+# notes: building on the previous step, only two rows are needed, the
+#        next row and the current row
 class Solution4:
     def numDistinct(self, s: str, t: str) -> int:
 
@@ -152,6 +158,10 @@ class Solution4:
 
         return dp[0]
 
-# test:
-test = Solution3()
-test.numDistinct(s = "rabbbita", t = "rabbit")
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.numDistinct("rabbbit", "rabbit") == 3
+    assert sol.numDistinct("babgbag", "bag") == 5
+    assert sol.numDistinct("abc", "abc") == 1
+    assert sol.numDistinct("abc", "xyz") == 0

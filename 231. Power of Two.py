@@ -1,13 +1,16 @@
+# 231. Power of Two
+
 # Bit Manipulation
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 用到的技巧是n & n-1可以提取最后一位1
-class Solution(object):
+# notes: n & (n-1) clears the lowest set bit; count the bits and a
+#        power of two has exactly one
+class Solution:
     def isPowerOfTwo(self, n):
         """
         :type n: int
-        :rtype: int
+        :rtype: bool
         """
         count = 0
         if n < 0:
@@ -17,31 +20,44 @@ class Solution(object):
             count += 1
         return count == 1
 
+
 # Bit Manipulation
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 用n & n-1把最后一位1去掉之后，看剩下的是不是0就行了
-class Solution2(object):
+# notes: clear the lowest set bit with n & (n-1); a power of two
+#        becomes 0 afterwards
+class Solution2:
     def isPowerOfTwo(self, n):
+        """
+        :type n: int
+        :rtype: bool
+        """
         if n == 0:
             return False
         return n & (n - 1) == 0
+
 
 # Bit Manipulation
 # Time: O(1)
 # Space: O(1)
 # 2023.08.02: no
-# notes: 用的技巧是n & -n只会保留最右边的一位1，如果这个数字只有一个1，那就会等于他自己
-# 否则就 不等
-class Solution3(object):
+# notes: n & -n keeps only the lowest set bit; if it equals n then n
+#        has a single bit, so it is a power of two
+class Solution3:
     def isPowerOfTwo(self, n):
+        """
+        :type n: int
+        :rtype: bool
+        """
         if n == 0:
             return False
         return n & (-n) == n
 
-test = Solution()
-test.isPowerOfTwo(-16)
-test.isPowerOfTwo(1)
-test.isPowerOfTwo(9)
 
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.isPowerOfTwo(1) is True
+    assert sol.isPowerOfTwo(16) is True
+    assert sol.isPowerOfTwo(9) is False
+    assert sol.isPowerOfTwo(0) is False

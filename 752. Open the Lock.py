@@ -1,10 +1,17 @@
+# 752. Open the Lock
+
+from collections import deque
+from queue import PriorityQueue
+
+
 # BFS
 # Time: O(n^2*a^n+D)
 # Space: O(a^n+D)
 # 2023.08.04: yes
-# notes: continue, 不是return
-from collections import deque
-class Solution(object):
+# notes: continue, not return
+# notes: level-order BFS from "0000"; each step expands every digit
+#        up and down, skip deadends and visited states
+class Solution:
     def openLock(self, deadends, target):
         """
         :type deadends: List[str]
@@ -40,12 +47,14 @@ class Solution(object):
                         q.append(cur[:i] + str(int(cur[i])-1) + cur[i + 1:])
         return -1
 
+
 # BFS double end
 # Time: O(n^2*a^n+D)
 # Space: O(a^n+D)
 # 2023.08.04: no
-# notes: 这道题可以双向BFS，可以加快速度
-class Solution2(object):
+# notes: bidirectional BFS from start and target at once, which
+#        speeds things up
+class Solution2:
     def openLock(self, deadends, target):
         """
         :type deadends: List[str]
@@ -100,15 +109,19 @@ class Solution2(object):
         return "".join(s)
 
 
-
 # A* Search
 # Time: O(8^d)
 # Space: O(n)
 # 2023.08.04: no
-from queue import PriorityQueue
-
+# notes: A* with a heuristic of the total per-digit circular
+#        distance to target, expanding the lowest f-cost state first
 class Solution3:
     def openLock(self, deadends, target):
+        """
+        :type deadends: List[str]
+        :type target: str
+        :rtype: int
+        """
         def h(node):
             dist = 0
             for i in range(4):
@@ -147,7 +160,12 @@ class Solution3:
 
         return -1
 
-test = Solution()
-test.openLock(['8888'], '1000')
-test.openLock(["0201","0101","0102","1212","2002"], "0202")
-test.openLock(["8887","8889","8878","8898","8788","8988","7888","9888"], '8888')
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3()):
+    assert sol.openLock(["0201", "0101", "0102", "1212", "2002"], "0202") == 6
+    assert sol.openLock(["8888"], "0009") == 1
+    assert sol.openLock(
+        ["8887", "8889", "8878", "8898", "8788", "8988", "7888", "9888"],
+        "8888") == -1
+    assert sol.openLock([], "0000") == 0

@@ -1,8 +1,11 @@
+# 213. House Robber II
+
 # Iteration DP
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: yes
-# notes: 我以为是mod，其实只需要从0到n-1或者1到n即可，因为第一个第二个house只有两种可能，取最大即可
+# notes: houses form a circle, so the first and last can't both be
+#        robbed; run linear robber on [0..n-2] and [1..n-1], take max
 class Solution:
     def rob(self, nums):
         n = len(nums)
@@ -29,11 +32,12 @@ class Solution:
         # and dp2 is for nums[2 - n] so we can take the last house
         return max(dp1[n-2], dp2[n-1])
 
+
 # Recursion DP
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: yes
-# notes: 同理可以压缩到O(1)
+# notes: same idea, compressed to O(1) space
 class Solution2:
     def rob(self, nums):
         if len(nums) == 0 or nums is None:
@@ -51,6 +55,11 @@ class Solution2:
             t2 = temp
         return t1
 
+
 # Tests:
-test = Solution()
-test.rob([1,2,3])
+for sol in (Solution(), Solution2()):
+    assert sol.rob([2, 3, 2]) == 3
+    assert sol.rob([1, 2, 3, 1]) == 4
+    assert sol.rob([1, 2, 3]) == 3
+    assert sol.rob([0]) == 0
+    assert sol.rob([200, 3, 140, 20, 10]) == 340

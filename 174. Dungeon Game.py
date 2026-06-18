@@ -1,18 +1,21 @@
+# 174. Dungeon Game
+
 # Dynamic Programming 2D recursion
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: no
-# notes: 不能从(0,0)开始推，但是可以从(m-1)(n-1)开始推
+# notes: cannot derive forward from (0,0), but can derive backward
+#        from (m-1, n-1)
 class Solution:
     def calculateMinimumHP(self, grid):
         m = len(grid)
         n = len(grid[0])
-        # 备忘录中都初始化为 -1
+        # memo all initialized to -1
         memo = [[-1 for _ in range(n)] for _ in range(m)]
 
         return self.dp(grid, 0, 0, memo)
 
-    # 备忘录，消除重叠子问题
+    # memo to remove overlapping subproblems
     def dp(self, grid, i, j, memo):
         m = len(grid)
         n = len(grid[0])
@@ -21,15 +24,15 @@ class Solution:
             return 1 if grid[i][j] >= 0 else -grid[i][j] + 1
         if i == m or j == n:
             return float('inf')
-        # 避免重复计算
+        # avoid recomputation
         if memo[i][j] != -1:
             return memo[i][j]
-        # 状态转移逻辑
+        # state transition
         res = min(
                 self.dp(grid, i, j + 1, memo),
                 self.dp(grid, i + 1, j, memo)
             ) - grid[i][j]
-        # 骑士的生命值至少为 1
+        # the knight needs at least 1 health
         memo[i][j] = 1 if res <= 0 else res
 
         return memo[i][j]
@@ -39,7 +42,8 @@ class Solution:
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: yes
-# notes: 状态转移方程和recursion一样，必须从(m-1)(n-1)倒着推
+# notes: same transition as the recursion, but iterate backward
+#        starting from (m-1, n-1)
 class Solution2:
     def calculateMinimumHP(self, dungeon):
         m, n = len(dungeon), len(dungeon[0])
@@ -56,7 +60,8 @@ class Solution2:
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: no
-# notes: BS的一种思路，假定骑士的血量是1，1000中间，不断二分，非标答
+# notes: binary search the starting health between 1 and 1000, check
+#        each guess; not the standard answer
 class Solution3:
     def calculateMinimumHP(self, grid):
         m, n = len(grid), len(grid[0])
@@ -84,11 +89,13 @@ class Solution3:
                 left = mid + 1
         return ans
 
+
 # Dynamic Programming with Circular Queue
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.26: no
-# notes: recursion的O(n)省空间方法，利用一个array去存储，是circular，但是我觉得直接替换也行，之后再看
+# notes: the O(n) space form of the recursion; store a sliding window
+#        of dp values in a circular array (plain replace also works)
 class MyCircularQueue:
     def __init__(self, capacity):
         """
@@ -109,7 +116,7 @@ class MyCircularQueue:
         return self.queue[index % self.capacity]
 
 
-class Solution4(object):
+class Solution4:
     def calculateMinimumHP(self, dungeon):
         """
         :type dungeon: List[List[int]]
@@ -145,16 +152,14 @@ class Solution4(object):
         # return the last element in the queue
         return dp.get(cols-1)
 
-# Tests:
-test = Solution4()
-test.calculateMinimumHP([[-2,-3,3],[-5,-10,1],[10,30,-5]])
 
 # Dynamic Programming with O(a) space
 # Time: O(mn)
 # Space: O(1)
 # 2023.07.26: no
-# notes: 与之前的题类似，直接在原dungeon上面进行更改，可以实现O(1)空间
-class Solution5(object):
+# notes: like the earlier problem, modify the dungeon in place to get
+#        O(1) extra space
+class Solution5:
     def calculateMinimumHP(self, dungeon):
         m, n = len(dungeon), len(dungeon[0])
         for i in range(m - 1, -1, -1):
@@ -168,3 +173,13 @@ class Solution5(object):
                 else:
                     dungeon[i][j] = max(min(dungeon[i][j + 1], dungeon[i + 1][j]) - dungeon[i][j], 1)
         return dungeon[0][0]
+
+
+# Tests:
+for sol in (Solution(), Solution2(), Solution3(), Solution4(), Solution5()):
+    # copy the grid since some solutions modify it in place
+    assert sol.calculateMinimumHP(
+        [[-2, -3, 3], [-5, -10, 1], [10, 30, -5]]) == 7
+    assert sol.calculateMinimumHP([[0]]) == 1
+    assert sol.calculateMinimumHP([[100]]) == 1
+    assert sol.calculateMinimumHP([[-3, 5]]) == 4

@@ -1,10 +1,17 @@
+# 583. Delete Operation for Two Strings
+
 # Without using LCS Dynamic Programmming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
-# notes: 注意base case，和矩阵大小
+# notes: watch the base case and the matrix size
 class Solution:
     def minDistance(self, word1, word2):
+        """
+        :type word1: str
+        :type word2: str
+        :rtype: int
+        """
         m, n = len(word1), len(word2)
         dp = [[0 for _ in range(n+1)]  for _ in range(m+1)]
         for i in (range(m+1)):
@@ -17,13 +24,19 @@ class Solution:
                     dp[i][j] = min(dp[i-1][j], dp[i][j-1])+1
         return dp[m][n]
 
+
 # Longest Common Subsequence with Memoization
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
-# notes: 最长公共自序列，就是1143题
+# notes: longest common subsequence, same as problem 1143
 class Solution2:
     def minDistance(self,s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: int
+        """
         memo = [[0] * (len(s2) + 1) for _ in range(len(s1) + 1)]
         return len(s1) + len(s2) - 2 * self.lcs(s1, s2, len(s1), len(s2), memo)
 
@@ -38,12 +51,19 @@ class Solution2:
             memo[m][n] = max(self.lcs(s1, s2, m, n - 1, memo), self.lcs(s1, s2, m - 1, n, memo))
         return memo[m][n]
 
+
 # Using Longest Common Subsequence- Dynamic Programming
 # Time: O(mn)
 # Space: O(mn)
 # 2023.07.25: yes
+# notes: bottom-up LCS, answer is m+n minus twice the LCS length
 class Solution3:
     def minDistance(self, s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: int
+        """
         dp = [[0] * (len(s2) + 1) for _ in range(len(s1) + 1)]
         for i in range(len(s1) + 1):
             for j in range(len(s2) + 1):
@@ -55,13 +75,19 @@ class Solution3:
                     dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
         return len(s1) + len(s2) - 2 * dp[len(s1)][len(s2)]
 
+
 # 1-D Dynamic Programming
 # Time: O(mn)
 # Space: O(n)
 # 2023.07.25: no
-# notes: 记录上一行的数据即可
+# notes: only keep the previous row
 class Solution4:
     def minDistance(self, s1, s2):
+        """
+        :type s1: str
+        :type s2: str
+        :rtype: int
+        """
         dp = [0] * (len(s2) + 1)
         for i in range(len(s1) + 1):
             temp = [0] * (len(s2) + 1)
@@ -76,10 +102,9 @@ class Solution4:
         return dp[len(s2)]
 
 
-
 # Tests:
-test = Solution()
-test.minDistance(word1 = "leetcode", word2 = "etco")
-test.minDistance(word1 = "sea", word2 = "eat")
-
-
+for sol in (Solution(), Solution2(), Solution3(), Solution4()):
+    assert sol.minDistance("leetcode", "etco") == 4
+    assert sol.minDistance("sea", "eat") == 2
+    assert sol.minDistance("", "abc") == 3
+    assert sol.minDistance("abc", "abc") == 0

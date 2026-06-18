@@ -1,10 +1,14 @@
+# 1514. Path with Maximum Probability
+
 # Dijkstra's Algorithm Approach
 # Time: O(m+ nlogn)
 # Space: O(n+m)
 # 2023.07.12: yes
+# notes: max-probability is like shortest path; use a max-heap on
+#        probability and relax edges by multiplying probabilities
 from collections import defaultdict, deque
 from queue import PriorityQueue
-class Solution(object):
+class Solution:
     def maxProbability(self, n, edges, succProb, start_node, end_node):
         """
         :type n: int
@@ -37,12 +41,23 @@ class Solution(object):
                     pq.put([-prob_to_next_node, next_node[1]])
         return 0
 
+
 # Bellman-Ford Algorithm Approach
 # Time: O(nm)
 # Space: O(n)
 # 2023.07.12: no
+# notes: relax every edge up to n-1 times, stopping early when a
+#        full pass makes no improvement
 class Solution2:
     def maxProbability(self, n: int, edges, succProb, start, end):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :type succProb: List[float]
+        :type start: int
+        :type end: int
+        :rtype: float
+        """
         max_prob = [0] * n
         max_prob[start] = 1
 
@@ -64,12 +79,23 @@ class Solution2:
 
         return max_prob[end]
 
+
 # Shortest Path Faster Algorithm
 # Time: O(nm)
 # Space: O(n+m)
 # 2023.07.12: no
+# notes: BFS-style relaxation; re-enqueue a node whenever its best
+#        probability improves
 class Solution3:
     def maxProbability(self, n: int, edges, succProb, start, end):
+        """
+        :type n: int
+        :type edges: List[List[int]]
+        :type succProb: List[float]
+        :type start: int
+        :type end: int
+        :rtype: float
+        """
         graph = defaultdict(list)
         for i, (a, b) in enumerate(edges):
             graph[a].append([b, succProb[i]])
@@ -93,7 +119,10 @@ class Solution3:
 
 
 # Tests:
-test = Solution3()
-test.maxProbability(3, [[0,1],[1,2],[0,2]], [0.5,0.5,0.2], 0, 2)
-test.maxProbability(3, [[0,1],[1,2],[0,2]], [0.5,0.5,0.3], 0, 2)
-test.maxProbability(3, [[0,1]], [0.5], 0, 2)
+for sol in (Solution(), Solution2(), Solution3()):
+    assert abs(sol.maxProbability(
+        3, [[0, 1], [1, 2], [0, 2]], [0.5, 0.5, 0.2], 0, 2) - 0.25) < 1e-9
+    assert abs(sol.maxProbability(
+        3, [[0, 1], [1, 2], [0, 2]], [0.5, 0.5, 0.3], 0, 2) - 0.3) < 1e-9
+    assert abs(sol.maxProbability(
+        3, [[0, 1]], [0.5], 0, 2) - 0.0) < 1e-9

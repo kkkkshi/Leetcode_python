@@ -1,8 +1,11 @@
+# 217. Contains Duplicate
+
 # Sorting Approach
 # Time: O(nlogn)
 # Space: O(1)
 # 2023.06.23: yes
-class Solution(object):
+# notes: sort, then any duplicate sits next to its equal neighbor
+class Solution:
     def containsDuplicate(self, nums):
         """
         :type nums: List[int]
@@ -14,11 +17,13 @@ class Solution(object):
                 return True
         return False
 
+
 # Hash Table Approach
 # Time: O(n)
 # Space: O(n)
 # 2023.06.23: yes
-class Solution2(object):
+# notes: track seen values in a set; a repeat means a duplicate
+class Solution2:
     def containsDuplicate(self, nums):
         """
         :type nums: List[int]
@@ -32,7 +37,10 @@ class Solution2(object):
                 return True
         return False
 
+
 # Tests:
-nums = [1, 2, 3, 1]
-test = Solution2()
-test.containsDuplicate(nums)
+for sol in (Solution(), Solution2()):
+    assert sol.containsDuplicate([1, 2, 3, 1]) is True
+    assert sol.containsDuplicate([1, 2, 3, 4]) is False
+    assert sol.containsDuplicate([1, 1, 1, 3, 3, 4, 3, 2, 4, 2]) is True
+    assert sol.containsDuplicate([1]) is False

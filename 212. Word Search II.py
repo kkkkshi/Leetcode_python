@@ -1,8 +1,11 @@
+# 212. Word Search II
+
 # Backtracking with Trie
 # Time: O(m(4*3^(l-1)))
 # Space: O(n)
 # 2023.07.20: no
-# notes: 利用Trie来记录所有的可能性，从每一个点都出发一次，用Trie可以同时找到多个点
+# notes: build a trie of all words, then DFS from each cell; the
+#        trie lets us match many words in one board traversal
 class Solution:
     def findWords(self, board, words):
         WORD_KEY = '$'
@@ -60,6 +63,12 @@ class Solution:
 
         return matchedWords
 
+
 # Tests:
-test = Solution()
-test.findWords(board = [["o","a","a","n"],["e","t","a","e"],["i","h","k","r"],["i","f","l","v"]], words = ["oath","pea","eat","rain"])
+for sol in (Solution(),):
+    board = [["o", "a", "a", "n"], ["e", "t", "a", "e"],
+             ["i", "h", "k", "r"], ["i", "f", "l", "v"]]
+    words = ["oath", "pea", "eat", "rain"]
+    assert sorted(sol.findWords(board, words)) == ["eat", "oath"]
+    assert sol.findWords([["a"]], ["a"]) == ["a"]
+    assert sol.findWords([["a", "b"]], ["ba"]) == ["ba"]
