@@ -1,8 +1,11 @@
+# 136. Single Number
+
 # Bit Manipulation
 # Time: O(n)
 # Space: O(1)
 # 2023.08.02: yes
-# notes: 用的是^的方法，a^a = 0, a^0 = a，这道题其他方法都是常规方法，加加减减，sum等去除
+# notes: XOR everything; a^a = 0 and a^0 = a, so pairs cancel and the
+#        lone number is left; other approaches are just arithmetic
 class Solution(object):
     def singleNumber(self, nums):
         """
@@ -14,6 +17,9 @@ class Solution(object):
             res ^= nums[i]
         return res
 
+
 # Tests:
-test = Solution()
-test.singleNumber([4,1,2,1,2])
+for sol in (Solution(),):
+    assert sol.singleNumber([4, 1, 2, 1, 2]) == 4
+    assert sol.singleNumber([2, 2, 1]) == 1
+    assert sol.singleNumber([1]) == 1

@@ -1,9 +1,16 @@
+# 121. Best Time to Buy and Sell Stock
+
 # brute force Approach
 # Time: O(n^2)
 # Space: O(1)
 # 2023.06.23: yes
+# notes: check every buy/sell pair and keep the largest difference
 class Solution:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         max_profit = 0
         for i in range(len(prices) - 1):
             for j in range(i + 1, len(prices)):
@@ -18,8 +25,13 @@ class Solution:
 # Time: O(n)
 # Space: O(1)
 # 2023.06.23: no
+# notes: track the lowest price so far, update profit at each step
 class Solution2:
     def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         min_price = float('inf')
         max_profit = 0
         for i in range(len(prices)):
@@ -29,17 +41,18 @@ class Solution2:
                 max_profit = prices[i] - min_price
         return max_profit
 
+
 # Dynamic Programming
 # Time: O(n)
 # Space: O(n)
 # 2023.07.28: no
-# notes: 六六归一，记得看
-# 太强了，真的，我愿称为神
+# notes: all stock problems reduce to one DP framework, worth a review
+# really strong, I'd honestly call it god-tier
 # https://labuladong.github.io/algo/di-er-zhan-a01c6/yong-dong--63ceb/yi-ge-fang-3b01b/
-# base case：
+# base case:
 # dp[-1][0] = 0
 # dp[-1][1] = -infinity
-# 状态转移方程：
+# state transition:
 # dp[i][0] = max(dp[i-1][0], dp[i-1][1] + prices[i])
 # dp[i][1] = max(dp[i-1][1], - prices[i])
 class Solution4(object):
@@ -59,12 +72,18 @@ class Solution4(object):
             dp[i][1] = max(dp[i - 1][1], -prices[i])
         return dp[n - 1][0]
 
+
 # Dynamic Programming Space Optimized
 # Time: O(n)
 # Space: O(1)
 # 2023.07.28: no
+# notes: same DP but keep only the previous two states, not the table
 class Solution5(object):
-    def maxProfit_k_1(self, prices):
+    def maxProfit(self, prices):
+        """
+        :type prices: List[int]
+        :rtype: int
+        """
         n = len(prices)
         # base case: dp[-1][0] = 0, dp[-1][1] = -infinity
         dp_i_0, dp_i_1 = 0, float('-inf')
@@ -75,24 +94,7 @@ class Solution5(object):
 
 
 # Tests:
-test = Solution4()
-prices = [7,1,5,3,6,4]
-prices2 = [4,2,7,3,8,1,9]
-prices3 = [7,6,4,3,1]
-test.maxProfit(prices)
-test.maxProfit(prices2)
-test.maxProfit(prices3)
-test.maxProfit([1, 2, 90, 10, 110])
-
-
-
-
-
-
-
-
-
-
-
-
-
+for sol in (Solution(), Solution2(), Solution4(), Solution5()):
+    assert sol.maxProfit([7, 1, 5, 3, 6, 4]) == 5
+    assert sol.maxProfit([7, 6, 4, 3, 1]) == 0
+    assert sol.maxProfit([1, 2, 90, 10, 110]) == 109
